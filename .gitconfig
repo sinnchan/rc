@@ -1,0 +1,14 @@
+[user]
+	name = sinnchan
+	email = sinn67c3z42@icloud.com
+[init]
+	defaultBlanch = main
+[merge]
+	ff = false
+[pull]
+	ff = only
+[core]
+	autocrlf = input
+[alias]
+	graph = log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short
+
