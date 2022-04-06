@@ -1,0 +1,29 @@
+# vimとかlessとかtigとかのバッファを終了時にちゃんと消す
+altscreen on
+
+# 文字コード
+defutf8 on
+defencoding utf8
+encoding utf8 utf8
+
+# スクロール行数
+defscrollback 10000
+
+# マウススクロール有効
+termcapinfo xterm* ti@:te@
+
+# 画面に一つのバー
+caption splitonly "%{= ck} %?%F%{b kw}%:%{ck}%? %?%h%:%t (screen #%n)%? %{-}"
+
+# 一番下のバー
+hardstatus alwayslastline "%{= ck} %-w%{b kw} %n %t* %{-}%+w %= LoadAVG [%l] "
+
+# そのた（バーも含む）
+sorendition "= ck"
+
+# 移動
+bind h focus left
+bind j focus down
+bind k focus up
+bind l focus right
+
