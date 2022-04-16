@@ -1,4 +1,7 @@
 #===================================================================#
+# color
+export CLICOLOR=1
+export LSCOLORS=ExFxBxDxCxegedabagacad
 
 # alias
 alias sc='screen'
