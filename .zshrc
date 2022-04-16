@@ -8,12 +8,10 @@ alias sr='screen -r'
 # path
 alias path="echo $PATH | sed -e 's/:/\n/g'"
 
+# pipenv
+export PIPENV_VENV_IN_PROJECT=true
 
 #===================================================================#
-
-
-
-
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
