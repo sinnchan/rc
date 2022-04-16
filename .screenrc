@@ -1,3 +1,7 @@
+# =============== #
+# title bar の名前が変わってしまう場合
+# " :defdynamictitle off " を実行すること。
+# =============== #
 # vimとかlessとかtigとかのバッファを終了時にちゃんと消す
 altscreen on
 
