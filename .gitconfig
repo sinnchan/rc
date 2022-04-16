@@ -3,6 +3,7 @@
 	email = sinn67c3z42@icloud.com
 [init]
 	defaultBlanch = main
+	defaultBranch = main
 [merge]
 	ff = false
 [pull]

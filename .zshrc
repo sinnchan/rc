@@ -5,16 +5,9 @@ alias sc='screen'
 alias sl='screen -ls'
 alias sr='screen -r'
 
-# python (pyenv, pyenv-virtualenv)
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-if command -v pyenv 1>/dev/null 2>&1; then
-    eval "$(pyenv init --path)" 
-    eval "$(pyenv init -)"
-fi
-if which pyenv-virtualenv-init > /dev/null; then 
-    eval "$(pyenv virtualenv-init -)"
-fi
+# path
+alias path="echo $PATH | sed -e 's/:/\n/g'"
+
 
 #===================================================================#
 
@@ -32,7 +25,7 @@ export ZSH="/Users/sinnchan/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="af-magic"
+ZSH_THEME="simple"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
