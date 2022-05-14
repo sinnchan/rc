@@ -12,11 +12,28 @@ set incsearch
 set hlsearch
 " 対応する括弧を強調表示
 set showmatch
-" タイトルを表示
-set title
 " シンタックスハイライト
 syntax on
 " バッファスクロール
 set mouse=a
 " insertをぬけるとIMEを無効
 set imdisable
+set notitle
+
+" MAPPING
+map <Esc><Esc> :noh<CR>
+"" tab
+nnoremap <S-h> gT
+nnoremap <S-l> gt
+"" cr
+nnoremap <S-k> i<CR><Esc>
+"" window
+nnoremap <Space>h <C-w>h
+nnoremap <Space>j <C-w>j
+nnoremap <Space>k <C-w>k
+nnoremap <Space>l <C-w>l
+nnoremap <C-h> :vertical resize -1<CR>
+nnoremap <C-j> :resize -1<CR>
+nnoremap <C-k> :resize +1<CR>
+nnoremap <C-l> :vertical resize +1<CR>
+
