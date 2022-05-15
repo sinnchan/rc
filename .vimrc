@@ -21,7 +21,11 @@ set imdisable
 set notitle
 
 " MAPPING
+"" hilight
 map <Esc><Esc> :noh<CR>
+"" cursor
+nnoremap <Space>i ^
+nnoremap <Space>a $
 "" tab
 nnoremap <S-h> gT
 nnoremap <S-l> gt
