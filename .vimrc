@@ -26,9 +26,6 @@ map <Esc><Esc> :noh<CR>
 "" cursor
 nnoremap <Space>i ^
 nnoremap <Space>a $
-"" tab
-nnoremap <S-h> gT
-nnoremap <S-l> gt
 "" cr
 nnoremap <S-k> i<CR><Esc>
 "" window
