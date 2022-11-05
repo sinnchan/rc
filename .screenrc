@@ -10,6 +10,9 @@ altscreen on
 defutf8 on
 defencoding utf8
 encoding utf8 utf8
+cjkwidth on
+
+defdynamictitle off
 
 # スクロール行数
 defscrollback 10000
