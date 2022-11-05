@@ -1,3 +1,8 @@
+# =============== #
+# title bar の名前が変わってしまう場合
+# " :defdynamictitle off " を実行すること。
+# =============== #
+
 # vimとかlessとかtigとかのバッファを終了時にちゃんと消す
 altscreen on
 
@@ -13,13 +18,15 @@ defscrollback 10000
 termcapinfo xterm* ti@:te@
 
 # 画面に一つのバー
-caption splitonly "%{= ck} %?%F%{b kw}%:%{ck}%? %?%h%:%t (screen #%n)%? %{-}"
+caption splitonly "%{= mk} %?%F%{b kw}%:%{mk}%? %?%h%:%t (screen #%n)%? %{-}"
 
 # 一番下のバー
-hardstatus alwayslastline "%{= ck} %-w%{b kw} %n %t* %{-}%+w %= LoadAVG [%l] "
+hardstatus alwayslastline "%{= mk} %-w%{b kw} %n %t* %{-}%+w %= LoadAVG [%l] "
+
+defdynamictitle off
 
 # そのた（バーも含む）
-sorendition "= ck"
+sorendition "= mk"
 
 # 移動
 bind h focus left
@@ -31,10 +38,10 @@ bind l focus right
 bind w eval 'command -c resize' 'echo "Resize window"'
 bind ^w eval 'command -c resize' 'echo "Resize window"'
 bind -c resize h eval 'command -c resize' 'resize -h -1'
-bind -c resize j eval 'command -c resize' 'resize -v -1'
 bind -c resize l eval 'command -c resize' 'resize -h +1'
+bind -c resize j eval 'command -c resize' 'resize -v -1'
 bind -c resize k eval 'command -c resize' 'resize -v +1'
 bind -c resize ^h eval 'command -c resize' 'resize -h -1'
-bind -c resize ^j eval 'command -c resize' 'resize -v -1'
 bind -c resize ^l eval 'command -c resize' 'resize -h +1'
+bind -c resize ^j eval 'command -c resize' 'resize -v -1'
 bind -c resize ^k eval 'command -c resize' 'resize -v +1'
