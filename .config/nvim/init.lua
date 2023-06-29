@@ -1,6 +1,12 @@
 
 vim.opt.number = true
 
+-- packer
+-- https://github.com/wbthomason/packer.nvim
+--
+-- boot strap packaer
+-- $ nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+--
 local ensure_packer = function()
   local fn = vim.fn
   local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
@@ -25,5 +31,4 @@ return packer.startup(function(use)
     packer.sync()
   end
 end)
-
 

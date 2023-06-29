@@ -1,15 +1,9 @@
 #!/bin/sh
 
-
 DOWNLOAD_PATH="$HOME/Downloads"
-ONE_DRIVE_PATH="$HOME/OneDrive - Sony/"
+ONE_DRIVE_PATH="$HOME/OneDrive\ -\ Sony"
 PROJECTS_PATH="$HOME/Projects"
-
-FREFLOW_SDK_ANDROID_PATH="$PROJECTS_PATH/freflow-android"
-FREFLOW_SDK_IOS_PATH="$PROJECTS_PATH/freflow-ios"
-
-FREFLOW_APP_ANDROID_PATH="$PROJECTS_PATH/freflow-app-android"
-FREFLOW_APP_IOS_PATH="$PROJECTS_PATH/freflow-app-ios"
+FLUTTER_PROJ_PATH="$PROJECTS_PATH/app_flutter"
 
 SESSION_NAME="work"
 
@@ -22,20 +16,13 @@ tmux split-window -hc $DOWNLOAD_PATH
 tmux split-window -hc $ONE_DRIVE_PATH
 tmux select-layout even-horizontal
 
-WINDOW_NAME="vim"
+WINDOW_NAME="work"
 
-source ~/.vimrc
-tmux new-window  -n $WINDOW_NAME -c $HOME
+tmux new-window  -n $WINDOW_NAME -c $FLUTTER_PROJ_PATH
+tmux split-window -hc $FLUTTER_PROJ_PATH
+tmux split-window -vc $FLUTTER_PROJ_PATH
 
-WINDOW_NAME="freflow-app"
+WINDOW_NAME="device"
 
-tmux new-window  -n $WINDOW_NAME -c $FREFLOW_APP_ANDROID_PATH
-tmux split-window -hc $FREFLOW_APP_IOS_PATH
-tmux select-layout even-horizontal
-
-WINDOW_NAME="freflow-sdk"
-
-tmux new-window  -n $WINDOW_NAME -c $FREFLOW_SDK_ANDROID_PATH
-tmux split-window -hc $FREFLOW_SDK_IOS_PATH
-tmux select-layout even-horizontal
-
+tmux new-window  -n $WINDOW_NAME -c $FLUTTER_PROJ_PATH
+tmux split-window -hc $FLUTTER_PROJ_PATH
