@@ -74,6 +74,13 @@ return packer.startup(function(use)
   use 'wbthomason/packer.nvim'
   -- https://github.com/navarasu/onedark.nvim
   use 'navarasu/onedark.nvim'
+  -- https://github.com/junegunn/fzf.vim
+  use {
+    'junegunn/fzf.vim',
+    run = function()
+      vim.fn['fzf#install()'](0)
+    end
+  }
 
   if packer_bootstrap then
     packer.sync()
