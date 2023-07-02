@@ -1,11 +1,9 @@
-# +-----------+
-# | oh my zsh |
-# +-----------+
+# -- oh my zsh --
 # https://github.com/ohmyzsh/ohmyzsh
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="simple"
 
-# plugins
+# -- plugins --
 plugins+=(git)
 plugins+=(zsh-vi-mode)
 plugins+=(fzf)
@@ -22,23 +20,20 @@ alias frun='(){fvm flutter run -d $3 --dart-define FLAVOR=$1 --dart-define ENV=$
 alias fcheck='~/scripts/git-scripts/fcheck.sh'
 alias cbranch='git branch --show-current'
 
-# dart
+# -- dart --
 if [[ -f ~/.dvm/scripts/dvm ]]; then
   . ~/.dvm/scripts/dvm
 fi
 
-# python
-
+# -- python --
 eval "$(_PIPENV_COMPLETE=zsh_source pipenv)"
 
 # -- path --
-#
 export PATH="/Users/higa/fvm/default/bin:$PATH"
 export PATH="$PATH:/Users/higa/Library/Android/sdk/platform-tools"
 export PATH="$PATH:$HOME/.pub-cache/bin"
 
 # -- fzf --
-#
 # https://github.com/junegunn/fzf#key-bindings-for-command-line
 # Preview file content using bat (https://github.com/sharkdp/bat)
 export FZF_CTRL_T_OPTS="
