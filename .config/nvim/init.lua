@@ -47,18 +47,18 @@ vim.api.nvim_set_keymap('n', '<Cpace>l', ':vertical resize +10<CR>', { noremap =
 
 ----# packer
 --# https://github.com/wbthomason/packer.nvim
-local packer = require('packer')
-local lualine = require('lualine')
-local tree_sitter_config = require('nvim-treesitter.configs')
 
 ----# theme
 --# onedark
 local onedark = require('onedark')
 onedark.load()
+
 --# grovbox
 -- vim.o.background = 'dark' -- or 'light'
 -- vim.cmd [[colorscheme gruvbox]]
+
 --# lualine
+local lualine = require('lualine')
 lualine.setup {
   options = { theme = 'onedark' } -- or 'gruvbox_dark'
 }
@@ -84,6 +84,7 @@ ts.setup {
 ts.load_extension('fzf')
 
 ----# tree-sitter
+local tree_sitter_config = require('nvim-treesitter.configs')
 tree_sitter_config.setup {
   ensure_installed = { 'c', 'lua', 'vim', 'dart' },
   sync_install = true,
@@ -135,6 +136,7 @@ smooth.setup({
 
 ----# packer.nvim bootstrap
 --# install: $ nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+local packer = require('packer')
 local packer_bootstrap = (
   function()
     local fn = vim.fn
