@@ -2,8 +2,8 @@
 
 DOWNLOAD_PATH="$HOME/Downloads"
 ONE_DRIVE_PATH="$HOME/OneDrive\ -\ Sony"
-PROJECTS_PATH="$HOME/Projects"
-FLUTTER_PROJ_PATH="$PROJECTS_PATH/app_flutter"
+PROJECTS_PATH="$HOME/projects"
+FLUTTER_PROJ_PATH="$PROJECTS_PATH/app-flutter"
 
 SESSION_NAME="work"
 
