@@ -53,16 +53,19 @@ export FZF_CTRL_R_OPTS="
 export FZF_ALT_C_OPTS="--preview 'tree -C {}'"
 # git branch
 
-alias gitb="git branch -a \
-  | grep -v '^*' \
-  | grep -v 'HEAD -> ' \
-  | sed -e 's/remotes\///' -e 's/origin\///' \
-  | sort \
-  | uniq \
-  | awk '{print $1}' \
-  | fzf \
-  | xargs git switch
-"
+fzf_git_branch() {
+  _SELECTED_BRANCH=$(git branch -a \
+    | grep -v '^*' \
+    | grep -v 'HEAD -> ' \
+    | sed -e 's/remotes\///' -e 's/origin\///' \
+    | sort \
+    | uniq \
+    | awk '{print $1}' \
+    | fzf)
+  LBUFFER+=$_SELECTED_BRANCH
+}
+zle -N fzf_git_branch
+bindkey "^B" fzf_git_branch
 
 # -- java --
 export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
