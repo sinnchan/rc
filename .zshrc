@@ -5,8 +5,8 @@ ZSH_THEME="simple"
 
 # -- plugins --
 plugins+=(git)
-plugins+=(zsh-vi-mode)
 plugins+=(fzf)
+plugins+=(zsh-vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -17,7 +17,7 @@ alias vi='nvim'
 # -- flutter --
 alias flutter='fvm flutter'
 alias frun='(){fvm flutter run -d $3 --dart-define FLAVOR=$1 --dart-define ENV=$2}'
-alias fcheck='~/scripts/git-scripts/fcheck.sh'
+alias fcheck='~/scripts/git/fcheck.sh'
 alias cbranch='git branch --show-current'
 
 # -- dart --
@@ -32,6 +32,8 @@ eval "$(_PIPENV_COMPLETE=zsh_source pipenv)"
 export PATH="/Users/higa/fvm/default/bin:$PATH"
 export PATH="$PATH:/Users/higa/Library/Android/sdk/platform-tools"
 export PATH="$PATH:$HOME/.pub-cache/bin"
+export PATH="$PATH:$HOME/.pub-cache/bin"
+export PATH="$PATH:/usr/local/opt/openjdk@11/bin"
 
 # -- fzf --
 # https://github.com/junegunn/fzf#key-bindings-for-command-line
@@ -49,6 +51,21 @@ export FZF_CTRL_R_OPTS="
   --header 'Press CTRL-Y to copy command into clipboard'"
 # Print tree structure in the preview window
 export FZF_ALT_C_OPTS="--preview 'tree -C {}'"
+# git branch
+
+fzf_git_branch() {
+  _SELECTED_BRANCH=$(git branch -a \
+    | grep -v '^*' \
+    | grep -v 'HEAD -> ' \
+    | sed -e 's/remotes\///' -e 's/origin\///' \
+    | sort \
+    | uniq \
+    | awk '{print $1}' \
+    | fzf)
+  LBUFFER+=$_SELECTED_BRANCH
+}
+zle -N fzf_git_branch
+bindkey "^B" fzf_git_branch
 
 # -- java --
 export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
