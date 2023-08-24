@@ -8,6 +8,24 @@ plugins+=(git)
 plugins+=(fzf)
 plugins+=(zsh-vi-mode)
 
+# widget
+fzf_git_branch() {
+  _SELECTED_BRANCH=$(git branch -a \
+    | grep -v '^*' \
+    | grep -v 'HEAD -> ' \
+    | sed -e 's/remotes\///' -e 's/origin\///' \
+    | sort \
+    | uniq \
+    | awk '{print $1}' \
+    | fzf)
+  LBUFFER+=$_SELECTED_BRANCH
+}
+
+function zvm_after_lazy_keybindings() {
+  zvm_define_widget fzf_git_branch
+  zvm_bindkey viins '^B' fzf_git_branch
+}
+
 source $ZSH/oh-my-zsh.sh
 
 # -- alias --
@@ -51,21 +69,7 @@ export FZF_CTRL_R_OPTS="
   --header 'Press CTRL-Y to copy command into clipboard'"
 # Print tree structure in the preview window
 export FZF_ALT_C_OPTS="--preview 'tree -C {}'"
-# git branch
 
-fzf_git_branch() {
-  _SELECTED_BRANCH=$(git branch -a \
-    | grep -v '^*' \
-    | grep -v 'HEAD -> ' \
-    | sed -e 's/remotes\///' -e 's/origin\///' \
-    | sort \
-    | uniq \
-    | awk '{print $1}' \
-    | fzf)
-  LBUFFER+=$_SELECTED_BRANCH
-}
-zle -N fzf_git_branch
-bindkey "^B" fzf_git_branch
 
 # -- java --
 export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
