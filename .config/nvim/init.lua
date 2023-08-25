@@ -1,7 +1,8 @@
-
 --------------------------------------------------
 -- INIT.LUA
 --------------------------------------------------
+
+local keymap = vim.api.nvim_set_keymap
 
 vim.opt.autoread = true
 vim.opt.backup = false
@@ -22,13 +23,15 @@ vim.opt.title = true
 vim.opt.updatetime = 300
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
+vim.opt.colorcolumn = "80"
 
 vim.g.mapleader = " "
+vim.o.guifont = "ProFont IIx Nerd Font:h12"
 
-vim.api.nvim_set_keymap('n', '<Space>h', ':vertical resize -10<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<Space>j', ':resize -10<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<Space>k', ':resize +10<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<Space>l', ':vertical resize +10<CR>', { noremap = true })
+keymap('n', '<leader>h', ':vertical resize -10<CR>', { noremap = true })
+keymap('n', '<leader>j', ':resize -10<CR>', { noremap = true })
+keymap('n', '<leader>k', ':resize +10<CR>', { noremap = true })
+keymap('n', '<leader>l', ':vertical resize +10<CR>', { noremap = true })
 
 
 --------------------------------------------------
@@ -67,6 +70,9 @@ end
 local sugOpts = { silent = true, noremap = true, expr = true, replace_keycodes = false }
 keyset("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', sugOpts)
 keyset("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], sugOpts)
+-- 一番上のサジェストをEnterで適用する
+keymap('i', '<CR>', [[pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]],
+  { expr = true, noremap = true })
 
 keyset("n", "[g", "<Plug>(coc-diagnostic-prev)", { silent = true, noremap = true })
 keyset("n", "]g", "<Plug>(coc-diagnostic-next)", { silent = true, noremap = true })
@@ -103,9 +109,9 @@ vim.api.nvim_create_autocmd("CursorHold", {
 keyset("n", "<leader>rn", "<Plug>(coc-rename)", { silent = true })
 
 -- Formatting selected code
-keyset("x", "<leader>f", "<Plug>(coc-format-selected)", { silent = true })
-keyset("n", "<leader>f", "<Plug>(coc-format-selected)", { silent = true })
-vim.api.nvim_set_keymap('n', '<leader>fa', [[<cmd>call CocAction('format')<CR>]], { noremap = true, silent = true })
+keyset("x", "<leader>cf", "<Plug>(coc-format-selected)", { silent = true })
+keyset("n", "<leader>cf", "<Plug>(coc-format-selected)", { silent = true })
+keymap('n', '<leader>fa', [[<cmd>call CocAction('format')<CR>]], { noremap = true, silent = true })
 
 
 -- Setup formatexpr specified filetype(s)
@@ -173,15 +179,31 @@ keyset("n", "<C-s>", "<Plug>(coc-range-select)", { silent = true })
 keyset("x", "<C-s>", "<Plug>(coc-range-select)", { silent = true })
 
 
+keyset("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", { silent = true, nowait = true })
+-- Manage extensions
+keyset("n", "<leader>ce", ":<C-u>CocList extensions<cr>", { silent = true, nowait = true })
+-- Show commands
+keyset("n", "<leader>cc", ":<C-u>CocList commands<cr>", { silent = true, nowait = true })
+-- Find symbol of current document
+keyset("n", "<leader>co", ":<C-u>CocList outline<cr>", { silent = true, nowait = true })
+-- Search workleader symbols
+keyset("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", { silent = true, nowait = true })
+-- Do default action for next item
+keyset("n", "<leader>cj", ":<C-u>CocNext<cr>", { silent = true, nowait = true })
+-- Do default action for previous item
+keyset("n", "<leader>ck", ":<C-u>CocPrev<cr>", { silent = true, nowait = true })
+-- Resume latest coc list
+keyset("n", "<leader>cp", ":<C-u>CocListResume<cr>", { silent = true, nowait = true })
+
 --------------------------------------------------
 -- FZF
 --------------------------------------------------
 
 local ts_builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', ts_builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', ts_builtin.live_grep, {})
-vim.keymap.set('n', '<leader>fb', ts_builtin.buffers, {})
-vim.keymap.set('n', '<leader>fc', ts_builtin.commands, {})
+keyset('n', '<leader>ff', ts_builtin.find_files, {})
+keyset('n', '<leader>fg', ts_builtin.live_grep, {})
+keyset('n', '<leader>fb', ts_builtin.buffers, {})
+keyset('n', '<leader>fc', ts_builtin.commands, {})
 
 local ts = require('telescope')
 ts.setup {
@@ -265,10 +287,6 @@ tree_sitter_config.setup {
 
 local nt = require('nvim-tree')
 local nt_api = require('nvim-tree.api')
-local gheight = vim.api.nvim_list_uis()[1].height
-local gwidth = vim.api.nvim_list_uis()[1].width
-local height = math.floor(gheight * 2 / 3)
-local width = math.floor(gwidth * 3 / 4)
 
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -278,24 +296,22 @@ nt.setup({
   sort_by = 'case_sensitive',
   view = {
     width = 30,
-    float = {
-      enable = true,
-      open_win_config = {
-        height = height,
-        width = width,
-        row = (gheight - height) * 0.5,
-        col = (gwidth - width) * 0.5
-      }
-    }
   },
 })
 
 -- key bind
-vim.keymap.set('n', '<leader>tt', nt_api.tree.toggle, { noremap = true })
-vim.keymap.set('n', '<leader>tf', nt_api.tree.find_file, { noremap = true })
-vim.keymap.set('n', '<leader>tr', nt_api.tree.reload, { noremap = true })
+keyset('n', '<leader>to', nt_api.tree.open, { noremap = true })
+keyset('n', '<leader>tq', nt_api.tree.close, { noremap = true })
+keyset('n', '<leader>tt', nt_api.tree.toggle, { noremap = true })
+keyset('n', '<leader>tg', nt_api.tree.focus, { noremap = true })
+keyset('n', '<leader>tf', nt_api.tree.find_file, { noremap = true })
+keyset('n', '<leader>tr', nt_api.tree.reload, { noremap = true })
 
----- smooth scroll
+
+--------------------------------------------------
+-- SMOOTH SCROLL
+--------------------------------------------------
+
 local smooth = require('neoscroll')
 smooth.setup({
   easing_function = 'cubic' -- cubic, quartic, circular
@@ -382,6 +398,12 @@ return packer.startup(
     use {
       'neoclide/coc.nvim',
       branch = 'release',
+    }
+
+    -- https://github.com/windwp/nvim-autopairs
+    use {
+      "windwp/nvim-autopairs",
+      config = function() require("nvim-autopairs").setup {} end
     }
 
     if packer_bootstrap then
