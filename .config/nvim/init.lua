@@ -67,9 +67,9 @@ function _G.check_back_space()
 end
 
 -- tabでsuggest選択
-local sugOpts = { silent = true, noremap = true, expr = true, replace_keycodes = false }
-keyset("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', sugOpts)
-keyset("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], sugOpts)
+local opts = { silent = true, noremap = true, expr = true, replace_keycodes = false }
+keyset("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
+keyset("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
 -- 一番上のサジェストをEnterで適用する
 keymap('i', '<CR>', [[pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]],
   { expr = true, noremap = true })
@@ -133,16 +133,16 @@ vim.api.nvim_create_autocmd("User", {
 
 -- Apply codeAction to the selected region
 -- Example: `<leader>aap` for current paragraph
-local caOpts = { silent = true, nowait = true }
-keyset("x", "<leader>a", "<Plug>(coc-codeaction-selected)", caOpts)
-keyset("n", "<leader>a", "<Plug>(coc-codeaction-selected)", caOpts)
+opts = { silent = true, nowait = true }
+keyset("x", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
+keyset("n", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
 
 -- Remap keys for apply code actions at the cursor position.
-keyset("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", caOpts)
+keyset("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", opts)
 -- Remap keys for apply source code actions for current file.
-keyset("n", "<leader>as", "<Plug>(coc-codeaction-source)", caOpts)
+keyset("n", "<leader>as", "<Plug>(coc-codeaction-source)", opts)
 -- Apply the most preferred quickfix action on the current line.
-keyset("n", "<leader>qf", "<Plug>(coc-fix-current)", caOpts)
+keyset("n", "<leader>qf", "<Plug>(coc-fix-current)", opts)
 
 -- Remap keys for apply refactor code actions.
 keyset("n", "<leader>re", "<Plug>(coc-codeaction-refactor)", { silent = true })
@@ -150,50 +150,44 @@ keyset("x", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", { silent = 
 keyset("n", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", { silent = true })
 
 -- Run the Code Lens actions on the current line
-keyset("n", "<leader>cl", "<Plug>(coc-codelens-action)", caOpts)
+keyset("n", "<leader>cl", "<Plug>(coc-codelens-action)", opts)
 
 -- i = inner, a = a, f = function, c = class. を選択する
 -- NOTE: Requires 'textDocument.documentSymbol' support from the language server
-keyset("x", "if", "<Plug>(coc-funcobj-i)", caOpts)
-keyset("o", "if", "<Plug>(coc-funcobj-i)", caOpts)
-keyset("x", "af", "<Plug>(coc-funcobj-a)", caOpts)
-keyset("o", "af", "<Plug>(coc-funcobj-a)", caOpts)
-keyset("x", "ic", "<Plug>(coc-classobj-i)", caOpts)
-keyset("o", "ic", "<Plug>(coc-classobj-i)", caOpts)
-keyset("x", "ac", "<Plug>(coc-classobj-a)", caOpts)
-keyset("o", "ac", "<Plug>(coc-classobj-a)", caOpts)
+keyset("x", "if", "<Plug>(coc-funcobj-i)", opts)
+keyset("o", "if", "<Plug>(coc-funcobj-i)", opts)
+keyset("x", "af", "<Plug>(coc-funcobj-a)", opts)
+keyset("o", "af", "<Plug>(coc-funcobj-a)", opts)
+keyset("x", "ic", "<Plug>(coc-classobj-i)", opts)
+keyset("o", "ic", "<Plug>(coc-classobj-i)", opts)
+keyset("x", "ac", "<Plug>(coc-classobj-a)", opts)
+keyset("o", "ac", "<Plug>(coc-classobj-a)", opts)
 
 -- Remap <C-f> and <C-b> to scroll float windows/popups
 ---@diagnostic disable-next-line: redefined-local
-local scOpts = { silent = true, nowait = true, expr = true }
-keyset("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', scOpts)
-keyset("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', scOpts)
-keyset("i", "<C-f>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', scOpts)
-keyset("i", "<C-b>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', scOpts)
-keyset("v", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', scOpts)
-keyset("v", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', scOpts)
+opts = { silent = true, nowait = true, expr = true }
+keyset("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
+keyset("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
+keyset("i", "<C-f>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
+keyset("i", "<C-b>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
+keyset("v", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
+keyset("v", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
 
 -- Use CTRL-S for selections ranges
 -- Requires 'textDocument/selectionRange' support of language server
-keyset("n", "<C-s>", "<Plug>(coc-range-select)", { silent = true })
-keyset("x", "<C-s>", "<Plug>(coc-range-select)", { silent = true })
+opts = { silent = true }
+keyset("n", "<C-s>", "<Plug>(coc-range-select)", opts)
+keyset("x", "<C-s>", "<Plug>(coc-range-select)", opts)
 
-
-keyset("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", { silent = true, nowait = true })
--- Manage extensions
-keyset("n", "<leader>ce", ":<C-u>CocList extensions<cr>", { silent = true, nowait = true })
--- Show commands
-keyset("n", "<leader>cc", ":<C-u>CocList commands<cr>", { silent = true, nowait = true })
--- Find symbol of current document
-keyset("n", "<leader>co", ":<C-u>CocList outline<cr>", { silent = true, nowait = true })
--- Search workleader symbols
-keyset("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", { silent = true, nowait = true })
--- Do default action for next item
-keyset("n", "<leader>cj", ":<C-u>CocNext<cr>", { silent = true, nowait = true })
--- Do default action for previous item
-keyset("n", "<leader>ck", ":<C-u>CocPrev<cr>", { silent = true, nowait = true })
--- Resume latest coc list
-keyset("n", "<leader>cp", ":<C-u>CocListResume<cr>", { silent = true, nowait = true })
+opts = { silent = true, nowait = true }
+keyset("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts)
+keyset("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts)
+keyset("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts)
+keyset("n", "<leader>co", ":<C-u>CocList outline<cr>", opts)
+keyset("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", opts)
+keyset("n", "<leader>cj", ":<C-u>CocNext<cr>", opts)
+keyset("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts)
+keyset("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts)
 
 --------------------------------------------------
 -- FZF
@@ -227,10 +221,10 @@ require('gitsigns').setup {
   on_attach = function(bufnr)
     local gs = package.loaded.gitsigns
 
-    local function map(mode, l, r, opts)
-      opts = opts or {}
-      opts.buffer = bufnr
-      vim.keymap.set(mode, l, r, opts)
+    local function map(mode, l, r, o)
+      o = o or {}
+      o.buffer = bufnr
+      vim.keymap.set(mode, l, r, o)
     end
 
     -- Navigation
