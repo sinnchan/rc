@@ -1,7 +1,7 @@
 # -- oh my zsh --
 # https://github.com/ohmyzsh/ohmyzsh
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="simple"
+ZSH_THEME="tjkirch"
 
 # -- plugins --
 plugins+=(git)
@@ -27,6 +27,10 @@ function zvm_after_lazy_keybindings() {
 }
 
 source $ZSH/oh-my-zsh.sh
+
+# exports
+
+export EDITOR='nvim'
 
 # -- alias --
 alias la='ls -lah'

@@ -1,5 +1,5 @@
 {
-  "inlayHint.enable": false,
-  "suggest.noselect": false
+  "suggest.noselect": false,
+  "inlayHint.enable": false
 }
 

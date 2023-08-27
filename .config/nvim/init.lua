@@ -2,10 +2,11 @@
 -- INIT.LUA
 --------------------------------------------------
 
-local keymap = vim.api.nvim_set_keymap
+local keymap = vim.keymap.set
 
 vim.opt.autoread = true
 vim.opt.backup = false
+vim.opt.colorcolumn = "80"
 vim.opt.confirm = true
 vim.opt.encoding = 'utf-8'
 vim.opt.expandtab = true
@@ -13,6 +14,7 @@ vim.opt.hidden = true
 vim.opt.hlsearch = true
 vim.opt.imdisable = true
 vim.opt.incsearch = true
+vim.opt.list = true
 vim.opt.number = true
 vim.opt.shiftwidth = 2
 vim.opt.showmatch = true
@@ -23,15 +25,16 @@ vim.opt.title = true
 vim.opt.updatetime = 300
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
-vim.opt.colorcolumn = "80"
 
 vim.g.mapleader = " "
 vim.o.guifont = "ProFont IIx Nerd Font:h12"
+vim.g.NERDCreateDefaultMappings = 0
 
-keymap('n', '<leader>h', ':vertical resize -10<CR>', { noremap = true })
-keymap('n', '<leader>j', ':resize -10<CR>', { noremap = true })
-keymap('n', '<leader>k', ':resize +10<CR>', { noremap = true })
-keymap('n', '<leader>l', ':vertical resize +10<CR>', { noremap = true })
+keymap('n', '<leader>h', ':vertical resize -10<CR>')
+keymap('n', '<leader>j', ':resize -10<CR>')
+keymap('n', '<leader>k', ':resize +10<CR>')
+keymap('n', '<leader>l', ':vertical resize +10<CR>')
+keymap('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true })
 
 
 --------------------------------------------------
@@ -59,7 +62,6 @@ lualine.setup {
 -- COC NVIM
 --------------------------------------------------
 
-local keyset = vim.keymap.set
 -- Autocomplete
 function _G.check_back_space()
   local col = vim.fn.col('.') - 1
@@ -67,21 +69,21 @@ function _G.check_back_space()
 end
 
 -- tabでsuggest選択
-local opts = { silent = true, noremap = true, expr = true, replace_keycodes = false }
-keyset("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
-keyset("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
+local opts = { silent = true, expr = true, replace_keycodes = false }
+keymap("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
+keymap("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
 -- 一番上のサジェストをEnterで適用する
-keymap('i', '<CR>', [[pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]],
-  { expr = true, noremap = true })
+keymap('i', '<CR>', [[coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]], opts)
 
-keyset("n", "[g", "<Plug>(coc-diagnostic-prev)", { silent = true, noremap = true })
-keyset("n", "]g", "<Plug>(coc-diagnostic-next)", { silent = true, noremap = true })
+opts = { silent = true }
+keymap("n", "[g", "<Plug>(coc-diagnostic-prev)", opts)
+keymap("n", "]g", "<Plug>(coc-diagnostic-next)", opts)
 
 -- GoTo code navigation
-keyset("n", "gd", "<Plug>(coc-definition)", { silent = true })
-keyset("n", "gy", "<Plug>(coc-type-definition)", { silent = true })
-keyset("n", "gi", "<Plug>(coc-implementation)", { silent = true })
-keyset("n", "gr", "<Plug>(coc-references)", { silent = true })
+keymap("n", "gd", "<Plug>(coc-definition)", opts)
+keymap("n", "gy", "<Plug>(coc-type-definition)", opts)
+keymap("n", "gi", "<Plug>(coc-implementation)", opts)
+keymap("n", "gr", "<Plug>(coc-references)", opts)
 
 -- Use K to show documentation in preview window
 function _G.show_docs()
@@ -95,7 +97,7 @@ function _G.show_docs()
   end
 end
 
-keyset("n", "K", '<CMD>lua _G.show_docs()<CR>', { silent = true })
+keymap("n", "K", '<CMD>lua _G.show_docs()<CR>', opts)
 
 -- Highlight the symbol and its references on a CursorHold event(cursor is idle)
 vim.api.nvim_create_augroup("CocGroup", {})
@@ -106,11 +108,11 @@ vim.api.nvim_create_autocmd("CursorHold", {
 })
 
 -- Symbol renaming
-keyset("n", "<leader>rn", "<Plug>(coc-rename)", { silent = true })
+keymap("n", "<leader>rn", "<Plug>(coc-rename)", opts)
 
 -- Formatting selected code
-keyset("x", "<leader>cf", "<Plug>(coc-format-selected)", { silent = true })
-keyset("n", "<leader>cf", "<Plug>(coc-format-selected)", { silent = true })
+keymap("x", "<leader>cf", "<Plug>(coc-format-selected)", opts)
+keymap("n", "<leader>cf", "<Plug>(coc-format-selected)", opts)
 keymap('n', '<leader>fa', [[<cmd>call CocAction('format')<CR>]], { noremap = true, silent = true })
 
 
@@ -134,70 +136,72 @@ vim.api.nvim_create_autocmd("User", {
 -- Apply codeAction to the selected region
 -- Example: `<leader>aap` for current paragraph
 opts = { silent = true, nowait = true }
-keyset("x", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
-keyset("n", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
+keymap("x", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
+keymap("n", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
 
 -- Remap keys for apply code actions at the cursor position.
-keyset("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", opts)
+keymap("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", opts)
 -- Remap keys for apply source code actions for current file.
-keyset("n", "<leader>as", "<Plug>(coc-codeaction-source)", opts)
+keymap("n", "<leader>as", "<Plug>(coc-codeaction-source)", opts)
 -- Apply the most preferred quickfix action on the current line.
-keyset("n", "<leader>qf", "<Plug>(coc-fix-current)", opts)
+keymap("n", "<leader>qf", "<Plug>(coc-fix-current)", opts)
 
 -- Remap keys for apply refactor code actions.
-keyset("n", "<leader>re", "<Plug>(coc-codeaction-refactor)", { silent = true })
-keyset("x", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", { silent = true })
-keyset("n", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", { silent = true })
+opts = { silent = true }
+keymap("n", "<leader>re", "<Plug>(coc-codeaction-refactor)", opts)
+keymap("x", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", opts)
+keymap("n", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", opts)
 
+opts = { silent = true, nowait = true }
 -- Run the Code Lens actions on the current line
-keyset("n", "<leader>cl", "<Plug>(coc-codelens-action)", opts)
+keymap("n", "<leader>cl", "<Plug>(coc-codelens-action)", opts)
 
 -- i = inner, a = a, f = function, c = class. を選択する
 -- NOTE: Requires 'textDocument.documentSymbol' support from the language server
-keyset("x", "if", "<Plug>(coc-funcobj-i)", opts)
-keyset("o", "if", "<Plug>(coc-funcobj-i)", opts)
-keyset("x", "af", "<Plug>(coc-funcobj-a)", opts)
-keyset("o", "af", "<Plug>(coc-funcobj-a)", opts)
-keyset("x", "ic", "<Plug>(coc-classobj-i)", opts)
-keyset("o", "ic", "<Plug>(coc-classobj-i)", opts)
-keyset("x", "ac", "<Plug>(coc-classobj-a)", opts)
-keyset("o", "ac", "<Plug>(coc-classobj-a)", opts)
+keymap("x", "if", "<Plug>(coc-funcobj-i)", opts)
+keymap("o", "if", "<Plug>(coc-funcobj-i)", opts)
+keymap("x", "af", "<Plug>(coc-funcobj-a)", opts)
+keymap("o", "af", "<Plug>(coc-funcobj-a)", opts)
+keymap("x", "ic", "<Plug>(coc-classobj-i)", opts)
+keymap("o", "ic", "<Plug>(coc-classobj-i)", opts)
+keymap("x", "ac", "<Plug>(coc-classobj-a)", opts)
+keymap("o", "ac", "<Plug>(coc-classobj-a)", opts)
 
 -- Remap <C-f> and <C-b> to scroll float windows/popups
 ---@diagnostic disable-next-line: redefined-local
 opts = { silent = true, nowait = true, expr = true }
-keyset("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
-keyset("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
-keyset("i", "<C-f>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
-keyset("i", "<C-b>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
-keyset("v", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
-keyset("v", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
+keymap("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
+keymap("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
+keymap("i", "<C-f>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
+keymap("i", "<C-b>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
+keymap("v", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
+keymap("v", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
 
 -- Use CTRL-S for selections ranges
 -- Requires 'textDocument/selectionRange' support of language server
 opts = { silent = true }
-keyset("n", "<C-s>", "<Plug>(coc-range-select)", opts)
-keyset("x", "<C-s>", "<Plug>(coc-range-select)", opts)
+keymap("n", "<C-s>", "<Plug>(coc-range-select)", opts)
+keymap("x", "<C-s>", "<Plug>(coc-range-select)", opts)
 
 opts = { silent = true, nowait = true }
-keyset("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts)
-keyset("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts)
-keyset("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts)
-keyset("n", "<leader>co", ":<C-u>CocList outline<cr>", opts)
-keyset("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", opts)
-keyset("n", "<leader>cj", ":<C-u>CocNext<cr>", opts)
-keyset("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts)
-keyset("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts)
+keymap("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts)
+keymap("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts)
+keymap("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts)
+keymap("n", "<leader>co", ":<C-u>CocList outline<cr>", opts)
+keymap("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", opts)
+keymap("n", "<leader>cj", ":<C-u>CocNext<cr>", opts)
+keymap("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts)
+keymap("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts)
 
 --------------------------------------------------
 -- FZF
 --------------------------------------------------
 
 local ts_builtin = require('telescope.builtin')
-keyset('n', '<leader>ff', ts_builtin.find_files, {})
-keyset('n', '<leader>fg', ts_builtin.live_grep, {})
-keyset('n', '<leader>fb', ts_builtin.buffers, {})
-keyset('n', '<leader>fc', ts_builtin.commands, {})
+keymap('n', '<leader>ff', ts_builtin.find_files, {})
+keymap('n', '<leader>fg', ts_builtin.live_grep, {})
+keymap('n', '<leader>fb', ts_builtin.buffers, {})
+keymap('n', '<leader>fc', ts_builtin.commands, {})
 
 local ts = require('telescope')
 ts.setup {
@@ -294,12 +298,12 @@ nt.setup({
 })
 
 -- key bind
-keyset('n', '<leader>to', nt_api.tree.open, { noremap = true })
-keyset('n', '<leader>tq', nt_api.tree.close, { noremap = true })
-keyset('n', '<leader>tt', nt_api.tree.toggle, { noremap = true })
-keyset('n', '<leader>tg', nt_api.tree.focus, { noremap = true })
-keyset('n', '<leader>tf', nt_api.tree.find_file, { noremap = true })
-keyset('n', '<leader>tr', nt_api.tree.reload, { noremap = true })
+keymap('n', '<leader>to', nt_api.tree.open)
+keymap('n', '<leader>tc', nt_api.tree.close)
+keymap('n', '<leader>tt', nt_api.tree.toggle)
+keymap('n', '<leader>tg', nt_api.tree.focus)
+keymap('n', '<leader>tf', nt_api.tree.find_file)
+keymap('n', '<leader>tr', nt_api.tree.reload)
 
 
 --------------------------------------------------
@@ -310,6 +314,21 @@ local smooth = require('neoscroll')
 smooth.setup({
   easing_function = 'cubic' -- cubic, quartic, circular
 })
+
+--------------------------------------------------
+-- INDENT LINE
+--------------------------------------------------
+
+require("indent_blankline").setup {
+  show_end_of_line = true,
+}
+
+--------------------------------------------------
+-- COLOR VIEWER
+--------------------------------------------------
+
+require 'colorizer'.setup()
+
 
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
@@ -342,59 +361,42 @@ local packer_bootstrap = (
 
 return packer.startup(
   function(use)
-    -- https://github.com/wbthomason/packer.nvim
     use 'wbthomason/packer.nvim'
-    -- https://github.com/nvim-lualine/lualine.nvim
+    use "lukas-reineke/indent-blankline.nvim"
+    use 'navarasu/onedark.nvim'
+    use 'ellisonleao/gruvbox.nvim'
+    use 'karb94/neoscroll.nvim'
+    use 'lewis6991/gitsigns.nvim'
+    use 'norcalli/nvim-colorizer.lua'
     use {
       'nvim-lualine/lualine.nvim',
       requires = { 'nvim-tree/nvim-web-devicons', opt = true }
     }
-
-    ---- theme
-    -- https://github.com/navarasu/onedark.nvim
-    use 'navarasu/onedark.nvim'
-    -- https://github.com/ellisonleao/gruvbox.nvim
-    use 'ellisonleao/gruvbox.nvim'
-    -- https://github.com/junegunn/fzf.vim
     use {
       'junegunn/fzf.vim',
       run = function() vim.fn['fzf#install()'](0) end
     }
-    -- fzf preview
-    -- https://github.com/nvim-telescope/telescope.nvim
     use {
       'nvim-telescope/telescope.nvim', tag = '0.1.2',
       requires = { { 'nvim-lua/plenary.nvim' } }
     }
-    -- https://github.com/nvim-telescope/telescope-fzf-native.nvim
     use {
       'nvim-telescope/telescope-fzf-native.nvim',
       run =
       'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
     }
-    -- https://github.com/nvim-treesitter/nvim-treesitter
     use {
       'nvim-treesitter/nvim-treesitter',
       run = function() vim.fn[':TSUpdate'](0) end
     }
-    -- https://github.com/nvim-tree/nvim-tree.lua
     use {
       'nvim-tree/nvim-tree.lua',
       requires = { 'nvim-tree/nvim-web-devicons' },
     }
-    -- https://github.com/karb94/neoscroll.nvim
-    use 'karb94/neoscroll.nvim'
-
-    -- lewis6991/gitsigns.nvim
-    use 'lewis6991/gitsigns.nvim'
-
-    -- https://github.com/neoclide/coc.nvim
     use {
       'neoclide/coc.nvim',
       branch = 'release',
     }
-
-    -- https://github.com/windwp/nvim-autopairs
     use {
       "windwp/nvim-autopairs",
       config = function() require("nvim-autopairs").setup {} end
