@@ -292,9 +292,7 @@ vim.opt.termguicolors = true
 
 nt.setup({
   sort_by = 'case_sensitive',
-  view = {
-    width = 30,
-  },
+  -- view = { width = 40 },
 })
 
 -- key bind

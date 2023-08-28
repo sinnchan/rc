@@ -37,7 +37,8 @@ alias la='ls -lah'
 alias vi='nvim'
 
 # -- flutter --
-alias flutter='fvm flutter'
+
+export PATH="$HOME/fvm/default/bin:$PATH"
 alias frun='(){fvm flutter run -d $3 --dart-define FLAVOR=$1 --dart-define ENV=$2}'
 alias fcheck='~/scripts/git/fcheck.sh'
 alias cbranch='git branch --show-current'
