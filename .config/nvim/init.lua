@@ -21,6 +21,7 @@ vim.opt.showmatch = true
 vim.opt.signcolumn = "yes"
 vim.opt.smartcase = true
 vim.opt.tabstop = 2
+vim.opt.termguicolors = true;
 vim.opt.title = true
 vim.opt.updatetime = 300
 vim.opt.wrapscan = false
@@ -322,10 +323,15 @@ require("indent_blankline").setup {
 }
 
 --------------------------------------------------
--- COLOR VIEWER
+-- CREATE COLOR CODE
 --------------------------------------------------
 
-require 'colorizer'.setup()
+require('ccc').setup({
+  highlighter = {
+    auto_enable = true,
+    lsp = true,
+  }
+})
 
 
 --------------------------------------------------
@@ -365,7 +371,7 @@ return packer.startup(
     use 'ellisonleao/gruvbox.nvim'
     use 'karb94/neoscroll.nvim'
     use 'lewis6991/gitsigns.nvim'
-    use 'norcalli/nvim-colorizer.lua'
+    use 'uga-rosa/ccc.nvim'
     use {
       'nvim-lualine/lualine.nvim',
       requires = { 'nvim-tree/nvim-web-devicons', opt = true }
