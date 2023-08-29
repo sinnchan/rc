@@ -26,6 +26,9 @@ vim.opt.title = true
 vim.opt.updatetime = 300
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldenable = false
 
 vim.g.mapleader = " "
 vim.o.guifont = "ProFont IIx Nerd Font:h12"
@@ -77,8 +80,8 @@ keymap("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
 keymap('i', '<CR>', [[coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]], opts)
 
 opts = { silent = true }
-keymap("n", "[g", "<Plug>(coc-diagnostic-prev)", opts)
-keymap("n", "]g", "<Plug>(coc-diagnostic-next)", opts)
+keymap("n", "g[", "<Plug>(coc-diagnostic-prev)", opts)
+keymap("n", "g]", "<Plug>(coc-diagnostic-next)", opts)
 
 -- GoTo code navigation
 keymap("n", "gd", "<Plug>(coc-definition)", opts)
@@ -233,32 +236,32 @@ require('gitsigns').setup {
     end
 
     -- Navigation
-    map('n', ']c', function()
+    map('n', '<leader>g]', function()
       if vim.wo.diff then return ']c' end
       vim.schedule(function() gs.next_hunk() end)
       return '<Ignore>'
     end, { expr = true })
 
-    map('n', '[c', function()
+    map('n', '<leader>g[', function()
       if vim.wo.diff then return '[c' end
       vim.schedule(function() gs.prev_hunk() end)
       return '<Ignore>'
     end, { expr = true })
 
     -- Actions
-    map('n', '<leader>hs', gs.stage_hunk)
-    map('n', '<leader>hr', gs.reset_hunk)
-    map('v', '<leader>hs', function() gs.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-    map('v', '<leader>hr', function() gs.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-    map('n', '<leader>hS', gs.stage_buffer)
-    map('n', '<leader>hu', gs.undo_stage_hunk)
-    map('n', '<leader>hR', gs.reset_buffer)
-    map('n', '<leader>hp', gs.preview_hunk)
-    map('n', '<leader>hb', function() gs.blame_line { full = true } end)
-    map('n', '<leader>tb', gs.toggle_current_line_blame)
-    map('n', '<leader>hd', gs.diffthis)
-    map('n', '<leader>hD', function() gs.diffthis('~') end)
-    map('n', '<leader>td', gs.toggle_deleted)
+    map('n', '<leader>gs', gs.stage_hunk)
+    map('n', '<leader>gr', gs.reset_hunk)
+    map('v', '<leader>gs', function() gs.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+    map('v', '<leader>gr', function() gs.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+    map('n', '<leader>gS', gs.stage_buffer)
+    map('n', '<leader>gu', gs.undo_stage_hunk)
+    map('n', '<leader>gR', gs.reset_buffer)
+    map('n', '<leader>gp', gs.preview_hunk)
+    map('n', '<leader>gb', function() gs.blame_line { full = true } end)
+    map('n', '<leader>gd', gs.diffthis)
+    map('n', '<leader>gD', function() gs.diffthis('~') end)
+    map('n', '<leader>gt', gs.toggle_deleted)
+    map('n', '<leader>gT', gs.toggle_current_line_blame)
 
     -- Text object
     map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
@@ -372,6 +375,7 @@ return packer.startup(
     use 'karb94/neoscroll.nvim'
     use 'lewis6991/gitsigns.nvim'
     use 'uga-rosa/ccc.nvim'
+    use 'nvim-treesitter/playground'
     use {
       'nvim-lualine/lualine.nvim',
       requires = { 'nvim-tree/nvim-web-devicons', opt = true }
