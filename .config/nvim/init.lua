@@ -6,10 +6,14 @@ local keymap = vim.keymap.set
 
 vim.opt.autoread = true
 vim.opt.backup = false
+vim.opt.breakindent = true
 vim.opt.colorcolumn = "80"
 vim.opt.confirm = true
 vim.opt.encoding = 'utf-8'
 vim.opt.expandtab = true
+vim.opt.foldenable = false
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldmethod = "expr"
 vim.opt.hidden = true
 vim.opt.hlsearch = true
 vim.opt.imdisable = true
@@ -20,15 +24,14 @@ vim.opt.shiftwidth = 2
 vim.opt.showmatch = true
 vim.opt.signcolumn = "yes"
 vim.opt.smartcase = true
+vim.opt.swapfile = false
 vim.opt.tabstop = 2
 vim.opt.termguicolors = true;
 vim.opt.title = true
 vim.opt.updatetime = 300
+vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-vim.opt.foldenable = false
 
 vim.g.mapleader = " "
 vim.o.guifont = "ProFont IIx Nerd Font:h12"
@@ -236,32 +239,32 @@ require('gitsigns').setup {
     end
 
     -- Navigation
-    map('n', '<leader>g]', function()
+    map('n', '<leader>h]', function()
       if vim.wo.diff then return ']c' end
       vim.schedule(function() gs.next_hunk() end)
       return '<Ignore>'
     end, { expr = true })
 
-    map('n', '<leader>g[', function()
+    map('n', '<leader>h[', function()
       if vim.wo.diff then return '[c' end
       vim.schedule(function() gs.prev_hunk() end)
       return '<Ignore>'
     end, { expr = true })
 
     -- Actions
-    map('n', '<leader>gs', gs.stage_hunk)
-    map('n', '<leader>gr', gs.reset_hunk)
-    map('v', '<leader>gs', function() gs.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-    map('v', '<leader>gr', function() gs.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-    map('n', '<leader>gS', gs.stage_buffer)
-    map('n', '<leader>gu', gs.undo_stage_hunk)
-    map('n', '<leader>gR', gs.reset_buffer)
-    map('n', '<leader>gp', gs.preview_hunk)
-    map('n', '<leader>gb', function() gs.blame_line { full = true } end)
-    map('n', '<leader>gd', gs.diffthis)
-    map('n', '<leader>gD', function() gs.diffthis('~') end)
-    map('n', '<leader>gt', gs.toggle_deleted)
-    map('n', '<leader>gT', gs.toggle_current_line_blame)
+    map('n', '<leader>hs', gs.stage_hunk)
+    map('n', '<leader>hr', gs.reset_hunk)
+    map('v', '<leader>hs', function() gs.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+    map('v', '<leader>hr', function() gs.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+    map('n', '<leader>hS', gs.stage_buffer)
+    map('n', '<leader>hu', gs.undo_stage_hunk)
+    map('n', '<leader>hR', gs.reset_buffer)
+    map('n', '<leader>hp', gs.preview_hunk)
+    map('n', '<leader>hb', function() gs.blame_line { full = true } end)
+    map('n', '<leader>hd', gs.diffthis)
+    map('n', '<leader>hD', function() gs.diffthis('~') end)
+    map('n', '<leader>ht', gs.toggle_deleted)
+    map('n', '<leader>hT', gs.toggle_current_line_blame)
 
     -- Text object
     map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
@@ -315,7 +318,64 @@ keymap('n', '<leader>tr', nt_api.tree.reload)
 local smooth = require('neoscroll')
 smooth.setup({
   easing_function = 'cubic' -- cubic, quartic, circular
+
 })
+
+--------------------------------------------------
+-- SMOOTH CURSOR
+--------------------------------------------------
+
+require('smoothcursor').setup({
+  autostart = true,
+  cursor = "", -- cursor shape (need nerd font)
+  texthl = "SmoothCursor", -- highlight group, default is { bg = nil, fg = "#FFD400" }
+  linehl = nil, -- highlight sub-cursor line like 'cursorline', "CursorLine" recommended
+  type = "default", -- define cursor movement calculate function, "default" or "exp" (exponential).
+  fancy = {
+    enable = true, -- enable fancy mode
+    head = { cursor = "", texthl = "SmoothCursorAqua", linehl = nil },
+    body = {
+      { cursor = "", texthl = "SmoothCursorAqua" },
+      { cursor = "●", texthl = "SmoothCursorAqua" },
+      { cursor = "|", texthl = "SmoothCursorAqua" },
+      { cursor = ":", texthl = "SmoothCursorAqua" },
+      { cursor = ".", texthl = "SmoothCursorAqua" },
+    },
+    tail = { cursor = nil, texthl = "SmoothCursor" }
+  },
+  flyin_effect = nil,          -- "bottom" or "top"
+  speed = 25,                  -- max is 100 to stick to your current position
+  intervals = 35,              -- tick interval
+  priority = 100,              -- set marker priority
+  timeout = 3000,              -- timout for animation
+  threshold = 3,               -- animate if threshold lines jump
+  disable_float_win = false,   -- disable on float window
+  enabled_filetypes = nil,     -- example: { "lua", "vim" }
+  disabled_filetypes = nil,    -- this option will be skipped if enabled_filetypes is set. example: { "TelescopePrompt", "NvimTree" }
+})
+
+vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
+  callback = function()
+    local current_mode = vim.fn.mode()
+    if current_mode == 'n' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#8aa872' })
+      vim.fn.sign_define('smoothcursor', { text = '' })
+    elseif current_mode == 'v' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#bf616a' })
+      vim.fn.sign_define('smoothcursor', { text = '' })
+    elseif current_mode == 'V' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#bf616a' })
+      vim.fn.sign_define('smoothcursor', { text = '' })
+    elseif current_mode == '�' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#bf616a' })
+      vim.fn.sign_define('smoothcursor', { text = '' })
+    elseif current_mode == 'i' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#668aab' })
+      vim.fn.sign_define('smoothcursor', { text = '' })
+    end
+  end,
+})
+
 
 --------------------------------------------------
 -- INDENT LINE
@@ -373,9 +433,11 @@ return packer.startup(
     use 'navarasu/onedark.nvim'
     use 'ellisonleao/gruvbox.nvim'
     use 'karb94/neoscroll.nvim'
+    use 'gen740/SmoothCursor.nvim'
     use 'lewis6991/gitsigns.nvim'
     use 'uga-rosa/ccc.nvim'
     use 'nvim-treesitter/playground'
+    use 'reisub0/hot-reload.vim'
     use {
       'nvim-lualine/lualine.nvim',
       requires = { 'nvim-tree/nvim-web-devicons', opt = true }
@@ -407,8 +469,9 @@ return packer.startup(
     }
     use {
       "windwp/nvim-autopairs",
-      config = function() require("nvim-autopairs").setup {} end
+      config = function() require("nvim-autopairs").setup() end
     }
+
 
     if packer_bootstrap then
       packer.sync()
