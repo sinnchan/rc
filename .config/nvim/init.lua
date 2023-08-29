@@ -302,11 +302,22 @@ function Setup()
   -- SMOOTH SCROLL
   --------------------------------------------------
 
-  local smooth = require('neoscroll')
-  smooth.setup({
+  require('neoscroll').setup({
     easing_function = 'cubic' -- cubic, quartic, circular
-
   })
+
+  require('neoscroll.config').set_mappings({
+    ['<C-u>'] = { 'scroll', { '-vim.wo.scroll', 'true', '80', nil } },
+    ['<C-d>'] = { 'scroll', { 'vim.wo.scroll', 'true', '80', nil } },
+    ['<C-b>'] = { 'scroll', { '-vim.api.nvim_win_get_height(0)', 'true', '100', nil } },
+    ['<C-f>'] = { 'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '100', nil } },
+    ['<C-y>'] = { 'scroll', { '-0.10', 'false', '50', nil } },
+    ['<C-e>'] = { 'scroll', { '0.10', 'false', '50', nil } },
+    ['zt'] = { 'zt', { '300' } },
+    ['zz'] = { 'zz', { '300' } },
+    ['zb'] = { 'zb', { '300' } },
+  })
+
 
   --------------------------------------------------
   -- SMOOTH CURSOR
