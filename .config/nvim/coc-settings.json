@@ -1,5 +1,6 @@
 {
   "suggest.noselect": false,
-  "inlayHint.enable": false
+  "inlayHint.enable": false,
+  "Lua.diagnostics.globals": ["vim"]
 }
 
