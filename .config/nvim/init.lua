@@ -37,6 +37,8 @@ vim.o.guifont = "ProFont IIx Nerd Font:h12"
 
 local keymap = vim.keymap.set
 
+keymap('n', '<C-l>', '10zl')
+keymap('n', '<C-h>', '10zh')
 keymap('n', '<leader>h', ':vertical resize -10<CR>')
 keymap('n', '<leader>j', ':resize -10<CR>')
 keymap('n', '<leader>k', ':resize +10<CR>')
