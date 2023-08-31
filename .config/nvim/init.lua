@@ -46,18 +46,8 @@ keymap('n', '<leader>l', ':vertical resize +10<CR>')
 keymap('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true })
 
 
-function Setup()
-  --------------------------------------------------
-  -- THEME
-  --------------------------------------------------
-
-  require('onedark').load()
-  require('lualine').setup { options = { theme = 'onedark' } }
-
-  --------------------------------------------------
-  -- COC NVIM
-  --------------------------------------------------
-
+local coc_config = function()
+  local keymap = vim.keymap.set
   -- Autocomplete
   function _G.check_back_space()
     local col = vim.fn.col('.') - 1
@@ -66,10 +56,12 @@ function Setup()
 
   -- tabでsuggest選択
   local opts = { silent = true, expr = true, replace_keycodes = false }
-  keymap("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
+  keymap("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()',
+    opts)
   keymap("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
   -- 一番上のサジェストをEnterで適用する
-  keymap('i', '<CR>', [[coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]], opts)
+  keymap('i', '<CR>', [[coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]],
+    opts)
 
   opts = { silent = true }
   keymap("n", "g[", "<Plug>(coc-diagnostic-prev)", opts)
@@ -188,11 +180,31 @@ function Setup()
   keymap("n", "<leader>cj", ":<C-u>CocNext<cr>", opts)
   keymap("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts)
   keymap("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts)
+end
 
-  --------------------------------------------------
-  -- FZF
-  --------------------------------------------------
+local noise_config = function()
+  require("noice").setup({
+    lsp = {
+      override = {
+        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+        ["vim.lsp.util.stylize_markdown"] = true,
+        ["cmp.entry.get_documentation"] = true,
+      },
+    },
+    -- you can enable a preset for easier configuration
+    presets = {
+      bottom_search = true,         -- use a classic bottom cmdline for search
+      command_palette = true,       -- position the cmdline and popupmenu together
+      long_message_to_split = true, -- long messages will be sent to a split
+      inc_rename = false,           -- enables an input dialog for inc-rename.nvim
+      lsp_doc_border = false,       -- add a border to hover docs and signature help
+    },
+  })
+end
 
+
+local fzf_config = function()
+  local keymap = vim.keymap.set
   local ts_builtin = require('telescope.builtin')
   keymap('n', '<leader>ff', ts_builtin.find_files, {})
   keymap('n', '<leader>fg', ts_builtin.live_grep, {})
@@ -211,12 +223,9 @@ function Setup()
     }
   }
   ts.load_extension('fzf')
+end
 
-
-  --------------------------------------------------
-  -- GIT SIGNS
-  --------------------------------------------------
-
+local gitsigns_config = function()
   require('gitsigns').setup {
     on_attach = function(bufnr)
       local gs = package.loaded.gitsigns
@@ -259,11 +268,10 @@ function Setup()
       map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
     end
   }
+end
 
-  --------------------------------------------------
-  -- TREE-SITTER
-  --------------------------------------------------
 
+local treesitter_config = function()
   require('nvim-treesitter.configs').setup {
     ensure_installed = { 'c', 'lua', 'vim', 'dart' },
     sync_install = true,
@@ -273,12 +281,10 @@ function Setup()
       additional_vim_regex_highlighting = false,
     },
   }
+end
 
-
-  --------------------------------------------------
-  -- TREE.NVIM
-  --------------------------------------------------
-
+local tree_config = function()
+  local keymap = vim.keymap.set
   local nt = require('nvim-tree')
   local nt_api = require('nvim-tree.api')
 
@@ -298,12 +304,9 @@ function Setup()
   keymap('n', '<leader>tg', nt_api.tree.focus)
   keymap('n', '<leader>tf', nt_api.tree.find_file)
   keymap('n', '<leader>tr', nt_api.tree.reload)
+end
 
-
-  --------------------------------------------------
-  -- SMOOTH SCROLL
-  --------------------------------------------------
-
+local smooth_scroll_config = function()
   require('neoscroll').setup({
     easing_function = 'cubic' -- cubic, quartic, circular
   })
@@ -319,12 +322,9 @@ function Setup()
     ['zz'] = { 'zz', { '300' } },
     ['zb'] = { 'zb', { '300' } },
   })
+end
 
-
-  --------------------------------------------------
-  -- SMOOTH CURSOR
-  --------------------------------------------------
-
+local smooth_corsor_config = function()
   require('smoothcursor').setup({
     autostart = true,
     cursor = "", -- cursor shape (need nerd font)
@@ -375,33 +375,7 @@ function Setup()
       end
     end,
   })
-
-
-  --------------------------------------------------
-  -- INDENT LINE
-  --------------------------------------------------
-
-  require("indent_blankline").setup {
-    show_end_of_line = true,
-  }
-
-  --------------------------------------------------
-  -- CREATE COLOR CODE
-  --------------------------------------------------
-
-  require('ccc').setup({
-    highlighter = {
-      auto_enable = true,
-      lsp = true,
-    }
-  })
 end
-
---------------------------------------------------
--- PLUGIN INITIALIZE
---------------------------------------------------
-
-Setup()
 
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
@@ -435,22 +409,51 @@ local packer_bootstrap = (
 return require('packer').startup(
   function(use)
     use 'wbthomason/packer.nvim'
-    use "lukas-reineke/indent-blankline.nvim"
-    use 'navarasu/onedark.nvim'
-    use 'ellisonleao/gruvbox.nvim'
-    use 'karb94/neoscroll.nvim'
-    use 'gen740/SmoothCursor.nvim'
-    use 'lewis6991/gitsigns.nvim'
-    use 'uga-rosa/ccc.nvim'
-    use 'nvim-treesitter/playground'
     use 'reisub0/hot-reload.vim'
     use {
+      "lukas-reineke/indent-blankline.nvim",
+      config = function()
+        require("indent_blankline").setup { show_end_of_line = true }
+      end
+    }
+    use {
+      'navarasu/onedark.nvim',
+      config = function() require('onedark').load() end
+    }
+    use {
+      'karb94/neoscroll.nvim',
+      config = smooth_scroll_config,
+    }
+    use {
+      'gen740/SmoothCursor.nvim',
+      config = smooth_corsor_config,
+    }
+    use {
+      'lewis6991/gitsigns.nvim',
+      config = gitsigns_config,
+    }
+    use {
+      'uga-rosa/ccc.nvim',
+      config = function()
+        require('ccc').setup({
+          highlighter = {
+            auto_enable = true,
+            lsp = true,
+          }
+        })
+      end
+    }
+    use {
       'nvim-lualine/lualine.nvim',
-      requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+      requires = { 'nvim-tree/nvim-web-devicons', opt = true },
+      config = function()
+        require('lualine').setup { options = { theme = 'onedark' } }
+      end
     }
     use {
       'junegunn/fzf.vim',
-      run = function() vim.fn['fzf#install()'](0) end
+      run = function() vim.fn['fzf#install()'](0) end,
+      config = fzf_config,
     }
     use {
       'nvim-telescope/telescope.nvim', tag = '0.1.2',
@@ -463,19 +466,32 @@ return require('packer').startup(
     }
     use {
       'nvim-treesitter/nvim-treesitter',
-      run = function() vim.fn[':TSUpdate'](0) end
+      run = function() vim.fn[':TSUpdate'](0) end,
+      config = treesitter_config,
+      requires = 'nvim-treesitter/playground',
     }
     use {
       'nvim-tree/nvim-tree.lua',
       requires = { 'nvim-tree/nvim-web-devicons' },
+      config = tree_config,
     }
     use {
       'neoclide/coc.nvim',
       branch = 'release',
+      config = coc_config,
     }
     use {
       "windwp/nvim-autopairs",
-      config = function() require("nvim-autopairs").setup() end
+      config = function() require("nvim-autopairs").setup() end,
+    }
+    use {
+      'folke/noice.nvim',
+      event = 'BufRead',
+      config = noise_config,
+      requires = {
+        { 'MunifTanjim/nui.nvim' },
+        { 'rcarriga/nvim-notify' }
+      }
     }
 
     if packer_bootstrap then
