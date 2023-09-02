@@ -10,7 +10,7 @@
 	ff = only
 [core]
 	autocrlf = input
-	editor = vim
+	editor = nvim
 [alias]
     tree = log --graph --oneline --all
     graph = log --graph --pretty=format:'%C(cyan)<-----------------------------------------------------------*%n%w(0, 2, 2)%C(yellow)[%h] %C(auto)%D %n%C(blue)Author: %<(28,trunc)%an [%ad]%n%C(blue)Commit: %<(28,trunc)%cn [%cd]%n%n%s%n%b%n' --date=format-local:'%Y-%m-%d %H:%M:%S'
