@@ -35,43 +35,82 @@ vim.g.mapleader = " "
 vim.o.guifont = "ProFont IIx Nerd Font:h12"
 
 
-local keymap = vim.keymap.set
+Map = vim.keymap.set
 
-keymap('n', '<C-l>', '10zl')
-keymap('n', '<C-h>', '10zh')
-keymap('n', '<leader>h', ':vertical resize -10<CR>')
-keymap('n', '<leader>j', ':resize -10<CR>')
-keymap('n', '<leader>k', ':resize +10<CR>')
-keymap('n', '<leader>l', ':vertical resize +10<CR>')
-keymap('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true })
+Map('n', '<C-l>', '10zl')
+Map('n', '<C-h>', '10zh')
+Map('n', '<leader>h', ':vertical resize -10<CR>')
+Map('n', '<leader>j', ':resize -10<CR>')
+Map('n', '<leader>k', ':resize +10<CR>')
+Map('n', '<leader>l', ':vertical resize +10<CR>')
+Map('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true })
+
+-- coc
+
+local opts = { silent = true, expr = true, replace_keycodes = false }
+Map("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
+Map("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
+
+opts = { silent = true, expr = true }
+Map('i', '<CR>', [[coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]], opts)
+
+opts = { silent = true }
+Map("n", "<C-s>", "<Plug>(coc-range-select)", opts)
+Map("n", "<leader>fs", "<Plug>(coc-format-selected)", opts)
+Map("n", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", opts)
+Map("n", "<leader>re", "<Plug>(coc-codeaction-refactor)", opts)
+Map("n", "<leader>rn", "<Plug>(coc-rename)", opts)
+Map("n", "K", '<CMD>lua _G.show_docs()<CR>', opts)
+Map("n", "g[", "<Plug>(coc-diagnostic-prev)", opts)
+Map("n", "g]", "<Plug>(coc-diagnostic-next)", opts)
+Map("n", "gd", "<Plug>(coc-definition)", opts)
+Map("n", "gi", "<Plug>(coc-implementation)", opts)
+Map("n", "gr", "<Plug>(coc-references)", opts)
+Map("n", "gy", "<Plug>(coc-type-definition)", opts)
+Map("x", "<C-s>", "<Plug>(coc-range-select)", opts)
+Map("x", "<leader>fs", "<Plug>(coc-format-selected)", opts)
+Map("x", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", opts)
+Map('n', '<leader>fa', [[<cmd>call CocAction('format')<CR>]], opts)
+
+opts = { silent = true, nowait = true }
+Map("n", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
+Map("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", opts)
+Map("n", "<leader>as", "<Plug>(coc-codeaction-source)", opts)
+Map("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts)
+Map("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts)
+Map("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts)
+Map("n", "<leader>cj", ":<C-u>CocNext<cr>", opts)
+Map("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts)
+Map("n", "<leader>cl", "<Plug>(coc-codelens-action)", opts)
+Map("n", "<leader>co", ":<C-u>CocList outline<cr>", opts)
+Map("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts)
+Map("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", opts)
+Map("n", "<leader>qf", "<Plug>(coc-fix-current)", opts)
+Map("o", "ac", "<Plug>(coc-classobj-a)", opts)
+Map("o", "af", "<Plug>(coc-funcobj-a)", opts)
+Map("o", "ic", "<Plug>(coc-classobj-i)", opts)
+Map("o", "if", "<Plug>(coc-funcobj-i)", opts)
+Map("x", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
+Map("x", "ac", "<Plug>(coc-classobj-a)", opts)
+Map("x", "af", "<Plug>(coc-funcobj-a)", opts)
+Map("x", "ic", "<Plug>(coc-classobj-i)", opts)
+Map("x", "if", "<Plug>(coc-funcobj-i)", opts)
+
+opts = { silent = true, nowait = true, expr = true }
+Map("i", "<C-b>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
+Map("i", "<C-f>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
+Map("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
+Map("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
+Map("v", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
+Map("v", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
 
 
 local coc_config = function()
-  local keymap = vim.keymap.set
   -- Autocomplete
   function _G.check_back_space()
     local col = vim.fn.col('.') - 1
     return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
   end
-
-  -- tabでsuggest選択
-  local opts = { silent = true, expr = true, replace_keycodes = false }
-  keymap("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()',
-    opts)
-  keymap("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
-  -- 一番上のサジェストをEnterで適用する
-  keymap('i', '<CR>', [[coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]],
-    opts)
-
-  opts = { silent = true }
-  keymap("n", "g[", "<Plug>(coc-diagnostic-prev)", opts)
-  keymap("n", "g]", "<Plug>(coc-diagnostic-next)", opts)
-
-  -- GoTo code navigation
-  keymap("n", "gd", "<Plug>(coc-definition)", opts)
-  keymap("n", "gy", "<Plug>(coc-type-definition)", opts)
-  keymap("n", "gi", "<Plug>(coc-implementation)", opts)
-  keymap("n", "gr", "<Plug>(coc-references)", opts)
 
   -- Use K to show documentation in preview window
   function _G.show_docs()
@@ -85,8 +124,6 @@ local coc_config = function()
     end
   end
 
-  keymap("n", "K", '<CMD>lua _G.show_docs()<CR>', opts)
-
   -- Highlight the symbol and its references on a CursorHold event(cursor is idle)
   vim.api.nvim_create_augroup("CocGroup", {})
   vim.api.nvim_create_autocmd("CursorHold", {
@@ -94,15 +131,6 @@ local coc_config = function()
     command = "silent call CocActionAsync('highlight')",
     desc = "Highlight symbol under cursor on CursorHold"
   })
-
-  -- Symbol renaming
-  keymap("n", "<leader>rn", "<Plug>(coc-rename)", opts)
-
-  -- Formatting selected code
-  keymap("x", "<leader>cf", "<Plug>(coc-format-selected)", opts)
-  keymap("n", "<leader>cf", "<Plug>(coc-format-selected)", opts)
-  keymap('n', '<leader>fa', [[<cmd>call CocAction('format')<CR>]], { noremap = true, silent = true })
-
 
   -- Setup formatexpr specified filetype(s)
   -- フォーマットをCocでハンドリング
@@ -120,96 +148,14 @@ local coc_config = function()
     command = "call CocActionAsync('showSignatureHelp')",
     desc = "Update signature help on jump placeholder"
   })
-
-  -- Apply codeAction to the selected region
-  -- Example: `<leader>aap` for current paragraph
-  opts = { silent = true, nowait = true }
-  keymap("x", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
-  keymap("n", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
-
-  -- Remap keys for apply code actions at the cursor position.
-  keymap("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", opts)
-  -- Remap keys for apply source code actions for current file.
-  keymap("n", "<leader>as", "<Plug>(coc-codeaction-source)", opts)
-  -- Apply the most preferred quickfix action on the current line.
-  keymap("n", "<leader>qf", "<Plug>(coc-fix-current)", opts)
-
-  -- Remap keys for apply refactor code actions.
-  opts = { silent = true }
-  keymap("n", "<leader>re", "<Plug>(coc-codeaction-refactor)", opts)
-  keymap("x", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", opts)
-  keymap("n", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", opts)
-
-  opts = { silent = true, nowait = true }
-  -- Run the Code Lens actions on the current line
-  keymap("n", "<leader>cl", "<Plug>(coc-codelens-action)", opts)
-
-  -- i = inner, a = a, f = function, c = class. を選択する
-  -- NOTE: Requires 'textDocument.documentSymbol' support from the language server
-  keymap("x", "if", "<Plug>(coc-funcobj-i)", opts)
-  keymap("o", "if", "<Plug>(coc-funcobj-i)", opts)
-  keymap("x", "af", "<Plug>(coc-funcobj-a)", opts)
-  keymap("o", "af", "<Plug>(coc-funcobj-a)", opts)
-  keymap("x", "ic", "<Plug>(coc-classobj-i)", opts)
-  keymap("o", "ic", "<Plug>(coc-classobj-i)", opts)
-  keymap("x", "ac", "<Plug>(coc-classobj-a)", opts)
-  keymap("o", "ac", "<Plug>(coc-classobj-a)", opts)
-
-  -- Remap <C-f> and <C-b> to scroll float windows/popups
-  ---@diagnostic disable-next-line: redefined-local
-  opts = { silent = true, nowait = true, expr = true }
-  keymap("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
-  keymap("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
-  keymap("i", "<C-f>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
-  keymap("i", "<C-b>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
-  keymap("v", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
-  keymap("v", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
-
-  -- Use CTRL-S for selections ranges
-  -- Requires 'textDocument/selectionRange' support of language server
-  opts = { silent = true }
-  keymap("n", "<C-s>", "<Plug>(coc-range-select)", opts)
-  keymap("x", "<C-s>", "<Plug>(coc-range-select)", opts)
-
-  opts = { silent = true, nowait = true }
-  keymap("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts)
-  keymap("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts)
-  keymap("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts)
-  keymap("n", "<leader>co", ":<C-u>CocList outline<cr>", opts)
-  keymap("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", opts)
-  keymap("n", "<leader>cj", ":<C-u>CocNext<cr>", opts)
-  keymap("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts)
-  keymap("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts)
 end
-
-local noise_config = function()
-  require("noice").setup({
-    lsp = {
-      override = {
-        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-        ["vim.lsp.util.stylize_markdown"] = true,
-        ["cmp.entry.get_documentation"] = true,
-      },
-    },
-    -- you can enable a preset for easier configuration
-    presets = {
-      bottom_search = true,         -- use a classic bottom cmdline for search
-      command_palette = true,       -- position the cmdline and popupmenu together
-      long_message_to_split = true, -- long messages will be sent to a split
-      inc_rename = false,           -- enables an input dialog for inc-rename.nvim
-      lsp_doc_border = false,       -- add a border to hover docs and signature help
-    },
-  })
-end
-
 
 local fzf_config = function()
-  local keymap = vim.keymap.set
   local ts_builtin = require('telescope.builtin')
-  keymap('n', '<leader>ff', ts_builtin.find_files, {})
-  keymap('n', '<leader>fg', ts_builtin.live_grep, {})
-  keymap('n', '<leader>fb', ts_builtin.buffers, {})
-  keymap('n', '<leader>fc', ts_builtin.commands, {})
+  Map('n', '<leader>ff', ts_builtin.find_files, {})
+  Map('n', '<leader>fg', ts_builtin.live_grep, {})
+  Map('n', '<leader>fb', ts_builtin.buffers, {})
+  Map('n', '<leader>fc', ts_builtin.commands, {})
 
   local ts = require('telescope')
   ts.setup {
@@ -284,7 +230,6 @@ local treesitter_config = function()
 end
 
 local tree_config = function()
-  local keymap = vim.keymap.set
   local nt = require('nvim-tree')
   local nt_api = require('nvim-tree.api')
 
@@ -298,12 +243,12 @@ local tree_config = function()
   })
 
   -- key bind
-  keymap('n', '<leader>to', nt_api.tree.open)
-  keymap('n', '<leader>tc', nt_api.tree.close)
-  keymap('n', '<leader>tt', nt_api.tree.toggle)
-  keymap('n', '<leader>tg', nt_api.tree.focus)
-  keymap('n', '<leader>tf', nt_api.tree.find_file)
-  keymap('n', '<leader>tr', nt_api.tree.reload)
+  Map('n', '<leader>to', nt_api.tree.open)
+  Map('n', '<leader>tc', nt_api.tree.close)
+  Map('n', '<leader>tt', nt_api.tree.toggle)
+  Map('n', '<leader>tg', nt_api.tree.focus)
+  Map('n', '<leader>tf', nt_api.tree.find_file)
+  Map('n', '<leader>tr', nt_api.tree.reload)
 end
 
 local smooth_scroll_config = function()
@@ -375,6 +320,10 @@ local smooth_corsor_config = function()
       end
     end,
   })
+end
+
+local eazy_align_config = function()
+  Map("n", "ga", "<Plug>(EasyAlign)", { noremap = false, silent = true })
 end
 
 --------------------------------------------------
@@ -476,22 +425,13 @@ return require('packer').startup(
       config = tree_config,
     }
     use {
+      'junegunn/vim-easy-align',
+      config = eazy_align_config
+    }
+    use {
       'neoclide/coc.nvim',
       branch = 'release',
       config = coc_config,
-    }
-    use {
-      "windwp/nvim-autopairs",
-      config = function() require("nvim-autopairs").setup() end,
-    }
-    use {
-      'folke/noice.nvim',
-      event = 'BufRead',
-      config = noise_config,
-      requires = {
-        { 'MunifTanjim/nui.nvim' },
-        { 'rcarriga/nvim-notify' }
-      }
     }
 
     if packer_bootstrap then
