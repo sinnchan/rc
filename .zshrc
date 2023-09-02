@@ -28,6 +28,10 @@ function zvm_after_lazy_keybindings() {
 
 source $ZSH/oh-my-zsh.sh
 
+# theme
+
+export LANG=en_US.UTF-8
+
 # exports
 
 export EDITOR='nvim'
@@ -79,3 +83,7 @@ export FZF_ALT_C_OPTS="--preview 'tree -C {}'"
 # -- java --
 export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
 
+
+# Add colors to Terminal
+export CLICOLOR=1
+export LSCOLORS=ExFxBxDxCxegedabagacad

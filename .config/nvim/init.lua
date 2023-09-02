@@ -47,7 +47,6 @@ keymap('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true
 
 
 local coc_config = function()
-  local keymap = vim.keymap.set
   -- Autocomplete
   function _G.check_back_space()
     local col = vim.fn.col('.') - 1
@@ -203,26 +202,12 @@ local noise_config = function()
 end
 
 
-local fzf_config = function()
-  local keymap = vim.keymap.set
+local telescope_config = function()
   local ts_builtin = require('telescope.builtin')
   keymap('n', '<leader>ff', ts_builtin.find_files, {})
   keymap('n', '<leader>fg', ts_builtin.live_grep, {})
   keymap('n', '<leader>fb', ts_builtin.buffers, {})
   keymap('n', '<leader>fc', ts_builtin.commands, {})
-
-  local ts = require('telescope')
-  ts.setup {
-    extensions = {
-      fzf = {
-        fuzzy = true,
-        override_generic_sorter = true,
-        override_file_sorter = true,
-        case_mode = "smart_case",
-      }
-    }
-  }
-  ts.load_extension('fzf')
 end
 
 local gitsigns_config = function()
@@ -284,7 +269,6 @@ local treesitter_config = function()
 end
 
 local tree_config = function()
-  local keymap = vim.keymap.set
   local nt = require('nvim-tree')
   local nt_api = require('nvim-tree.api')
 
@@ -453,16 +437,12 @@ return require('packer').startup(
     use {
       'junegunn/fzf.vim',
       run = function() vim.fn['fzf#install()'](0) end,
-      config = fzf_config,
     }
     use {
-      'nvim-telescope/telescope.nvim', tag = '0.1.2',
-      requires = { { 'nvim-lua/plenary.nvim' } }
-    }
-    use {
-      'nvim-telescope/telescope-fzf-native.nvim',
-      run =
-      'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
+      'nvim-telescope/telescope.nvim',
+      tag = '0.1.2',
+      requires = { { 'nvim-lua/plenary.nvim' } },
+      config = telescope_config,
     }
     use {
       'nvim-treesitter/nvim-treesitter',
