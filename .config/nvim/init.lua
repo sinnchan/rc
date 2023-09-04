@@ -1,6 +1,6 @@
---------------------------------------------------
--- INIT.LUA
---------------------------------------------------
+-----------------
+-- vim options --
+-----------------
 
 vim.opt.autoread = true
 vim.opt.backup = false
@@ -32,11 +32,9 @@ vim.opt.wrapscan = false
 vim.opt.writebackup = false
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
-vim.o.guifont = "ProFont IIx Nerd Font:h12"
 
-
+-- default vim keymap
 Map = vim.keymap.set
-
 Map('n', '<C-l>', '10zl')
 Map('n', '<C-h>', '10zh')
 Map('n', '<leader>h', ':vertical resize -10<CR>')
@@ -45,67 +43,24 @@ Map('n', '<leader>k', ':resize +10<CR>')
 Map('n', '<leader>l', ':vertical resize +10<CR>')
 Map('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true })
 
--- coc
+vim.opt.runtimepath:append('~/.config/nvim/lua')
+Map('n', '<leader>af', require('flutter_analyze').analyze_flutter)
 
-local opts = { silent = true, expr = true, replace_keycodes = false }
-Map("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
-Map("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
 
-opts = { silent = true, expr = true }
-Map('i', '<CR>', [[coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]], opts)
-
-opts = { silent = true }
-Map("n", "<C-s>", "<Plug>(coc-range-select)", opts)
-Map("n", "<leader>fs", "<Plug>(coc-format-selected)", opts)
-Map("n", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", opts)
-Map("n", "<leader>re", "<Plug>(coc-codeaction-refactor)", opts)
-Map("n", "<leader>rn", "<Plug>(coc-rename)", opts)
-Map("n", "K", '<CMD>lua _G.show_docs()<CR>', opts)
-Map("n", "g[", "<Plug>(coc-diagnostic-prev)", opts)
-Map("n", "g]", "<Plug>(coc-diagnostic-next)", opts)
-Map("n", "gd", "<Plug>(coc-definition)", opts)
-Map("n", "gi", "<Plug>(coc-implementation)", opts)
-Map("n", "gr", "<Plug>(coc-references)", opts)
-Map("n", "gy", "<Plug>(coc-type-definition)", opts)
-Map("x", "<C-s>", "<Plug>(coc-range-select)", opts)
-Map("x", "<leader>fs", "<Plug>(coc-format-selected)", opts)
-Map("x", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", opts)
-Map('n', '<leader>fa', [[<cmd>call CocAction('format')<CR>]], opts)
-
-opts = { silent = true, nowait = true }
-Map("n", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
-Map("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", opts)
-Map("n", "<leader>as", "<Plug>(coc-codeaction-source)", opts)
-Map("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts)
-Map("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts)
-Map("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts)
-Map("n", "<leader>cj", ":<C-u>CocNext<cr>", opts)
-Map("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts)
-Map("n", "<leader>cl", "<Plug>(coc-codelens-action)", opts)
-Map("n", "<leader>co", ":<C-u>CocList outline<cr>", opts)
-Map("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts)
-Map("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", opts)
-Map("n", "<leader>qf", "<Plug>(coc-fix-current)", opts)
-Map("o", "ac", "<Plug>(coc-classobj-a)", opts)
-Map("o", "af", "<Plug>(coc-funcobj-a)", opts)
-Map("o", "ic", "<Plug>(coc-classobj-i)", opts)
-Map("o", "if", "<Plug>(coc-funcobj-i)", opts)
-Map("x", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
-Map("x", "ac", "<Plug>(coc-classobj-a)", opts)
-Map("x", "af", "<Plug>(coc-funcobj-a)", opts)
-Map("x", "ic", "<Plug>(coc-classobj-i)", opts)
-Map("x", "if", "<Plug>(coc-funcobj-i)", opts)
-
-opts = { silent = true, nowait = true, expr = true }
-Map("i", "<C-b>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
-Map("i", "<C-f>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
-Map("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
-Map("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
-Map("v", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
-Map("v", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
-
+-------------
+-- configs --
+-------------
 
 local coc_config = function()
+  -- extensions
+  vim.g.coc_global_extensions = {
+    'coc-json',
+    'coc-lua',
+    'coc-git',
+    'coc-flutter',
+    'coc-pairs',
+  }
+
   -- Autocomplete
   function _G.check_back_space()
     local col = vim.fn.col('.') - 1
@@ -148,14 +103,64 @@ local coc_config = function()
     command = "call CocActionAsync('showSignatureHelp')",
     desc = "Update signature help on jump placeholder"
   })
-end
 
-local telescope_config = function()
-  local ts_builtin = require('telescope.builtin')
-  keymap('n', '<leader>ff', ts_builtin.find_files, {})
-  keymap('n', '<leader>fg', ts_builtin.live_grep, {})
-  keymap('n', '<leader>fb', ts_builtin.buffers, {})
-  keymap('n', '<leader>fc', ts_builtin.commands, {})
+  -- keymaps
+  local opts = { silent = true, expr = true, replace_keycodes = false }
+  Map("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
+  Map("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)
+
+  opts = { silent = true, expr = true }
+  Map('i', '<CR>', [[coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]], opts)
+
+  opts = { silent = true }
+  Map("n", "<C-s>", "<Plug>(coc-range-select)", opts)
+  Map("n", "<leader>fs", "<Plug>(coc-format-selected)", opts)
+  Map("n", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", opts)
+  Map("n", "<leader>re", "<Plug>(coc-codeaction-refactor)", opts)
+  Map("n", "<leader>rn", "<Plug>(coc-rename)", opts)
+  Map("n", "K", '<CMD>lua _G.show_docs()<CR>', opts)
+  Map("n", "g[", "<Plug>(coc-diagnostic-prev)", opts)
+  Map("n", "g]", "<Plug>(coc-diagnostic-next)", opts)
+  Map("n", "gd", "<Plug>(coc-definition)", opts)
+  Map("n", "gi", "<Plug>(coc-implementation)", opts)
+  Map("n", "gr", "<Plug>(coc-references)", opts)
+  Map("n", "gy", "<Plug>(coc-type-definition)", opts)
+  Map("x", "<C-s>", "<Plug>(coc-range-select)", opts)
+  Map("x", "<leader>fs", "<Plug>(coc-format-selected)", opts)
+  Map("x", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", opts)
+  Map('n', '<leader>fa', [[<cmd>call CocAction('format')<CR>]], opts)
+
+  opts = { silent = true, nowait = true }
+  Map("n", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
+  Map("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", opts)
+  Map("n", "<leader>as", "<Plug>(coc-codeaction-source)", opts)
+  Map("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts)
+  Map("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts)
+  Map("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts)
+  Map("n", "<leader>cj", ":<C-u>CocNext<cr>", opts)
+  Map("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts)
+  Map("n", "<leader>cl", "<Plug>(coc-codelens-action)", opts)
+  Map("n", "<leader>co", ":<C-u>CocList outline<cr>", opts)
+  Map("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts)
+  Map("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", opts)
+  Map("n", "<leader>qf", "<Plug>(coc-fix-current)", opts)
+  Map("o", "ac", "<Plug>(coc-classobj-a)", opts)
+  Map("o", "af", "<Plug>(coc-funcobj-a)", opts)
+  Map("o", "ic", "<Plug>(coc-classobj-i)", opts)
+  Map("o", "if", "<Plug>(coc-funcobj-i)", opts)
+  Map("x", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
+  Map("x", "ac", "<Plug>(coc-classobj-a)", opts)
+  Map("x", "af", "<Plug>(coc-funcobj-a)", opts)
+  Map("x", "ic", "<Plug>(coc-classobj-i)", opts)
+  Map("x", "if", "<Plug>(coc-funcobj-i)", opts)
+
+  opts = { silent = true, nowait = true, expr = true }
+  Map("i", "<C-b>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
+  Map("i", "<C-f>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
+  Map("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
+  Map("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
+  Map("v", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
+  Map("v", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
 end
 
 local gitsigns_config = function()
@@ -203,6 +208,15 @@ local gitsigns_config = function()
   }
 end
 
+local telescope_config = function()
+  local ts_builtin = require('telescope.builtin')
+  local opts = {}
+  Map('n', '<leader>ff', ts_builtin.find_files, opts)
+  Map('n', '<leader>fg', ts_builtin.live_grep, opts)
+  Map('n', '<leader>fb', ts_builtin.buffers, opts)
+  Map('n', '<leader>fc', ts_builtin.commands, opts)
+end
+
 
 local treesitter_config = function()
   require('nvim-treesitter.configs').setup {
@@ -236,24 +250,6 @@ local tree_config = function()
   Map('n', '<leader>tg', nt_api.tree.focus)
   Map('n', '<leader>tf', nt_api.tree.find_file)
   Map('n', '<leader>tr', nt_api.tree.reload)
-end
-
-local smooth_scroll_config = function()
-  require('neoscroll').setup({
-    easing_function = 'cubic' -- cubic, quartic, circular
-  })
-
-  require('neoscroll.config').set_mappings({
-    ['<C-u>'] = { 'scroll', { '-vim.wo.scroll', 'true', '80', nil } },
-    ['<C-d>'] = { 'scroll', { 'vim.wo.scroll', 'true', '80', nil } },
-    ['<C-b>'] = { 'scroll', { '-vim.api.nvim_win_get_height(0)', 'true', '100', nil } },
-    ['<C-f>'] = { 'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '100', nil } },
-    ['<C-y>'] = { 'scroll', { '-0.10', 'false', '50', nil } },
-    ['<C-e>'] = { 'scroll', { '0.10', 'false', '50', nil } },
-    ['zt'] = { 'zt', { '300' } },
-    ['zz'] = { 'zz', { '300' } },
-    ['zb'] = { 'zb', { '300' } },
-  })
 end
 
 local smooth_corsor_config = function()
@@ -309,8 +305,31 @@ local smooth_corsor_config = function()
   })
 end
 
+local onedark_config = function()
+  require('onedark').load()
+end
+
+local lualine_config = function()
+  require('lualine').setup { options = { theme = 'onedark' } }
+end
+
+local ccc_config = function()
+  require('ccc').setup({
+    highlighter = {
+      auto_enable = true,
+      lsp = true,
+    }
+  })
+end
+
 local eazy_align_config = function()
-  Map("n", "ga", "<Plug>(EasyAlign)", { noremap = false, silent = true })
+  local opts = { noremap = false, silent = true }
+  Map("x", "ga", "<Plug>(EasyAlign)", opts)
+  Map("n", "ga", "<Plug>(EasyAlign)", opts)
+end
+
+local indent_config = function()
+  require("indent_blankline").setup { show_end_of_line = true }
 end
 
 --------------------------------------------------
@@ -345,20 +364,18 @@ local packer_bootstrap = (
 return require('packer').startup(
   function(use)
     use 'wbthomason/packer.nvim'
-    use 'reisub0/hot-reload.vim'
+    use '~/repositories/hot-reload.vim'
     use {
       "lukas-reineke/indent-blankline.nvim",
-      config = function()
-        require("indent_blankline").setup { show_end_of_line = true }
-      end
+      config = indent_config,
     }
     use {
       'navarasu/onedark.nvim',
-      config = function() require('onedark').load() end
+      config = onedark_config,
     }
     use {
       'karb94/neoscroll.nvim',
-      config = smooth_scroll_config,
+      -- config = smooth_scroll_config,
     }
     use {
       'gen740/SmoothCursor.nvim',
@@ -370,21 +387,12 @@ return require('packer').startup(
     }
     use {
       'uga-rosa/ccc.nvim',
-      config = function()
-        require('ccc').setup({
-          highlighter = {
-            auto_enable = true,
-            lsp = true,
-          }
-        })
-      end
+      config = ccc_config,
     }
     use {
       'nvim-lualine/lualine.nvim',
       requires = { 'nvim-tree/nvim-web-devicons', opt = true },
-      config = function()
-        require('lualine').setup { options = { theme = 'onedark' } }
-      end
+      config = lualine_config,
     }
     use {
       'junegunn/fzf.vim',
@@ -399,8 +407,8 @@ return require('packer').startup(
     use {
       'nvim-treesitter/nvim-treesitter',
       run = function() vim.fn[':TSUpdate'](0) end,
-      config = treesitter_config,
       requires = 'nvim-treesitter/playground',
+      config = treesitter_config,
     }
     use {
       'nvim-tree/nvim-tree.lua',
