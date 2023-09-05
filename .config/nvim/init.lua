@@ -43,6 +43,8 @@ Map('n', '<leader>k', ':resize +10<CR>')
 Map('n', '<leader>l', ':vertical resize +10<CR>')
 Map('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true })
 Map('n', '<leader>ro', ':e ~/.config/nvim/init.lua<CR>', { silent = true })
+vim.cmd [[ autocmd FileType markdown setlocal tabstop=2 ]]
+
 
 -------------
 -- configs --
