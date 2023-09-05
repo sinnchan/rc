@@ -43,10 +43,6 @@ Map('n', '<leader>k', ':resize +10<CR>')
 Map('n', '<leader>l', ':vertical resize +10<CR>')
 Map('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true })
 
-vim.opt.runtimepath:append('~/.config/nvim/lua')
-Map('n', '<leader>af', require('flutter_analyze').analyze_flutter)
-
-
 -------------
 -- configs --
 -------------
@@ -134,14 +130,14 @@ local coc_config = function()
   Map("n", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
   Map("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", opts)
   Map("n", "<leader>as", "<Plug>(coc-codeaction-source)", opts)
-  Map("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts)
+  Map("n", "<leader>cd", ":<C-u>CocList diagnostics<cr>", opts)
   Map("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts)
   Map("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts)
   Map("n", "<leader>cj", ":<C-u>CocNext<cr>", opts)
   Map("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts)
   Map("n", "<leader>cl", "<Plug>(coc-codelens-action)", opts)
   Map("n", "<leader>co", ":<C-u>CocList outline<cr>", opts)
-  Map("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts)
+  Map("n", "<leader>cr", ":<C-u>CocListResume<cr>", opts)
   Map("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", opts)
   Map("n", "<leader>qf", "<Plug>(coc-fix-current)", opts)
   Map("o", "ac", "<Plug>(coc-classobj-a)", opts)
