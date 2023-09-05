@@ -42,10 +42,7 @@ Map('n', '<leader>j', ':resize -10<CR>')
 Map('n', '<leader>k', ':resize +10<CR>')
 Map('n', '<leader>l', ':vertical resize +10<CR>')
 Map('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true })
-
-vim.opt.runtimepath:append('~/.config/nvim/lua')
-Map('n', '<leader>af', require('flutter_analyze').analyze_flutter)
-
+Map('n', '<leader>ro', ':e ~/.config/nvim/init.lua<CR>', { silent = true })
 
 -------------
 -- configs --
@@ -215,6 +212,12 @@ local telescope_config = function()
   Map('n', '<leader>fg', ts_builtin.live_grep, opts)
   Map('n', '<leader>fb', ts_builtin.buffers, opts)
   Map('n', '<leader>fc', ts_builtin.commands, opts)
+
+  require('textcase').setup {}
+  require('telescope').load_extension('textcase')
+  opts = { desc = 'Telescope' }
+  Map('n', '<leader>fC', '<cmd>TextCaseOpenTelescope<CR>', opts)
+  Map('v', '<leader>fC', '<cmd>TextCaseOpenTelescope<CR>', opts)
 end
 
 
@@ -364,7 +367,8 @@ local packer_bootstrap = (
 return require('packer').startup(
   function(use)
     use 'wbthomason/packer.nvim'
-    use '~/repositories/hot-reload.vim'
+    use 'sinnchan/hot-reload.vim'
+
     use {
       "lukas-reineke/indent-blankline.nvim",
       config = indent_config,
@@ -401,13 +405,16 @@ return require('packer').startup(
     use {
       'nvim-telescope/telescope.nvim',
       tag = '0.1.2',
-      requires = { { 'nvim-lua/plenary.nvim' } },
+      requires = {
+        'nvim-lua/plenary.nvim',
+        'johmsalas/text-case.nvim',
+      },
       config = telescope_config,
     }
     use {
       'nvim-treesitter/nvim-treesitter',
       run = function() vim.fn[':TSUpdate'](0) end,
-      requires = 'nvim-treesitter/playground',
+      requires = { 'nvim-treesitter/playground' },
       config = treesitter_config,
     }
     use {
