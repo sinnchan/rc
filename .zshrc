@@ -48,6 +48,7 @@ export PATH="$PATH:/usr/local/opt/openjdk@11/bin"
 # alias
 alias la='ls -lah'
 alias vi='nvim'
+alias virc='nvim ~/.config/nvim/init.lua'
 
 # flutter
 alias frun='(){fvm flutter run -d $3 --dart-define FLAVOR=$1 --dart-define ENV=$2}'
