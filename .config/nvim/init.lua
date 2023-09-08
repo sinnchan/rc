@@ -33,6 +33,9 @@ vim.opt.writebackup = false
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
 
+-- cmd
+vim.cmd [[ autocmd FileType markdown setlocal tabstop=2 ]]
+
 -- default vim keymap
 Map = vim.keymap.set
 Map('n', '<C-l>', '10zl')
@@ -43,7 +46,6 @@ Map('n', '<leader>k', ':resize +10<CR>')
 Map('n', '<leader>l', ':vertical resize +10<CR>')
 Map('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true })
 Map('n', '<leader>ro', ':e ~/.config/nvim/init.lua<CR>', { silent = true })
-vim.cmd [[ autocmd FileType markdown setlocal tabstop=2 ]]
 
 
 -------------

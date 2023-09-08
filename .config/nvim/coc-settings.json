@@ -1,6 +1,16 @@
 {
   "suggest.noselect": false,
   "inlayHint.enable": false,
-  "Lua.diagnostics.globals": ["vim"]
+  "Lua.diagnostics.globals": [
+    "vim"
+  ],
+  "flutter.workspaceFolder.ignore": [
+    "~/.pub-cache/",
+    "~/.config/",
+    "~/.dotfiles/",
+    "~/fvm"
+  ],
+  "flutter.sdk.searchPaths": [
+    "~/fvm/default/bin/flutter"
+  ]
 }
-

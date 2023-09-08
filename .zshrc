@@ -89,3 +89,4 @@ export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
 # Add colors to Terminal
 export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
+source /usr/share/nvm/init-nvm.sh
