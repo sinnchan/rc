@@ -30,6 +30,8 @@ vim.opt.updatetime = 300
 vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
+vim.opt.cursorline = true
+vim.opt.cursorcolumn = true
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
 
@@ -40,10 +42,6 @@ vim.cmd [[ autocmd FileType markdown setlocal tabstop=2 ]]
 Map = vim.keymap.set
 Map('n', '<C-l>', '10zl')
 Map('n', '<C-h>', '10zh')
-Map('n', '<leader>h', ':vertical resize -10<CR>')
-Map('n', '<leader>j', ':resize -10<CR>')
-Map('n', '<leader>k', ':resize +10<CR>')
-Map('n', '<leader>l', ':vertical resize +10<CR>')
 Map('n', '<leader>rr', ':source ~/.config/nvim/init.lua<CR>', { silent = true })
 Map('n', '<leader>ro', ':e ~/.config/nvim/init.lua<CR>', { silent = true })
 
@@ -105,6 +103,13 @@ local coc_config = function()
     desc = "Update signature help on jump placeholder"
   })
 
+
+  -- function
+  local goto_def_vsplit = function()
+    vim.cmd('vsplit')
+    vim.fn['CocAction']('jumpDefinition')
+  end
+
   -- keymaps
   local opts = { silent = true, expr = true, replace_keycodes = false }
   Map("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
@@ -123,6 +128,7 @@ local coc_config = function()
   Map("n", "g[", "<Plug>(coc-diagnostic-prev)", opts)
   Map("n", "g]", "<Plug>(coc-diagnostic-next)", opts)
   Map("n", "gd", "<Plug>(coc-definition)", opts)
+  Map("n", "gD", goto_def_vsplit, opts)
   Map("n", "gi", "<Plug>(coc-implementation)", opts)
   Map("n", "gr", "<Plug>(coc-references)", opts)
   Map("n", "gy", "<Plug>(coc-type-definition)", opts)
@@ -218,7 +224,11 @@ local telescope_config = function()
   Map('n', '<leader>fc', ts_builtin.commands, opts)
 
   require('textcase').setup {}
-  require('telescope').load_extension('textcase')
+
+  local telescope = require('telescope');
+  telescope.load_extension('textcase')
+  telescope.load_extension('emoji')
+
   opts = { desc = 'Telescope' }
   Map('n', '<leader>fC', '<cmd>TextCaseOpenTelescope<CR>', opts)
   Map('v', '<leader>fC', '<cmd>TextCaseOpenTelescope<CR>', opts)
@@ -339,6 +349,15 @@ local indent_config = function()
   require("indent_blankline").setup { show_end_of_line = true }
 end
 
+local winshift_config = function()
+  Map("n", "<C-W>m", "<Cmd>WinShift swap<CR>")
+  Map("n", "<C-W>M", "<Cmd>WinShift<CR>")
+end
+
+local nvim_window_config = function()
+  local opts = { noremap = false }
+  Map("n", "<C-w>w", require('nvim-window').pick, opts)
+end
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
 --------------------------------------------------
@@ -412,6 +431,7 @@ return require('packer').startup(
       requires = {
         'nvim-lua/plenary.nvim',
         'johmsalas/text-case.nvim',
+        'xiyaowong/telescope-emoji.nvim',
       },
       config = telescope_config,
     }
@@ -434,6 +454,14 @@ return require('packer').startup(
       'neoclide/coc.nvim',
       branch = 'release',
       config = coc_config,
+    }
+    use {
+      'sindrets/winshift.nvim',
+      config = winshift_config,
+    }
+    use {
+      'yorickpeterse/nvim-window',
+      config = nvim_window_config,
     }
 
     if packer_bootstrap then
