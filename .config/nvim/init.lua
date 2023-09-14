@@ -390,19 +390,45 @@ local packer_bootstrap = (
 return require('packer').startup(
   function(use)
     use 'wbthomason/packer.nvim'
-    use 'sinnchan/hot-reload.vim'
 
     use {
-      "lukas-reineke/indent-blankline.nvim",
-      config = indent_config,
+      'neoclide/coc.nvim',
+      branch = 'release',
+      config = coc_config,
+    }
+    use {
+      'nvim-treesitter/nvim-treesitter',
+      run = function() vim.fn[':TSUpdate'](0) end,
+      requires = { 'nvim-treesitter/playground' },
+      config = treesitter_config,
+    }
+    use {
+      'nvim-telescope/telescope.nvim',
+      tag = '0.1.2',
+      requires = {
+        'nvim-lua/plenary.nvim',
+        'johmsalas/text-case.nvim',
+        'xiyaowong/telescope-emoji.nvim',
+      },
+      config = telescope_config,
+    }
+    use {
+      'nvim-tree/nvim-tree.lua',
+      requires = { 'nvim-tree/nvim-web-devicons' },
+      config = tree_config,
     }
     use {
       'navarasu/onedark.nvim',
       config = onedark_config,
     }
     use {
-      'karb94/neoscroll.nvim',
-      -- config = smooth_scroll_config,
+      'nvim-lualine/lualine.nvim',
+      requires = { 'nvim-tree/nvim-web-devicons', opt = true },
+      config = lualine_config,
+    }
+    use {
+      "lukas-reineke/indent-blankline.nvim",
+      config = indent_config,
     }
     use {
       'gen740/SmoothCursor.nvim',
@@ -417,43 +443,8 @@ return require('packer').startup(
       config = ccc_config,
     }
     use {
-      'nvim-lualine/lualine.nvim',
-      requires = { 'nvim-tree/nvim-web-devicons', opt = true },
-      config = lualine_config,
-    }
-    use {
-      'junegunn/fzf.vim',
-      run = function() vim.fn['fzf#install()'](0) end,
-    }
-    use {
-      'nvim-telescope/telescope.nvim',
-      tag = '0.1.2',
-      requires = {
-        'nvim-lua/plenary.nvim',
-        'johmsalas/text-case.nvim',
-        'xiyaowong/telescope-emoji.nvim',
-      },
-      config = telescope_config,
-    }
-    use {
-      'nvim-treesitter/nvim-treesitter',
-      run = function() vim.fn[':TSUpdate'](0) end,
-      requires = { 'nvim-treesitter/playground' },
-      config = treesitter_config,
-    }
-    use {
-      'nvim-tree/nvim-tree.lua',
-      requires = { 'nvim-tree/nvim-web-devicons' },
-      config = tree_config,
-    }
-    use {
       'junegunn/vim-easy-align',
       config = eazy_align_config
-    }
-    use {
-      'neoclide/coc.nvim',
-      branch = 'release',
-      config = coc_config,
     }
     use {
       'sindrets/winshift.nvim',
@@ -463,6 +454,7 @@ return require('packer').startup(
       'yorickpeterse/nvim-window',
       config = nvim_window_config,
     }
+    use 'sinnchan/hot-reload.vim'
 
     if packer_bootstrap then
       require('packer').sync()
