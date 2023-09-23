@@ -2,11 +2,15 @@
 -- vim options --
 -----------------
 
+vim.g.NERDCreateDefaultMappings = 0
+vim.g.mapleader = " "
 vim.opt.autoread = true
 vim.opt.backup = false
 vim.opt.breakindent = true
 vim.opt.colorcolumn = "80"
 vim.opt.confirm = true
+vim.opt.cursorcolumn = true
+vim.opt.cursorline = true
 vim.opt.encoding = 'utf-8'
 vim.opt.expandtab = true
 vim.opt.foldenable = false
@@ -14,6 +18,7 @@ vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldmethod = "expr"
 vim.opt.hidden = true
 vim.opt.hlsearch = true
+vim.opt.ignorecase = true
 vim.opt.imdisable = true
 vim.opt.incsearch = true
 vim.opt.list = true
@@ -30,10 +35,6 @@ vim.opt.updatetime = 300
 vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
-vim.opt.cursorline = true
-vim.opt.cursorcolumn = true
-vim.g.NERDCreateDefaultMappings = 0
-vim.g.mapleader = " "
 
 -- cmd
 vim.cmd [[ autocmd FileType markdown setlocal tabstop=2 ]]
@@ -327,7 +328,19 @@ local onedark_config = function()
 end
 
 local lualine_config = function()
-  require('lualine').setup { options = { theme = 'onedark' } }
+  require('lualine').setup {
+    options = {
+      theme = 'onedark',
+    },
+    sections = {
+      lualine_a = { 'mode' },
+      lualine_b = { 'diff', 'diagnostics' },
+      lualine_c = { 'filename' },
+      lualine_x = { 'encoding', 'fileformat', 'filetype' },
+      lualine_y = { 'progress' },
+      lualine_z = { 'location' }
+    }
+  }
 end
 
 local ccc_config = function()
@@ -356,7 +369,7 @@ end
 
 local nvim_window_config = function()
   local opts = { noremap = false }
-  Map("n", "<C-w>w", require('nvim-window').pick, opts)
+  Map("n", "<C-w>f", require('nvim-window').pick, opts)
 end
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
