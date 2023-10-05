@@ -4,6 +4,10 @@
   "Lua.diagnostics.globals": [
     "vim"
   ],
+  "rust-analyzer.rustfmt.extraArgs": [
+    "--config",
+    "tab_spaces=2"
+  ],
   "flutter.workspaceFolder.ignore": [
     "~/.pub-cache/",
     "~/.config/",

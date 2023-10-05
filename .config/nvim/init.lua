@@ -37,7 +37,7 @@ vim.opt.wrapscan = false
 vim.opt.writebackup = false
 
 -- cmd
-vim.cmd [[ autocmd FileType markdown setlocal tabstop=2 ]]
+vim.cmd [[ autocmd FileType markdown,rust setlocal tabstop=2 ]]
 
 -- default vim keymap
 Map = vim.keymap.set
@@ -58,6 +58,7 @@ local coc_config = function()
     'coc-lua',
     'coc-git',
     'coc-flutter',
+    'coc-rust-analyzer',
     'coc-pairs',
   }
 
@@ -359,7 +360,26 @@ local eazy_align_config = function()
 end
 
 local indent_config = function()
-  require("indent_blankline").setup { show_end_of_line = true }
+  require("ibl").setup {
+  }
+  local highlight = {
+    "IndentLineColor",
+  }
+
+  local hooks = require "ibl.hooks"
+  hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+    vim.api.nvim_set_hl(0, "IndentLineColor", { fg = "#43484b" })
+  end)
+
+  require("ibl").setup {
+    indent = {
+      highlight = highlight,
+      char = "▏",
+    },
+    scope = {
+      enabled = false,
+    },
+  }
 end
 
 local winshift_config = function()
@@ -371,6 +391,7 @@ local nvim_window_config = function()
   local opts = { noremap = false }
   Map("n", "<C-w>f", require('nvim-window').pick, opts)
 end
+
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
 --------------------------------------------------
@@ -403,6 +424,7 @@ local packer_bootstrap = (
 return require('packer').startup(
   function(use)
     use 'wbthomason/packer.nvim'
+    use 'sinnchan/hot-reload.vim'
 
     use {
       'neoclide/coc.nvim',
@@ -467,7 +489,10 @@ return require('packer').startup(
       'yorickpeterse/nvim-window',
       config = nvim_window_config,
     }
-    use 'sinnchan/hot-reload.vim'
+    use {
+      "iamcco/markdown-preview.nvim",
+      run = function() vim.fn["mkdp#util#install"]() end,
+    }
 
     if packer_bootstrap then
       require('packer').sync()
