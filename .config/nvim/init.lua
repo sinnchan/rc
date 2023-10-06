@@ -107,8 +107,22 @@ local coc_config = function()
 
 
   -- function
-  local goto_def_vsplit = function()
+  local goto_def_vsplit_top = function()
+    vim.cmd('split')
+    vim.fn['CocAction']('jumpDefinition')
+  end
+  local goto_def_vsplit_bottom = function()
+    vim.cmd('split')
+    vim.cmd('wincmd j')
+    vim.fn['CocAction']('jumpDefinition')
+  end
+  local goto_def_vsplit_left = function()
     vim.cmd('vsplit')
+    vim.fn['CocAction']('jumpDefinition')
+  end
+  local goto_def_vsplit_right = function()
+    vim.cmd('vsplit')
+    vim.cmd('wincmd l')
     vim.fn['CocAction']('jumpDefinition')
   end
 
@@ -130,7 +144,10 @@ local coc_config = function()
   Map("n", "g[", "<Plug>(coc-diagnostic-prev)", opts)
   Map("n", "g]", "<Plug>(coc-diagnostic-next)", opts)
   Map("n", "gd", "<Plug>(coc-definition)", opts)
-  Map("n", "gD", goto_def_vsplit, opts)
+  Map("n", "gDh", goto_def_vsplit_left, opts)
+  Map("n", "gDj", goto_def_vsplit_bottom, opts)
+  Map("n", "gDk", goto_def_vsplit_top, opts)
+  Map("n", "gDl", goto_def_vsplit_right, opts)
   Map("n", "gi", "<Plug>(coc-implementation)", opts)
   Map("n", "gr", "<Plug>(coc-references)", opts)
   Map("n", "gy", "<Plug>(coc-type-definition)", opts)
@@ -368,7 +385,7 @@ local indent_config = function()
 
   local hooks = require "ibl.hooks"
   hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-    vim.api.nvim_set_hl(0, "IndentLineColor", { fg = "#43484b" })
+    vim.api.nvim_set_hl(0, "IndentLineColor", { fg = "#303336" })
   end)
 
   require("ibl").setup {
@@ -390,6 +407,23 @@ end
 local nvim_window_config = function()
   local opts = { noremap = false }
   Map("n", "<C-w>f", require('nvim-window').pick, opts)
+end
+
+local windows_config = function()
+  require('windows').setup()
+
+  vim.o.winwidth = 10
+  vim.o.winminwidth = 10
+  vim.o.equalalways = false
+
+  local function cmd(command)
+    return table.concat({ '<Cmd>', command, '<CR>' })
+  end
+
+  vim.keymap.set('n', '<C-w>z', cmd 'WindowsMaximize')
+  vim.keymap.set('n', '<C-w>_', cmd 'WindowsMaximizeVertically')
+  vim.keymap.set('n', '<C-w>|', cmd 'WindowsMaximizeHorizontally')
+  vim.keymap.set('n', '<C-w>=', cmd 'WindowsEqualize')
 end
 
 --------------------------------------------------
@@ -492,6 +526,14 @@ return require('packer').startup(
     use {
       "iamcco/markdown-preview.nvim",
       run = function() vim.fn["mkdp#util#install"]() end,
+    }
+    use {
+      "anuvyklack/windows.nvim",
+      requires = {
+        "anuvyklack/middleclass",
+        "anuvyklack/animation.nvim"
+      },
+      config = windows_config,
     }
 
     if packer_bootstrap then
