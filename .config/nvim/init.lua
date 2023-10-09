@@ -242,7 +242,13 @@ local telescope_config = function()
   Map('n', '<leader>fb', ts_builtin.buffers, opts)
   Map('n', '<leader>fc', ts_builtin.commands, opts)
 
-  require('textcase').setup {}
+  require('textcase').setup {
+    pickers = {
+      find_files = {
+        follow = true
+      }
+    }
+  }
 
   local telescope = require('telescope');
   telescope.load_extension('textcase')
@@ -288,57 +294,19 @@ local tree_config = function()
   Map('n', '<leader>tr', nt_api.tree.reload)
 end
 
-local smooth_corsor_config = function()
-  require('smoothcursor').setup({
-    autostart = true,
-    cursor = "", -- cursor shape (need nerd font)
-    texthl = "SmoothCursor", -- highlight group, default is { bg = nil, fg = "#FFD400" }
-    linehl = nil, -- highlight sub-cursor line like 'cursorline', "CursorLine" recommended
-    type = "default", -- define cursor movement calculate function, "default" or "exp" (exponential).
-    fancy = {
-      enable = true, -- enable fancy mode
-      head = { cursor = "", texthl = "SmoothCursorAqua", linehl = nil },
-      body = {
-        { cursor = "", texthl = "SmoothCursorAqua" },
-        { cursor = "●", texthl = "SmoothCursorAqua" },
-        { cursor = "|", texthl = "SmoothCursorAqua" },
-        { cursor = ":", texthl = "SmoothCursorAqua" },
-        { cursor = ".", texthl = "SmoothCursorAqua" },
-      },
-      tail = { cursor = nil, texthl = "SmoothCursor" }
-    },
-    flyin_effect = nil,        -- "bottom" or "top"
-    speed = 25,                -- max is 100 to stick to your current position
-    intervals = 35,            -- tick interval
-    priority = 100,            -- set marker priority
-    timeout = 3000,            -- timout for animation
-    threshold = 3,             -- animate if threshold lines jump
-    disable_float_win = false, -- disable on float window
-    enabled_filetypes = nil,   -- example: { "lua", "vim" }
-    disabled_filetypes = nil,  -- this option will be skipped if enabled_filetypes is set. example: { "TelescopePrompt", "NvimTree" }
-  })
-
-  vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
-    callback = function()
-      local current_mode = vim.fn.mode()
-      if current_mode == 'n' then
-        vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#8aa872' })
-        vim.fn.sign_define('smoothcursor', { text = '' })
-      elseif current_mode == 'v' then
-        vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#bf616a' })
-        vim.fn.sign_define('smoothcursor', { text = '' })
-      elseif current_mode == 'V' then
-        vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#bf616a' })
-        vim.fn.sign_define('smoothcursor', { text = '' })
-      elseif current_mode == '�' then
-        vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#bf616a' })
-        vim.fn.sign_define('smoothcursor', { text = '' })
-      elseif current_mode == 'i' then
-        vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#668aab' })
-        vim.fn.sign_define('smoothcursor', { text = '' })
-      end
-    end,
-  })
+local neoscroll_config = function()
+  require('neoscroll').setup()
+  local t    = {}
+  t['<C-u>'] = { 'scroll', { '-vim.wo.scroll', 'true', '80', 'quintic' } }
+  t['<C-d>'] = { 'scroll', { 'vim.wo.scroll', 'true', '80', 'quintic' } }
+  t['<C-b>'] = { 'scroll', { '-vim.api.nvim_win_get_height(0)', 'true', '160', 'quintic' } }
+  t['<C-f>'] = { 'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '160', 'quintic' } }
+  t['<C-y>'] = { 'scroll', { '-0.10', 'false', '40', 'quintic' } }
+  t['<C-e>'] = { 'scroll', { '0.10', 'false', '40', 'quintic' } }
+  t['zt']    = { 'zt', { '80', 'quintic' } }
+  t['zz']    = { 'zz', { '80', 'quintic' } }
+  t['zb']    = { 'zb', { '80', 'quintic' } }
+  require('neoscroll.config').set_mappings(t)
 end
 
 local onedark_config = function()
@@ -500,8 +468,8 @@ return require('packer').startup(
       config = indent_config,
     }
     use {
-      'gen740/SmoothCursor.nvim',
-      config = smooth_corsor_config,
+      'karb94/neoscroll.nvim',
+      config = neoscroll_config,
     }
     use {
       'lewis6991/gitsigns.nvim',
