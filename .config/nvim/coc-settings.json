@@ -12,7 +12,9 @@
     "~/.pub-cache/",
     "~/.config/",
     "~/.dotfiles/",
-    "~/fvm"
+    "~/fvm",
+    "./android/",
+    "./webviewx/"
   ],
   "flutter.sdk.searchPaths": [
     "~/fvm/default/bin/flutter"

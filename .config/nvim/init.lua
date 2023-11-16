@@ -4,6 +4,7 @@
 
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
+vim.o.showtabline = 2
 vim.opt.autoread = true
 vim.opt.backup = false
 vim.opt.breakindent = true
@@ -235,12 +236,15 @@ local gitsigns_config = function()
 end
 
 local telescope_config = function()
+  local telescope = require('telescope');
   local ts_builtin = require('telescope.builtin')
   local opts = {}
   Map('n', '<leader>ff', ts_builtin.find_files, opts)
-  Map('n', '<leader>fg', ts_builtin.live_grep, opts)
+  Map('n', '<leader>fl', ts_builtin.live_grep, opts)
   Map('n', '<leader>fb', ts_builtin.buffers, opts)
   Map('n', '<leader>fc', ts_builtin.commands, opts)
+  Map('n', '<leader>fg', ts_builtin.git_status, opts)
+  Map('n', '<leader>fe', telescope.extensions.emoji.emoji, opts)
 
   require('textcase').setup {
     pickers = {
@@ -250,7 +254,6 @@ local telescope_config = function()
     }
   }
 
-  local telescope = require('telescope');
   telescope.load_extension('textcase')
   telescope.load_extension('emoji')
 
@@ -394,6 +397,24 @@ local windows_config = function()
   vim.keymap.set('n', '<C-w>=', cmd 'WindowsEqualize')
 end
 
+local tabby_config = function()
+  require('tabby.tabline').use_preset('tab_only', {
+    theme = {
+      fill = 'TabLineFill',       -- tabline background
+      head = 'TabLine',           -- head element highlight
+      current_tab = 'TabLineSel', -- current tab label highlight
+      tab = 'TabLine',            -- other tab label highlight
+      win = 'TabLine',            -- window highlight
+      tail = 'TabLine',           -- tail element highlight
+    },
+    nerdfont = true,              -- whether use nerdfont
+    lualine_theme = 'onedark',    -- lualine theme name
+    buf_name = {
+      mode = 'unique',
+    },
+  })
+end
+
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
 --------------------------------------------------
@@ -502,6 +523,10 @@ return require('packer').startup(
         "anuvyklack/animation.nvim"
       },
       config = windows_config,
+    }
+    use {
+      'nanozuki/tabby.nvim',
+      config = tabby_config,
     }
 
     if packer_bootstrap then
