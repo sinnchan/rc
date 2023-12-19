@@ -1,7 +1,3 @@
-
-# load local zshrc
-source $HOME/.local.zshrc
-
 # -- oh my zsh --
 # https://github.com/ohmyzsh/ohmyzsh
 export ZSH="$HOME/.oh-my-zsh"
@@ -51,7 +47,17 @@ alias vi='nvim'
 alias virc='nvim ~/.config/nvim/init.lua'
 
 # flutter
-alias frun='(){fvm flutter run -d $3 --dart-define FLAVOR=$1 --dart-define ENV=$2}'
+function frun() {
+  if [[ $2 == "production" ]]; then
+    # ENVがproductionの場合、リリースモードで実行
+    fvm flutter run --release -d $3 --dart-define FLAVOR=$1 --dart-define ENV=$2
+  else
+    # それ以外の場合、通常のモードで実行
+    fvm flutter run -d $3 --dart-define FLAVOR=$1 --dart-define ENV=$2
+  fi
+}
+
+alias frun=frun
 alias fcheck='~/scripts/git/fcheck.sh'
 alias cbranch='git branch --show-current'
 
@@ -89,4 +95,9 @@ export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
 # Add colors to Terminal
 export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
-source /usr/share/nvm/init-nvm.sh
+
+# ruby
+[[ -d ~/.rbenv  ]] && \
+  export PATH=${HOME}/.rbenv/bin:${PATH} && \
+  eval "$(rbenv init -)"
+

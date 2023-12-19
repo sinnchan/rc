@@ -415,6 +415,17 @@ local tabby_config = function()
   })
 end
 
+local spectre_config = function()
+  local spectre = require("spectre")
+  spectre.setup()
+  -- Toggle Spectre
+  Map('n', '<leader>S', spectre.toggle)
+  -- Search current word
+  Map('v', '<leader>sw', spectre.open_visual)
+  -- Search on current file
+  Map('v', '<leader>sp', spectre.open_file_search)
+end
+
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
 --------------------------------------------------
@@ -488,10 +499,10 @@ return require('packer').startup(
       "lukas-reineke/indent-blankline.nvim",
       config = indent_config,
     }
-    use {
-      'karb94/neoscroll.nvim',
-      config = neoscroll_config,
-    }
+    -- use {
+    --   'karb94/neoscroll.nvim',
+    --   config = neoscroll_config,
+    -- }
     use {
       'lewis6991/gitsigns.nvim',
       config = gitsigns_config,
@@ -527,6 +538,13 @@ return require('packer').startup(
     use {
       'nanozuki/tabby.nvim',
       config = tabby_config,
+    }
+    use {
+      'nvim-pack/nvim-spectre',
+      requires = {
+        'nvim-lua/plenary.nvim'
+      },
+      config = spectre_config,
     }
 
     if packer_bootstrap then
