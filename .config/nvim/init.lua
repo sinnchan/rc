@@ -426,6 +426,10 @@ local spectre_config = function()
   Map('v', '<leader>sp', spectre.open_file_search)
 end
 
+local min_todo_config = function ()
+  Map('n', '<leader>mt', '<Cmd>ToggleTask<CR>')
+end
+
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
 --------------------------------------------------
@@ -545,6 +549,10 @@ return require('packer').startup(
         'nvim-lua/plenary.nvim'
       },
       config = spectre_config,
+    }
+    use {
+      'sinnchan/min-todo.vim',
+      config = min_todo_config,
     }
 
     if packer_bootstrap then
