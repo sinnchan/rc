@@ -190,6 +190,36 @@ local coc_config = function()
   Map("v", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
 end
 
+local nvim_dap_config = function()
+  local dap = require('dap')
+  dap.adapters.dart = {
+    type = 'executable',
+    command = 'flutter',
+    args = { 'debug_adapter' }
+  }
+  dap.configurations.dart = {
+    {
+      type = "dart",
+      request = "launch",
+      name = "Launch flutter",
+      dartSdkPath = "~/fvm/default/bin/cache/dart-sdk/bin/dart",
+      flutterSdkPath = "~/fvm/default/bin/flutter",
+      program = "${file}",
+      cwd = "${workspaceFolder}",
+      toolArgs = { "-d 99111FFAZ00D7Z --dart-define FLAVOR=r --dart-define ENV=dev" }
+    }
+  }
+
+  -- key
+  Map('n', '<leader>dd', dap.toggle_breakpoint)
+  Map('n', '<leader>dD', dap.clear_breakpoints)
+  Map('n', '<leader>dl', dap.list_breakpoints)
+  Map('n', '<leader>dn', dap.step_over)
+  Map('n', '<leader>di', dap.step_into)
+  Map('n', '<leader>do', dap.step_out)
+  Map('n', '<leader>dc', dap.continue)
+end
+
 local gitsigns_config = function()
   require('gitsigns').setup {
     on_attach = function(bufnr)
@@ -242,6 +272,7 @@ local telescope_config = function()
   Map('n', '<leader>ff', ts_builtin.find_files, opts)
   Map('n', '<leader>fl', ts_builtin.live_grep, opts)
   Map('n', '<leader>fb', ts_builtin.buffers, opts)
+  Map('n', '<leader>fm', ts_builtin.marks, opts)
   Map('n', '<leader>fc', ts_builtin.commands, opts)
   Map('n', '<leader>fg', ts_builtin.git_status, opts)
   Map('n', '<leader>fe', telescope.extensions.emoji.emoji, opts)
@@ -426,8 +457,21 @@ local spectre_config = function()
   Map('v', '<leader>sp', spectre.open_file_search)
 end
 
-local min_todo_config = function ()
-  Map('n', '<leader>mt', '<Cmd>ToggleTask<CR>')
+local toggleterm_config = function()
+  require('toggleterm').setup()
+  local terminal = require('toggleterm.terminal').Terminal
+  local lazygit = terminal:new({
+    cmd = 'lazygit',
+    direction = 'float',
+    hidden = true,
+    close_on_exit = false,
+  })
+
+  Map('n', '<leader>lg', function() lazygit:toggle() end)
+end
+
+local marks_config = function()
+  require('marks').setup()
 end
 
 --------------------------------------------------
@@ -459,6 +503,9 @@ local packer_bootstrap = (
 -- PACKER STARTUP
 --------------------------------------------------
 
+-- require external command
+-- [node, ripgrep, code-minimap]
+
 return require('packer').startup(
   function(use)
     use 'wbthomason/packer.nvim'
@@ -486,6 +533,10 @@ return require('packer').startup(
       config = telescope_config,
     }
     use {
+      'mfussenegger/nvim-dap',
+      config = nvim_dap_config,
+    }
+    use {
       'nvim-tree/nvim-tree.lua',
       requires = { 'nvim-tree/nvim-web-devicons' },
       config = tree_config,
@@ -503,10 +554,10 @@ return require('packer').startup(
       "lukas-reineke/indent-blankline.nvim",
       config = indent_config,
     }
-    -- use {
-    --   'karb94/neoscroll.nvim',
-    --   config = neoscroll_config,
-    -- }
+    use {
+      'karb94/neoscroll.nvim',
+      config = neoscroll_config,
+    }
     use {
       'lewis6991/gitsigns.nvim',
       config = gitsigns_config,
@@ -551,8 +602,13 @@ return require('packer').startup(
       config = spectre_config,
     }
     use {
-      'sinnchan/min-todo.vim',
-      config = min_todo_config,
+      'akinsho/toggleterm.nvim',
+      tag = '*',
+      config = toggleterm_config,
+    }
+    use {
+      'chentoast/marks.nvim',
+      config = marks_config,
     }
 
     if packer_bootstrap then
