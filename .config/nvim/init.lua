@@ -182,12 +182,8 @@ local coc_config = function()
   Map("x", "if", "<Plug>(coc-funcobj-i)", opts)
 
   opts = { silent = true, nowait = true, expr = true }
-  Map("i", "<C-b>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
-  Map("i", "<C-f>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', opts)
-  Map("n", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
-  Map("n", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
-  Map("v", "<C-b>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', opts)
-  Map("v", "<C-f>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', opts)
+  Map("n", "<C-p>", 'coc#float#has_scroll() ? coc#float#scroll(0) : ""', opts)
+  Map("n", "<C-n>", 'coc#float#has_scroll() ? coc#float#scroll(1) : ""', opts)
 end
 
 local nvim_dap_config = function()
@@ -276,6 +272,7 @@ local telescope_config = function()
   Map('n', '<leader>fc', ts_builtin.commands, opts)
   Map('n', '<leader>fg', ts_builtin.git_status, opts)
   Map('n', '<leader>fe', telescope.extensions.emoji.emoji, opts)
+  Map('n', '<leader>fn', telescope.extensions.noice.noice, opts)
 
   require('textcase').setup {
     pickers = {
@@ -287,6 +284,7 @@ local telescope_config = function()
 
   telescope.load_extension('textcase')
   telescope.load_extension('emoji')
+  telescope.load_extension('noice')
 
   opts = { desc = 'Telescope' }
   Map('n', '<leader>fC', '<cmd>TextCaseOpenTelescope<CR>', opts)
@@ -329,17 +327,19 @@ local tree_config = function()
 end
 
 local neoscroll_config = function()
-  require('neoscroll').setup()
+  require('neoscroll').setup({
+    easing_function = 'quintic',
+  })
   local t    = {}
-  t['<C-u>'] = { 'scroll', { '-vim.wo.scroll', 'true', '80', 'quintic' } }
-  t['<C-d>'] = { 'scroll', { 'vim.wo.scroll', 'true', '80', 'quintic' } }
-  t['<C-b>'] = { 'scroll', { '-vim.api.nvim_win_get_height(0)', 'true', '160', 'quintic' } }
-  t['<C-f>'] = { 'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '160', 'quintic' } }
-  t['<C-y>'] = { 'scroll', { '-0.10', 'false', '40', 'quintic' } }
-  t['<C-e>'] = { 'scroll', { '0.10', 'false', '40', 'quintic' } }
-  t['zt']    = { 'zt', { '80', 'quintic' } }
-  t['zz']    = { 'zz', { '80', 'quintic' } }
-  t['zb']    = { 'zb', { '80', 'quintic' } }
+  t['<C-u>'] = { 'scroll', { '-vim.wo.scroll', 'true', '80' } }
+  t['<C-d>'] = { 'scroll', { 'vim.wo.scroll', 'true', '80' } }
+  t['<C-b>'] = { 'scroll', { '-vim.api.nvim_win_get_height(0)', 'true', '160' } }
+  t['<C-f>'] = { 'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '160' } }
+  t['<C-y>'] = { 'scroll', { '-0.10', 'false', '40' } }
+  t['<C-e>'] = { 'scroll', { '0.10', 'false', '40' } }
+  t['zt']    = { 'zt', { '80' } }
+  t['zz']    = { 'zz', { '80' } }
+  t['zb']    = { 'zb', { '80' } }
   require('neoscroll.config').set_mappings(t)
 end
 
@@ -464,7 +464,6 @@ local toggleterm_config = function()
     cmd = 'lazygit',
     direction = 'float',
     hidden = true,
-    close_on_exit = false,
   })
 
   Map('n', '<leader>lg', function() lazygit:toggle() end)
@@ -472,6 +471,25 @@ end
 
 local marks_config = function()
   require('marks').setup()
+end
+
+local noice_config = function()
+  require("noice").setup({
+    lsp = {
+      override = {
+        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+        ["vim.lsp.util.stylize_markdown"] = true,
+        ["cmp.entry.get_documentation"] = true,
+      },
+    },
+    presets = {
+      bottom_search = false,
+      command_palette = true,
+      long_message_to_split = true,
+      inc_rename = true,
+      lsp_doc_border = true,
+    },
+  })
 end
 
 --------------------------------------------------
@@ -609,6 +627,16 @@ return require('packer').startup(
     use {
       'chentoast/marks.nvim',
       config = marks_config,
+    }
+
+    use {
+      'folke/noice.nvim',
+      requires = {
+        'MunifTanjim/nui.nvim',
+        'rcarriga/nvim-notify',
+        'hrsh7th/nvim-cmp',
+      },
+      config = noice_config,
     }
 
     if packer_bootstrap then

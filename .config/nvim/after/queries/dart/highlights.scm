@@ -1,9 +1,11 @@
 ;; extends
 
-(final_builtin)  @keyword
-(const_builtin)  @keyword
-"abstract" @keyword
-"static" @keyword
+[
+  (const_builtin)
+  "final"
+  "abstract"
+  "static"
+] @keyword
 (type_alias (type_identifier) @type)
 (formal_parameter (identifier) @parameter)
 
