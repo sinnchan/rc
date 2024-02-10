@@ -34,13 +34,6 @@ export LANG=en_US.UTF-8
 # exports
 export EDITOR='nvim'
 
-# path
-export PATH="$PATH:$HOME/fvm/default/bin"
-export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
-export PATH="$PATH:$HOME/.pub-cache/bin"
-export PATH="$PATH:/usr/local/opt/openjdk@11/bin"
-
-
 # alias
 alias la='ls -lah'
 alias vi='nvim'
