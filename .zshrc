@@ -27,6 +27,7 @@ function zvm_after_lazy_keybindings() {
 }
 
 source $ZSH/oh-my-zsh.sh
+source $HOME/.zshrc.local
 
 # theme
 export LANG=en_US.UTF-8
@@ -38,30 +39,6 @@ export EDITOR='nvim'
 alias la='ls -lah'
 alias vi='nvim'
 alias virc='nvim ~/.config/nvim/init.lua'
-
-# flutter
-function frun() {
-  if [[ $2 == "production" ]]; then
-    # ENVがproductionの場合、リリースモードで実行
-    fvm flutter run --release -d $3 --dart-define FLAVOR=$1 --dart-define ENV=$2
-  else
-    # それ以外の場合、通常のモードで実行
-    fvm flutter run -d $3 --dart-define FLAVOR=$1 --dart-define ENV=$2
-  fi
-}
-
-alias frun=frun
-alias fcheck='~/scripts/git/fcheck.sh'
-alias cbranch='git branch --show-current'
-
-# dart
-if [[ -f ~/.dvm/scripts/dvm ]]; then
-  . ~/.dvm/scripts/dvm
-fi
-
-# python
-eval "$(_PIPENV_COMPLETE=zsh_source pipenv)"
-
 
 # fzf
 # https://github.com/junegunn/fzf#key-bindings-for-command-line
@@ -80,17 +57,4 @@ export FZF_CTRL_R_OPTS="
 # Print tree structure in the preview window
 export FZF_ALT_C_OPTS="--preview 'tree -C {}'"
 
-
-# java
-export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
-
-
-# Add colors to Terminal
-export CLICOLOR=1
-export LSCOLORS=ExFxBxDxCxegedabagacad
-
-# ruby
-[[ -d ~/.rbenv  ]] && \
-  export PATH=${HOME}/.rbenv/bin:${PATH} && \
-  eval "$(rbenv init -)"
 
