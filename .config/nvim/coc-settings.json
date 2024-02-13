@@ -18,5 +18,7 @@
   ],
   "flutter.sdk.searchPaths": [
     "~/fvm/default/bin/flutter"
-  ]
+  ],
+  "coc.source.OmniSharp.enable": true,
+  "coc.source.OmniSharp.triggerCharacters": ".",
 }

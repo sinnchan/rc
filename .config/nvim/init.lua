@@ -4,6 +4,7 @@
 
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
+vim.g.ale_linters = { cs = { 'OmniSharp' } }
 vim.o.showtabline = 2
 vim.opt.autoread = true
 vim.opt.backup = false
@@ -272,7 +273,6 @@ local telescope_config = function()
   Map('n', '<leader>fc', ts_builtin.commands, opts)
   Map('n', '<leader>fg', ts_builtin.git_status, opts)
   Map('n', '<leader>fe', telescope.extensions.emoji.emoji, opts)
-  Map('n', '<leader>fn', telescope.extensions.noice.noice, opts)
 
   require('textcase').setup {
     pickers = {
@@ -284,7 +284,6 @@ local telescope_config = function()
 
   telescope.load_extension('textcase')
   telescope.load_extension('emoji')
-  telescope.load_extension('noice')
 
   opts = { desc = 'Telescope' }
   Map('n', '<leader>fC', '<cmd>TextCaseOpenTelescope<CR>', opts)
@@ -473,25 +472,6 @@ local marks_config = function()
   require('marks').setup()
 end
 
-local noice_config = function()
-  require("noice").setup({
-    lsp = {
-      override = {
-        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-        ["vim.lsp.util.stylize_markdown"] = true,
-        ["cmp.entry.get_documentation"] = true,
-      },
-    },
-    presets = {
-      bottom_search = false,
-      command_palette = true,
-      long_message_to_split = true,
-      inc_rename = true,
-      lsp_doc_border = true,
-    },
-  })
-end
-
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
 --------------------------------------------------
@@ -630,13 +610,10 @@ return require('packer').startup(
     }
 
     use {
-      'folke/noice.nvim',
+      'OmniSharp/omnisharp-vim',
       requires = {
-        'MunifTanjim/nui.nvim',
-        'rcarriga/nvim-notify',
-        'hrsh7th/nvim-cmp',
+        'dense-analysis/ale',
       },
-      config = noice_config,
     }
 
     if packer_bootstrap then
