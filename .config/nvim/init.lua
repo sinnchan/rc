@@ -4,7 +4,6 @@
 
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
-vim.g.ale_linters = { cs = { 'OmniSharp' } }
 vim.o.showtabline = 2
 vim.opt.autoread = true
 vim.opt.backup = false
@@ -56,12 +55,19 @@ Map('n', '<leader>ro', ':e ~/.config/nvim/init.lua<CR>', { silent = true })
 local coc_config = function()
   -- extensions
   vim.g.coc_global_extensions = {
-    'coc-json',
     'coc-lua',
-    'coc-git',
     'coc-flutter',
-    'coc-rust-analyzer',
     'coc-pairs',
+    'coc-json',
+    'coc-git',
+    'coc-rust-analyzer',
+    'coc-xml',
+    'coc-sh',
+    'coc-kotlin',
+    'coc-clangd',
+    'coc-sourcekit',
+    'coc-vimlsp',
+    'coc-go',
   }
 
   -- Autocomplete
@@ -151,7 +157,6 @@ local coc_config = function()
   Map("n", "gDk", goto_def_vsplit_top, opts)
   Map("n", "gDl", goto_def_vsplit_right, opts)
   Map("n", "gi", "<Plug>(coc-implementation)", opts)
-  Map("n", "gr", "<Plug>(coc-references)", opts)
   Map("n", "gy", "<Plug>(coc-type-definition)", opts)
   Map("x", "<C-s>", "<Plug>(coc-range-select)", opts)
   Map("x", "<leader>fs", "<Plug>(coc-format-selected)", opts)
@@ -265,6 +270,19 @@ end
 local telescope_config = function()
   local telescope = require('telescope');
   local ts_builtin = require('telescope.builtin')
+
+  telescope.setup({
+    extensions = {
+      coc = {
+        prefer_locations = true,
+      }
+    }
+  })
+
+  telescope.load_extension('textcase')
+  telescope.load_extension('emoji')
+  telescope.load_extension('coc')
+
   local opts = {}
   Map('n', '<leader>ff', ts_builtin.find_files, opts)
   Map('n', '<leader>fl', ts_builtin.live_grep, opts)
@@ -273,6 +291,7 @@ local telescope_config = function()
   Map('n', '<leader>fc', ts_builtin.commands, opts)
   Map('n', '<leader>fg', ts_builtin.git_status, opts)
   Map('n', '<leader>fe', telescope.extensions.emoji.emoji, opts)
+  Map('n', 'gr', '<cmd>Telescope coc references<CR>', opts)
 
   require('textcase').setup {
     pickers = {
@@ -281,9 +300,6 @@ local telescope_config = function()
       }
     }
   }
-
-  telescope.load_extension('textcase')
-  telescope.load_extension('emoji')
 
   opts = { desc = 'Telescope' }
   Map('n', '<leader>fC', '<cmd>TextCaseOpenTelescope<CR>', opts)
@@ -343,7 +359,11 @@ local neoscroll_config = function()
 end
 
 local onedark_config = function()
-  require('onedark').load()
+  local onedark = require('onedark')
+  onedark.setup {
+    transparent = true,
+  }
+  onedark.load()
 end
 
 local lualine_config = function()
@@ -472,6 +492,16 @@ local marks_config = function()
   require('marks').setup()
 end
 
+local hop_config = function()
+  local hop = require('hop')
+  hop.setup({
+    keys = 'abcefhjkmnprstuvwxyz.2345678',
+    uppercase_labels = true,
+    multi_windows = true,
+  })
+  Map('n', 'f', function() hop.hint_char1({}) end)
+end
+
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
 --------------------------------------------------
@@ -527,6 +557,7 @@ return require('packer').startup(
         'nvim-lua/plenary.nvim',
         'johmsalas/text-case.nvim',
         'xiyaowong/telescope-emoji.nvim',
+        'fannheyward/telescope-coc.nvim',
       },
       config = telescope_config,
     }
@@ -608,12 +639,13 @@ return require('packer').startup(
       'chentoast/marks.nvim',
       config = marks_config,
     }
-
     use {
       'OmniSharp/omnisharp-vim',
-      requires = {
-        'dense-analysis/ale',
-      },
+    }
+    use {
+      'smoka7/hop.nvim',
+      tag = '*',
+      config = hop_config,
     }
 
     if packer_bootstrap then
