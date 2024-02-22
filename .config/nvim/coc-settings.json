@@ -1,6 +1,12 @@
 {
   "suggest.noselect": false,
   "inlayHint.enable": false,
+  "hover.floatConfig": {
+    "border": true,
+  },
+  "suggest.floatConfig": {
+    "border": true,
+  },
   "Lua.diagnostics.globals": [
     "vim"
   ],
@@ -20,5 +26,5 @@
     "~/fvm/default/bin/flutter"
   ],
   "coc.source.OmniSharp.enable": true,
-  "coc.source.OmniSharp.triggerCharacters": ".",
+  "coc.source.OmniSharp.triggerCharacters": "."
 }

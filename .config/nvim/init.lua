@@ -37,6 +37,15 @@ vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
 
+-- color
+local custom_colors = function()
+  vim.api.nvim_set_hl(0, 'Search', { fg = '#19ffb2', underline = true })
+  vim.api.nvim_set_hl(0, 'IncSearch', { fg = '#19ffb2', underline = true })
+  vim.api.nvim_set_hl(0, 'CurSearch', { fg = 'black', bg = '#19ffb2' })
+end
+
+custom_colors();
+
 -- cmd
 vim.cmd [[ autocmd FileType markdown,rust setlocal tabstop=2 ]]
 
@@ -156,7 +165,6 @@ local coc_config = function()
   Map("n", "gDj", goto_def_vsplit_bottom, opts)
   Map("n", "gDk", goto_def_vsplit_top, opts)
   Map("n", "gDl", goto_def_vsplit_right, opts)
-  Map("n", "gi", "<Plug>(coc-implementation)", opts)
   Map("n", "gy", "<Plug>(coc-type-definition)", opts)
   Map("x", "<C-s>", "<Plug>(coc-range-select)", opts)
   Map("x", "<leader>fs", "<Plug>(coc-format-selected)", opts)
@@ -167,7 +175,6 @@ local coc_config = function()
   Map("n", "<leader>a", "<Plug>(coc-codeaction-selected)", opts)
   Map("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", opts)
   Map("n", "<leader>as", "<Plug>(coc-codeaction-source)", opts)
-  Map("n", "<leader>cd", ":<C-u>CocList diagnostics<cr>", opts)
   Map("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts)
   Map("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts)
   Map("n", "<leader>cj", ":<C-u>CocNext<cr>", opts)
@@ -282,6 +289,7 @@ local telescope_config = function()
   telescope.load_extension('textcase')
   telescope.load_extension('emoji')
   telescope.load_extension('coc')
+  telescope.load_extension('noice')
 
   local opts = {}
   Map('n', '<leader>ff', ts_builtin.find_files, opts)
@@ -291,7 +299,10 @@ local telescope_config = function()
   Map('n', '<leader>fc', ts_builtin.commands, opts)
   Map('n', '<leader>fg', ts_builtin.git_status, opts)
   Map('n', '<leader>fe', telescope.extensions.emoji.emoji, opts)
-  Map('n', 'gr', '<cmd>Telescope coc references<CR>', opts)
+  Map('n', '<leader>fn', telescope.extensions.noice.noice, opts)
+  Map('n', '<leader>cd', '<CMD>Telescope coc workspace_diagnostics<CR>', opts)
+  Map('n', 'gr', '<CMD>Telescope coc references<CR>', opts)
+  Map('n', 'gi', '<CMD>Telescope coc implementations<CR>', opts)
 
   require('textcase').setup {
     pickers = {
@@ -502,6 +513,28 @@ local hop_config = function()
   Map('n', 'f', function() hop.hint_char1({}) end)
 end
 
+local noice_config = function()
+  require("notify").setup({
+    background_colour = "#000000",
+  })
+  require("noice").setup({
+    lsp = {
+      override = {
+        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+        ["vim.lsp.util.stylize_markdown"] = true,
+        ["cmp.entry.get_documentation"] = true,
+      },
+    },
+    presets = {
+      bottom_search = false,
+      command_palette = true,
+      long_message_to_split = true,
+      inc_rename = true,
+      lsp_doc_border = true,
+    },
+  })
+end
+
 --------------------------------------------------
 -- PACKER.NVIM BOOTSTRAP
 --------------------------------------------------
@@ -646,6 +679,15 @@ return require('packer').startup(
       'smoka7/hop.nvim',
       tag = '*',
       config = hop_config,
+    }
+    use {
+      'folke/noice.nvim',
+      requires = {
+        'MunifTanjim/nui.nvim',
+        'rcarriga/nvim-notify',
+        'hrsh7th/nvim-cmp',
+      },
+      config = noice_config,
     }
 
     if packer_bootstrap then
