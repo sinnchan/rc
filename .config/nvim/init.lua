@@ -38,10 +38,13 @@ vim.opt.wrapscan = false
 vim.opt.writebackup = false
 
 -- color
+local custom_colors = function()
+  vim.api.nvim_set_hl(0, 'Search', { fg = '#19ffb2', underline = true })
+  vim.api.nvim_set_hl(0, 'IncSearch', { fg = '#19ffb2', underline = true })
+  vim.api.nvim_set_hl(0, 'CurSearch', { fg = 'black', bg = '#19ffb2' })
+end
 
-vim.api.nvim_set_hl(0, 'Search', { fg = '#19ffb2', underline = true })
-vim.api.nvim_set_hl(0, 'IncSearch', { fg = '#19ffb2', underline = true })
-vim.api.nvim_set_hl(0, 'CurSearch', { fg = 'black', bg = '#19ffb2' })
+custom_colors();
 
 -- cmd
 vim.cmd [[ autocmd FileType markdown,rust setlocal tabstop=2 ]]
@@ -162,7 +165,6 @@ local coc_config = function()
   Map("n", "gDj", goto_def_vsplit_bottom, opts)
   Map("n", "gDk", goto_def_vsplit_top, opts)
   Map("n", "gDl", goto_def_vsplit_right, opts)
-  Map("n", "gi", "<Plug>(coc-implementation)", opts)
   Map("n", "gy", "<Plug>(coc-type-definition)", opts)
   Map("x", "<C-s>", "<Plug>(coc-range-select)", opts)
   Map("x", "<leader>fs", "<Plug>(coc-format-selected)", opts)
@@ -300,6 +302,7 @@ local telescope_config = function()
   Map('n', '<leader>fn', telescope.extensions.noice.noice, opts)
   Map('n', '<leader>cd', '<CMD>Telescope coc workspace_diagnostics<CR>', opts)
   Map('n', 'gr', '<CMD>Telescope coc references<CR>', opts)
+  Map('n', 'gi', '<CMD>Telescope coc implementations<CR>', opts)
 
   require('textcase').setup {
     pickers = {
@@ -511,6 +514,9 @@ local hop_config = function()
 end
 
 local noice_config = function()
+  require("notify").setup({
+    background_colour = "#000000",
+  })
   require("noice").setup({
     lsp = {
       override = {
