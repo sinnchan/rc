@@ -537,7 +537,7 @@ local packer_bootstrap = (
 return require('packer').startup(
   function(use)
     use 'wbthomason/packer.nvim'
-    use 'sinnchan/hot-reload.vim'
+    use 'autolisis/hot-reload.vim'
 
     use {
       'neoclide/coc.nvim',
