@@ -386,15 +386,8 @@ local plugins = {
   },
   {
     "rcarriga/nvim-dap-ui",
-    config = function()
-      local listeners = require("dap").listeners.before
-      local ui = require("dapui")
-      ui.setup()
-      listeners.attach.dapui_config = function() ui.open() end
-      listeners.launch.dapui_config = function() ui.open() end
-      listeners.event_terminated.dapui_config = function() ui.close() end
-      listeners.event_exited.dapui_config = function() ui.close() end
-    end,
+    main = "dapui",
+    config = true,
     keys = function()
       local ui = require("dapui")
       return {
@@ -458,7 +451,14 @@ local plugins = {
       },
       decorations = {
         project_config = true,
-      }
+      },
+      lsp = {
+        color = {
+          enabled = true,
+          background = true,
+          background_color = { r = 40, g = 44, b = 52 },
+        },
+      },
     },
     config = function(_, opts)
       local tools = require("flutter-tools")
