@@ -43,21 +43,43 @@ local custom_colors = function()
 end
 
 -- func
-local function cmd(command)
+local cmd = function(command)
   return table.concat({ "<CMD>", command, "<CR>" })
 end
 
-local function onLspAttach(callback)
+local onLspAttach = function(callback)
   vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("UserLspConfig", {}),
     callback = callback,
   })
 end
 
+-- function
+local goto_def_sp_top = function()
+  vim.cmd "split"
+  vim.cmd "Lspsaga goto_definition"
+end
+local goto_def_sp_bottom = function()
+  vim.cmd("split")
+  vim.cmd("wincmd j")
+  vim.cmd "Lspsaga goto_definition"
+end
+local goto_def_sp_left = function()
+  vim.cmd("vsplit")
+  vim.cmd "Lspsaga goto_definition"
+end
+local goto_def_sp_right = function()
+  vim.cmd("vsplit")
+  vim.cmd("wincmd l")
+  vim.cmd "Lspsaga goto_definition"
+end
+
 vim.cmd [[ autocmd FileType markdown,rust setlocal tabstop=2 ]]
 
 -- default vim keymap
 Map = vim.keymap.set
+Map("n", "<C-l>", "10zl")
+Map("n", "<C-h>", "10zh")
 Map("n", "<leader>rr", cmd "source ~/.config/nvim/init.lua", { silent = true })
 Map("n", "<leader>ro", cmd "e ~/.config/nvim/init.lua", { silent = true })
 
@@ -237,18 +259,22 @@ local plugins = {
       }
     },
     keys = {
-      { "<leader>ci", cmd "Lspsaga incoming_calls" },
-      { "<leader>co", cmd "Lspsaga outgoing_calls" },
-      { "<leader>ac", cmd "Lspsaga code_action" },
-      { "<leader>ac", cmd "Lspsaga code_action",         mode = "x" },
-      { "<leader>rn", cmd "Lspsaga rename" },
-      { "K",          cmd "Lspsaga hover_doc" },
-      { "g[",         cmd "Lspsaga diagnostic_jump_prev" },
-      { "g]",         cmd "Lspsaga diagnostic_jump_next" },
-      { "gd",         cmd "Lspsaga goto_definition" },
-      { "gD",         cmd "Lspsaga peek_definition" },
-      { "go",         cmd "Lspsaga outline" },
-      { "gr",         cmd "Lspsaga finder" },
+      { "K",           cmd "Lspsaga hover_doc" },
+      { "g[",          cmd "Lspsaga diagnostic_jump_prev" },
+      { "g]",          cmd "Lspsaga diagnostic_jump_next" },
+      { "gd",          cmd "Lspsaga goto_definition" },
+      { "gD",          cmd "Lspsaga peek_definition" },
+      { "go",          cmd "Lspsaga outline" },
+      { "gr",          cmd "Lspsaga finder" },
+      { "<leader>ci",  cmd "Lspsaga incoming_calls" },
+      { "<leader>co",  cmd "Lspsaga outgoing_calls" },
+      { "<leader>ac",  cmd "Lspsaga code_action" },
+      { "<leader>ac",  cmd "Lspsaga code_action",         mode = "x" },
+      { "<leader>rn",  cmd "Lspsaga rename" },
+      { "<leader>gDh", goto_def_sp_left },
+      { "<leader>gDj", goto_def_sp_bottom },
+      { "<leader>gDk", goto_def_sp_top },
+      { "<leader>gDl", goto_def_sp_right },
     }
   },
   {
@@ -371,7 +397,12 @@ local plugins = {
       'nvim-lua/plenary.nvim',
       'stevearc/dressing.nvim',
     },
-    opts = {},
+    opts = {
+      fvm = true,
+      widget_guides = {
+        enabled = true,
+      },
+    },
   },
   {
     "lukas-reineke/indent-blankline.nvim",
