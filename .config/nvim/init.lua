@@ -1,5 +1,7 @@
--- init
+-- path
+package.path = package.path .. ";" .. os.getenv("HOME") .. "/?.lua"
 
+-- init
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
 vim.o.showtabline = 2
@@ -57,21 +59,21 @@ end
 -- function
 local goto_def_sp_top = function()
   vim.cmd "split"
-  vim.cmd "Lspsaga goto_definition"
+  vim.cmd("Lspsaga goto_definition")
 end
 local goto_def_sp_bottom = function()
   vim.cmd("split")
   vim.cmd("wincmd j")
-  vim.cmd "Lspsaga goto_definition"
+  vim.cmd("Lspsaga goto_definition")
 end
 local goto_def_sp_left = function()
   vim.cmd("vsplit")
-  vim.cmd "Lspsaga goto_definition"
+  vim.cmd("Lspsaga goto_definition")
 end
 local goto_def_sp_right = function()
   vim.cmd("vsplit")
   vim.cmd("wincmd l")
-  vim.cmd "Lspsaga goto_definition"
+  vim.cmd("Lspsaga goto_definition")
 end
 
 vim.cmd [[ autocmd FileType markdown,rust setlocal tabstop=2 ]]
@@ -184,15 +186,29 @@ local plugins = {
     event = "VeryLazy",
     dependencies = { "williamboman/mason-lspconfig.nvim" },
     config = function()
-      local handler = function(server_name)
-        require("lspconfig")[server_name].setup {
-          capabilities = require('cmp_nvim_lsp').default_capabilities(),
-        }
-      end
       require("mason").setup()
       require("mason-lspconfig").setup {
         automatic_installation = true,
-        handlers = { handler },
+        handlers = {
+          -- handler
+          function(server_name)
+            require("lspconfig")[server_name].setup {
+              capabilities = require('cmp_nvim_lsp').default_capabilities(),
+            }
+          end,
+          -- config
+          ["lua_ls"] = function()
+            require('lspconfig').lua_ls.setup {
+              settings = {
+                Lua = {
+                  completion = {
+                    callSnippet = "Replace",
+                  },
+                },
+              },
+            }
+          end,
+        },
       }
     end,
   },
@@ -218,6 +234,17 @@ local plugins = {
         Map("n", "<leader>fa", function() lsp_b.format { async = true } end, opts)
       end)
     end,
+  },
+  {
+    "folke/neodev.nvim",
+    priority = 525,
+    event = "VeryLazy",
+    opts = {
+      library = {
+        plugins = { "nvim-dap-ui" },
+        types = true,
+      },
+    },
   },
   {
     'nvimdev/lspsaga.nvim',
@@ -339,6 +366,11 @@ local plugins = {
   },
   {
     "mfussenegger/nvim-dap",
+    priority = 550,
+    dependencies = {
+      "rcarriga/nvim-dap-ui",
+      "folke/neodev.nvim",
+    },
     keys = function()
       local dap = require("dap")
       return {
@@ -349,6 +381,24 @@ local plugins = {
         { "<leader>di", dap.step_into },
         { "<leader>do", dap.step_out },
         { "<leader>dc", dap.continue },
+      }
+    end,
+  },
+  {
+    "rcarriga/nvim-dap-ui",
+    config = function()
+      local listeners = require("dap").listeners.before
+      local ui = require("dapui")
+      ui.setup()
+      listeners.attach.dapui_config = function() ui.open() end
+      listeners.launch.dapui_config = function() ui.open() end
+      listeners.event_terminated.dapui_config = function() ui.close() end
+      listeners.event_exited.dapui_config = function() ui.close() end
+    end,
+    keys = function()
+      local ui = require("dapui")
+      return {
+        { "<leader>du", function() ui.toggle() end }
       }
     end,
   },
@@ -402,7 +452,23 @@ local plugins = {
       widget_guides = {
         enabled = true,
       },
+      debugger = {
+        enabled = true,
+        run_via_dap = true,
+      },
+      decorations = {
+        project_config = true,
+      }
     },
+    config = function(_, opts)
+      local tools = require("flutter-tools")
+      tools.setup(opts)
+
+      local is_loaded, mod = pcall(require, "local_flutter_proj")
+      if is_loaded then
+        tools.setup_project(mod.projects)
+      end
+    end
   },
   {
     "lukas-reineke/indent-blankline.nvim",
