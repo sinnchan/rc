@@ -276,7 +276,7 @@ local plugins = {
         left_width = 0.3,
         right_width = 0.5,
         keys = {
-          shuttle = "e",
+          shuttle = "<C-o>",
           split = "<C-s>",
           vsplit = "<C-x>",
         },
