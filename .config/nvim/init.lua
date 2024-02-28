@@ -58,7 +58,7 @@ end
 
 -- function
 local goto_def_sp_top = function()
-  vim.cmd "split"
+  vim.cmd("split")
   vim.cmd("Lspsaga goto_definition")
 end
 local goto_def_sp_bottom = function()
@@ -182,39 +182,45 @@ local plugins = {
   },
   {
     "williamboman/mason.nvim",
-    priority = 500,
+    priority = 502,
     event = "VeryLazy",
-    dependencies = { "williamboman/mason-lspconfig.nvim" },
-    config = function()
-      require("mason").setup()
-      require("mason-lspconfig").setup {
-        automatic_installation = true,
-        handlers = {
-          -- handler
-          function(server_name)
-            require("lspconfig")[server_name].setup {
-              capabilities = require('cmp_nvim_lsp').default_capabilities(),
-            }
-          end,
-          -- config
-          ["lua_ls"] = function()
-            require('lspconfig').lua_ls.setup {
-              settings = {
-                Lua = {
-                  completion = {
-                    callSnippet = "Replace",
-                  },
+    dependencies = {
+      "neovim/nvim-lspconfig",
+    },
+    config = true,
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    priority = 501,
+    event = "VeryLazy",
+    dependencies = {
+      "williamboman/mason.nvim",
+    },
+    opts = {
+      automatic_installation = true,
+      handlers = {
+        function(server_name)
+          require("lspconfig")[server_name].setup {
+            capabilities = require('cmp_nvim_lsp').default_capabilities(),
+          }
+        end,
+        ["lua_ls"] = function()
+          require('lspconfig').lua_ls.setup {
+            settings = {
+              Lua = {
+                completion = {
+                  callSnippet = "Replace",
                 },
               },
-            }
-          end,
-        },
-      }
-    end,
+            },
+          }
+        end,
+      },
+    },
   },
   {
     "neovim/nvim-lspconfig",
-    priority = 400,
+    priority = 500,
     event = "VeryLazy",
     keys = {
       { '<leader>e', vim.diagnostic.open_float },
@@ -303,6 +309,47 @@ local plugins = {
       { "<leader>gDk", goto_def_sp_top },
       { "<leader>gDl", goto_def_sp_right },
     }
+  },
+
+  -- languages
+
+  { 'udalov/kotlin-vim' },
+  {
+    'akinsho/flutter-tools.nvim',
+    ft = { "dart" },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'stevearc/dressing.nvim',
+    },
+    opts = {
+      fvm = true,
+      widget_guides = {
+        enabled = true,
+      },
+      debugger = {
+        enabled = true,
+        run_via_dap = true,
+      },
+      decorations = {
+        project_config = true,
+      },
+      lsp = {
+        color = {
+          enabled = true,
+          background = true,
+          background_color = { r = 40, g = 44, b = 52 },
+        },
+      },
+    },
+    config = function(_, opts)
+      local tools = require("flutter-tools")
+      tools.setup(opts)
+
+      local is_loaded, mod = pcall(require, "local_flutter_proj")
+      if is_loaded then
+        tools.setup_project(mod.projects)
+      end
+    end
   },
   {
     "hrsh7th/nvim-cmp",
@@ -432,43 +479,6 @@ local plugins = {
         { "<leader>tr", tree.tree.reload },
       }
     end,
-  },
-  {
-    'akinsho/flutter-tools.nvim',
-    ft = { "dart" },
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'stevearc/dressing.nvim',
-    },
-    opts = {
-      fvm = true,
-      widget_guides = {
-        enabled = true,
-      },
-      debugger = {
-        enabled = true,
-        run_via_dap = true,
-      },
-      decorations = {
-        project_config = true,
-      },
-      lsp = {
-        color = {
-          enabled = true,
-          background = true,
-          background_color = { r = 40, g = 44, b = 52 },
-        },
-      },
-    },
-    config = function(_, opts)
-      local tools = require("flutter-tools")
-      tools.setup(opts)
-
-      local is_loaded, mod = pcall(require, "local_flutter_proj")
-      if is_loaded then
-        tools.setup_project(mod.projects)
-      end
-    end
   },
   {
     "lukas-reineke/indent-blankline.nvim",
