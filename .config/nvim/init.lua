@@ -352,7 +352,6 @@ local plugins = {
       },
       debugger = {
         enabled = true,
-        run_via_dap = true,
       },
       decorations = {
         project_config = true,
@@ -452,6 +451,7 @@ local plugins = {
         { "<leader>di", dap.step_into },
         { "<leader>do", dap.step_out },
         { "<leader>dc", dap.continue },
+        { "<leader>dC", dap.disconnect },
       }
     end,
   },
@@ -750,6 +750,12 @@ local plugins = {
     event = "VeryLazy",
     opts = {},
   },
+  {
+    "tpope/vim-fugitive",
+    cmd = {
+      "Git",
+    },
+  }
 }
 
 require("lazy").setup(plugins, lazy_opts)
