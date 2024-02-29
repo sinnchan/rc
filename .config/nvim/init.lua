@@ -195,6 +195,7 @@ local plugins = {
     event = "VeryLazy",
     dependencies = {
       "williamboman/mason.nvim",
+      "b0o/schemastore.nvim",
     },
     opts = {
       automatic_installation = true,
@@ -215,6 +216,29 @@ local plugins = {
             },
           }
         end,
+        ["jsonls"] = function()
+          require('lspconfig').jsonls.setup {
+            settings = {
+              json = {
+                schemas = require('schemastore').json.schemas(),
+                validate = { enable = true },
+              },
+            },
+          }
+        end,
+        ["yamlls"] = function()
+          require('lspconfig').yamlls.setup {
+            settings = {
+              yaml = {
+                schemaStore = {
+                  enable = false,
+                  url = "",
+                },
+                schemas = require('schemastore').yaml.schemas(),
+              },
+            },
+          }
+        end
       },
     },
   },
