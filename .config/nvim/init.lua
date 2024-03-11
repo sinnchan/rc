@@ -352,6 +352,7 @@ local plugins = {
       },
       debugger = {
         enabled = true,
+        run_via_dap = true,
       },
       decorations = {
         project_config = true,
@@ -627,8 +628,7 @@ local plugins = {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
-    build = "cd app && yarn install",
-    init = function() vim.g.mkdp_filetypes = { "markdown" } end,
+    build = function() vim.fn["mkdp#util#install"]() end,
   },
   {
     "anuvyklack/windows.nvim",
@@ -751,11 +751,10 @@ local plugins = {
     opts = {},
   },
   {
-    "tpope/vim-fugitive",
-    cmd = {
-      "Git",
-    },
-  }
+    "dinhhuy258/git.nvim",
+    cmd = { "GitBlame" },
+    config = true,
+  },
 }
 
 require("lazy").setup(plugins, lazy_opts)
