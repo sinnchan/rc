@@ -1,8 +1,20 @@
 {
+  "riverpod method": {
+    "description": "snip riverpod method",
+    "prefix": [
+      "snip_riverpod_method"
+    ],
+    "body": [
+      "@riverpod",
+      "$2 $1($1Ref ref) {",
+      "\tthrow UnimplementedError();",
+      "}"
+    ]
+  },
   "riverpod class": {
     "description": "snip riverpod class",
     "prefix": [
-      "riverpod"
+      "snip_riverpod_class"
     ],
     "body": [
       "@riverpod",
@@ -17,7 +29,7 @@
   "freezed class": {
     "description": "snip freezed class",
     "prefix": [
-      "freezed"
+      "snip_freezed"
     ],
     "body": [
       "@freezed",
@@ -34,8 +46,7 @@
   "freezed part": {
     "description": "snip freezed part",
     "prefix": [
-      "part",
-      "pf"
+      "snip_freezed_part"
     ],
     "body": [
       "part '$TM_FILENAME_BASE.freezed.dart';"
@@ -44,8 +55,7 @@
   "generate part": {
     "description": "snip generate part",
     "prefix": [
-      "part",
-      "pg"
+      "snip_gen_part"
     ],
     "body": [
       "part '$TM_FILENAME_BASE.g.dart';"

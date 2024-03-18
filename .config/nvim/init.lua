@@ -337,13 +337,13 @@ local plugins = {
 
   -- languages
 
-  { 'udalov/kotlin-vim' },
+  { "udalov/kotlin-vim" },
   {
-    'akinsho/flutter-tools.nvim',
+    "akinsho/flutter-tools.nvim",
     ft = { "dart" },
     dependencies = {
-      'nvim-lua/plenary.nvim',
-      'stevearc/dressing.nvim',
+      "nvim-lua/plenary.nvim",
+      "stevearc/dressing.nvim",
     },
     opts = {
       fvm = true,
@@ -362,6 +362,15 @@ local plugins = {
           enabled = true,
           background = true,
           background_color = { r = 40, g = 44, b = 52 },
+        },
+        settings = {
+          renameFilesWithClasses = "always",
+          updateImportsOnRename = true,
+          analysisExcludedFolders = {
+            ".dart_tool",
+            vim.fn.expand("~") .. "/.pub-cache/",
+            vim.fn.expand("~") .. "/fvm/",
+          },
         },
       },
     },
@@ -454,6 +463,9 @@ local plugins = {
       "rcarriga/nvim-dap-ui",
       "folke/neodev.nvim",
     },
+    config = function()
+      require("dap").set_exception_breakpoints({})
+    end,
     keys = function()
       local dap = require("dap")
       return {

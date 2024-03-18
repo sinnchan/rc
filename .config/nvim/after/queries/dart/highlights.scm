@@ -2,6 +2,7 @@
 
 [
   (const_builtin)
+  (void_type)
   "final"
   "abstract"
   "static"
