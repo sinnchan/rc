@@ -365,7 +365,7 @@ local plugins = {
           renameFilesWithClasses = "always",
           updateImportsOnRename = true,
           analysisExcludedFolders = {
-            ".dart_tool",
+            ".dart_tool/",
             vim.fn.expand("~") .. "/.pub-cache/",
             vim.fn.expand("~") .. "/fvm/",
           },
@@ -460,6 +460,7 @@ local plugins = {
     dependencies = {
       "rcarriga/nvim-dap-ui",
       "folke/neodev.nvim",
+      "nvim-neotest/nvim-nio",
     },
     keys = function()
       local dap = require("dap")
