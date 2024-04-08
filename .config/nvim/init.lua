@@ -56,28 +56,6 @@ local onLspAttach = function(callback)
   })
 end
 
--- function
-local goto_def_sp_top = function()
-  vim.cmd("split")
-  vim.cmd("Lspsaga goto_definition")
-end
-local goto_def_sp_bottom = function()
-  vim.cmd("split")
-  vim.cmd("wincmd j")
-  vim.cmd("Lspsaga goto_definition")
-end
-local goto_def_sp_left = function()
-  vim.cmd("vsplit")
-  vim.cmd("Lspsaga goto_definition")
-end
-local goto_def_sp_right = function()
-  vim.cmd("vsplit")
-  vim.cmd("wincmd l")
-  vim.cmd("Lspsaga goto_definition")
-end
-
-vim.cmd [[ autocmd FileType markdown,rust setlocal tabstop=2 ]]
-
 -- default vim keymap
 Map = vim.keymap.set
 Map("n", "<C-l>", "10zl")
@@ -113,7 +91,7 @@ local plugins = {
     lazy = false,
     opts = { transparent = true },
     config = function(_, opts)
-      local onedark = require('onedark')
+      local onedark = require("onedark")
       onedark.setup(opts)
       onedark.load()
       custom_colors();
@@ -168,15 +146,15 @@ local plugins = {
       local ts = require("telescope")
       local builtin = require("telescope.builtin")
       return {
-        { "<leader>ff", builtin.find_files, },
-        { "<leader>fl", builtin.live_grep, },
-        { "<leader>fb", builtin.buffers, },
-        { "<leader>fm", builtin.marks, },
-        { "<leader>fc", builtin.commands, },
-        { "<leader>fg", builtin.git_status, },
+        { "<leader>ff", builtin.find_files },
+        { "<leader>fl", builtin.live_grep },
+        { "<leader>fb", builtin.buffers },
+        { "<leader>fm", builtin.marks },
+        { "<leader>fc", builtin.commands },
+        { "<leader>fg", builtin.git_status },
         { "<leader>fd", builtin.diagnostics },
-        { "<leader>fe", ts.extensions.emoji.emoji, },
-        { "<leader>fn", ts.extensions.noice.noice, },
+        { "<leader>fe", ts.extensions.emoji.emoji },
+        { "<leader>fn", ts.extensions.noice.noice },
       }
     end,
   },
@@ -202,11 +180,11 @@ local plugins = {
       handlers = {
         function(server_name)
           require("lspconfig")[server_name].setup {
-            capabilities = require('cmp_nvim_lsp').default_capabilities(),
+            capabilities = require("cmp_nvim_lsp").default_capabilities(),
           }
         end,
         ["lua_ls"] = function()
-          require('lspconfig').lua_ls.setup {
+          require("lspconfig").lua_ls.setup {
             settings = {
               Lua = {
                 completion = {
@@ -217,24 +195,24 @@ local plugins = {
           }
         end,
         ["jsonls"] = function()
-          require('lspconfig').jsonls.setup {
+          require("lspconfig").jsonls.setup {
             settings = {
               json = {
-                schemas = require('schemastore').json.schemas(),
+                schemas = require("schemastore").json.schemas(),
                 validate = { enable = true },
               },
             },
           }
         end,
         ["yamlls"] = function()
-          require('lspconfig').yamlls.setup {
+          require("lspconfig").yamlls.setup {
             settings = {
               yaml = {
                 schemaStore = {
                   enable = false,
                   url = "",
                 },
-                schemas = require('schemastore').yaml.schemas(),
+                schemas = require("schemastore").yaml.schemas(),
               },
             },
           }
@@ -247,8 +225,8 @@ local plugins = {
     priority = 500,
     event = "VeryLazy",
     keys = {
-      { '<leader>e', vim.diagnostic.open_float },
-      { '<leader>q', vim.diagnostic.setloclist },
+      { "<leader>e", vim.diagnostic.open_float },
+      { "<leader>q", vim.diagnostic.setloclist },
     },
     config = function()
       onLspAttach(function(ev)
@@ -277,9 +255,9 @@ local plugins = {
     },
   },
   {
-    'nvimdev/lspsaga.nvim',
+    "nvimdev/lspsaga.nvim",
     event = "VeryLazy",
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
       lightbulb = {
         enable = false,
@@ -315,24 +293,44 @@ local plugins = {
         layout = "float",
       }
     },
-    keys = {
-      { "K",           cmd "Lspsaga hover_doc" },
-      { "g[",          cmd "Lspsaga diagnostic_jump_prev" },
-      { "g]",          cmd "Lspsaga diagnostic_jump_next" },
-      { "gd",          cmd "Lspsaga goto_definition" },
-      { "gD",          cmd "Lspsaga peek_definition" },
-      { "go",          cmd "Lspsaga outline" },
-      { "gr",          cmd "Lspsaga finder" },
-      { "<leader>ci",  cmd "Lspsaga incoming_calls" },
-      { "<leader>co",  cmd "Lspsaga outgoing_calls" },
-      { "<leader>ac",  cmd "Lspsaga code_action" },
-      { "<leader>ac",  cmd "Lspsaga code_action",         mode = "x" },
-      { "<leader>rn",  cmd "Lspsaga rename" },
-      { "<leader>gDh", goto_def_sp_left },
-      { "<leader>gDj", goto_def_sp_bottom },
-      { "<leader>gDk", goto_def_sp_top },
-      { "<leader>gDl", goto_def_sp_right },
-    }
+    keys = function()
+      local goto_def_sp_top = function()
+        vim.cmd "split"
+        vim.cmd "Lspsaga goto_definition"
+      end
+      local goto_def_sp_bottom = function()
+        vim.cmd "split"
+        vim.cmd "wincmd j"
+        vim.cmd "Lspsaga goto_definition"
+      end
+      local goto_def_sp_left = function()
+        vim.cmd "vsplit"
+        vim.cmd "Lspsaga goto_definition"
+      end
+      local goto_def_sp_right = function()
+        vim.cmd "vsplit"
+        vim.cmd "wincmd l"
+        vim.cmd "Lspsaga goto_definition"
+      end
+      return {
+        { "K",           cmd "Lspsaga hover_doc" },
+        { "g[",          cmd "Lspsaga diagnostic_jump_prev" },
+        { "g]",          cmd "Lspsaga diagnostic_jump_next" },
+        { "gd",          cmd "Lspsaga goto_definition" },
+        { "gD",          cmd "Lspsaga peek_definition" },
+        { "go",          cmd "Lspsaga outline" },
+        { "gr",          cmd "Lspsaga finder" },
+        { "<leader>ci",  cmd "Lspsaga incoming_calls" },
+        { "<leader>co",  cmd "Lspsaga outgoing_calls" },
+        { "<leader>ac",  cmd "Lspsaga code_action" },
+        { "<leader>ac",  cmd "Lspsaga code_action",         mode = "x" },
+        { "<leader>rn",  cmd "Lspsaga rename" },
+        { "<leader>gDh", goto_def_sp_left },
+        { "<leader>gDj", goto_def_sp_bottom },
+        { "<leader>gDk", goto_def_sp_top },
+        { "<leader>gDl", goto_def_sp_right },
+      }
+    end,
   },
 
   -- languages
@@ -398,8 +396,8 @@ local plugins = {
       "onsails/lspkind.nvim",
     },
     opts = function()
-      local cmp = require('cmp')
-      local lspkind = require('lspkind')
+      local cmp = require("cmp")
+      local lspkind = require("lspkind")
       return {
         snippet = {
           expand = function(args)
@@ -411,36 +409,36 @@ local plugins = {
           documentation = cmp.config.window.bordered(),
         },
         mapping = cmp.mapping.preset.insert {
-          ['<C-u>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-d>'] = cmp.mapping.scroll_docs(4),
-          ['<C-Space>'] = cmp.mapping.complete(),
-          ['<C-e>'] = cmp.mapping.abort(),
-          ['<CR>'] = cmp.mapping.confirm { select = true },
-          ['<Tab>'] = function(fallback)
+          ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+          ["<C-d>"] = cmp.mapping.scroll_docs(4),
+          ["<C-Space>"] = cmp.mapping.complete(),
+          ["<C-e>"] = cmp.mapping.abort(),
+          ["<CR>"] = cmp.mapping.confirm { select = true },
+          ["<Tab>"] = function(fallback)
             if cmp.visible() then cmp.select_next_item() else fallback() end
           end,
-          ['<S-Tab>'] = function(fallback)
+          ["<S-Tab>"] = function(fallback)
             if cmp.visible() then cmp.select_prev_item() else fallback() end
           end,
         },
         sources = cmp.config.sources(
-          { { name = 'nvim_lsp' }, { name = 'vsnip' } },
-          { { name = 'buffer' } }
+          { { name = "nvim_lsp" }, { name = "vsnip" } },
+          { { name = "buffer" } }
         ),
         formatting = {
           format = lspkind.cmp_format {
-            mode = 'symbol',
+            mode = "symbol",
             maxwidth = 50,
-            ellipsis_char = '...',
+            ellipsis_char = "...",
             show_labelDetails = true,
           },
         },
       }
     end,
     config = function(_, opts)
-      local pairs = require('nvim-autopairs.completion.cmp')
-      local cmp = require('cmp')
-      cmp.event:on('confirm_done', pairs.on_confirm_done())
+      local pairs = require("nvim-autopairs.completion.cmp")
+      local cmp = require("cmp")
+      cmp.event:on("confirm_done", pairs.on_confirm_done())
       cmp.setup(opts)
     end,
   },
@@ -448,12 +446,12 @@ local plugins = {
     "hrsh7th/vim-vsnip",
     config = function()
       local opts = { expr = true, noremap = false }
-      Map({ 'n', 's' }, '<s>', [[<Plug>(vsnip-select-text)]], opts)
-      Map({ 'n', 's' }, '<S>', [[<Plug>(vsnip-cut-text)]], opts)
-      Map({ 'i', 's' }, '<Tab>',
-        function() return vim.fn['vsnip#jumpable'](1) == 1 and '<Plug>(vsnip-jump-next)' or '<Tab>' end, opts)
-      Map({ 'i', 's' }, '<S-Tab>',
-        function() return vim.fn['vsnip#jumpable'](-1) == 1 and '<Plug>(vsnip-jump-prev)' or '<S-Tab>' end, opts)
+      Map({ "n", "s" }, "<s>", [[<Plug>(vsnip-select-text)]], opts)
+      Map({ "n", "s" }, "<S>", [[<Plug>(vsnip-cut-text)]], opts)
+      Map({ "i", "s" }, "<Tab>",
+        function() return vim.fn["vsnip#jumpable"](1) == 1 and "<Plug>(vsnip-jump-next)" or "<Tab>" end, opts)
+      Map({ "i", "s" }, "<S-Tab>",
+        function() return vim.fn["vsnip#jumpable"](-1) == 1 and "<Plug>(vsnip-jump-prev)" or "<S-Tab>" end, opts)
     end
   },
   {
@@ -463,9 +461,6 @@ local plugins = {
       "rcarriga/nvim-dap-ui",
       "folke/neodev.nvim",
     },
-    config = function()
-      require("dap").set_exception_breakpoints({})
-    end,
     keys = function()
       local dap = require("dap")
       return {
@@ -477,6 +472,8 @@ local plugins = {
         { "<leader>do", dap.step_out },
         { "<leader>dc", dap.continue },
         { "<leader>dC", dap.disconnect },
+        { "<leader>de", function() dap.set_exception_breakpoints() end },
+        { "<leader>dE", function() dap.set_exception_breakpoints({}) end },
       }
     end,
   },
@@ -484,6 +481,7 @@ local plugins = {
     "rcarriga/nvim-dap-ui",
     main = "dapui",
     config = true,
+    dependencies = { "nvim-neotest/nvim-nio" },
     keys = function()
       local ui = require("dapui")
       return {
@@ -665,7 +663,7 @@ local plugins = {
       vim.o.winwidth = 10
       vim.o.winminwidth = 10
       vim.o.equalalways = false
-      require('windows').setup()
+      require("windows").setup()
     end,
     keys = {
       { "<C-w>z", cmd "WindowsMaximize" },
