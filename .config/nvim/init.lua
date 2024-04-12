@@ -266,14 +266,15 @@ local plugins = {
         width = 0.8,
         height = 0.8,
         keys = {
-          split = "<C-c>s",
-          vsplit = "<C-c>x",
+          split = "<C-s>",
+          vsplit = "<C-v>",
         },
       },
       callhierarchy = {
         keys = {
+          edit = "o",
           split = "<C-s>",
-          vsplit = "<C-x>",
+          vsplit = "<C-v>",
         },
       },
       code_action = {
@@ -284,13 +285,17 @@ local plugins = {
         left_width = 0.3,
         right_width = 0.5,
         keys = {
+          toggle_or_open = "o",
           shuttle = "<C-o>",
           split = "<C-s>",
-          vsplit = "<C-x>",
+          vsplit = "<C-v>",
         },
       },
       outline = {
         layout = "float",
+        keys = {
+          toggle_or_jump = "o",
+        },
       }
     },
     keys = function()
@@ -626,6 +631,16 @@ local plugins = {
     },
   },
   {
+    "norcalli/nvim-colorizer.lua",
+    cmd = {
+      "ColorizerAttachToBuffer",
+      "ColorizerDetachFromBuffer",
+      "ColorizerReloadAllBuffers",
+      "ColorizerToggle",
+    },
+    config = true,
+  },
+  {
     "sindrets/winshift.nvim",
     keys = {
       { "<C-W>m", cmd "WinShift swap" },
@@ -743,8 +758,8 @@ local plugins = {
     "folke/noice.nvim",
     event = "VeryLazy",
     dependencies = {
+      -- "hrsh7th/nvim-cmp",
       "MunifTanjim/nui.nvim",
-      "hrsh7th/nvim-cmp",
       "rcarriga/nvim-notify",
     },
     opts = {
@@ -780,6 +795,11 @@ local plugins = {
     cmd = { "GitBlame" },
     config = true,
   },
+  {
+    "Pocco81/auto-save.nvim",
+    event = "InsertEnter",
+    config = true,
+  }
 }
 
 require("lazy").setup(plugins, lazy_opts)
