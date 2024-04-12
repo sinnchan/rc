@@ -38,10 +38,27 @@ vim.opt.wrapscan = false
 vim.opt.writebackup = false
 
 -- color
+local highlight = {
+  "RainbowRed",
+  "RainbowYellow",
+  "RainbowBlue",
+  "RainbowOrange",
+  "RainbowGreen",
+  "RainbowViolet",
+  "RainbowCyan",
+}
+
 local custom_colors = function()
   vim.api.nvim_set_hl(0, "Search", { fg = "#19ffb2", underline = true })
   vim.api.nvim_set_hl(0, "IncSearch", { fg = "#19ffb2", underline = true })
   vim.api.nvim_set_hl(0, "CurSearch", { fg = "black", bg = "#19ffb2" })
+  vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+  vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+  vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+  vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+  vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+  vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+  vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
 end
 
 -- func
@@ -534,23 +551,47 @@ local plugins = {
     end,
   },
   {
+    "hiphish/rainbow-delimiters.nvim",
+    event = "VeryLazy",
+    priority = 110,
+    config = function()
+      local rainbow_delimiters = require 'rainbow-delimiters'
+      vim.g.rainbow_delimiters = {
+        strategy = {
+          [''] = rainbow_delimiters.strategy['global'],
+          vim = rainbow_delimiters.strategy['local'],
+        },
+        query = {
+          [''] = 'rainbow-delimiters',
+          lua = 'rainbow-blocks',
+        },
+        priority = {
+          [''] = 110,
+          lua = 210,
+        },
+        highlight = highlight,
+      }
+    end
+  },
+  {
     "lukas-reineke/indent-blankline.nvim",
     event = "VeryLazy",
-    opts = {
-      indent = {
-        highlight = { "IndentLineColor" },
-        char = "▏",
-      },
-      scope = {
-        enabled = false,
-      },
-    },
-    config = function(_, opts)
-      local hooks = require("ibl.hooks")
-      hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-        vim.api.nvim_set_hl(0, "IndentLineColor", { fg = "#303336" })
-      end)
-      require("ibl").setup(opts)
+    priority = 100,
+    config = function()
+      local hooks = require "ibl.hooks"
+      require("ibl").setup {
+        indent = {
+          char = "▏",
+        },
+        scope = {
+          highlight = highlight,
+        },
+      }
+
+      hooks.register(
+        hooks.type.SCOPE_HIGHLIGHT,
+        hooks.builtin.scope_highlight_from_extmark
+      )
     end,
   },
   {
