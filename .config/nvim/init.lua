@@ -1,4 +1,5 @@
--- path
+-- pavalueth
+--
 package.path = package.path
     .. ";" .. os.getenv("HOME")
     .. "/?.lua"
@@ -48,28 +49,33 @@ local google_colors = {
   "#FBBC05",
   "#34A853",
 }
-local colors = color.gen_gradient(
-  google_colors,
-  12
-)
+local colors = color.gen_gradient(google_colors, 12)
+local bg_color = "#282c34"
 
-local colors_tbl = {}
+local indent_colors = {}
+local delimiter_colors = {}
+local delimiter_color_keys = {}
+local indent_color_keys = {}
 for i, _color in ipairs(colors) do
-  colors_tbl["GradationColor" .. i] = color.leap(_color, "#282c34", 0.0)
-end
+  local delimiter_color_key = "DelimiterColor" .. i
+  table.insert(delimiter_colors, { key = delimiter_color_key, color = _color })
+  table.insert(delimiter_color_keys, delimiter_color_key)
 
-local highlight = {}
-for key in pairs(colors_tbl) do
-  table.insert(highlight, key)
+  local indent_color_key = "IntentColor" .. i
+  table.insert(indent_colors, { key = indent_color_key, color = color.leap(_color, bg_color, 0.7) })
+  table.insert(indent_color_keys, indent_color_key)
 end
 
 local custom_colors = function()
   vim.api.nvim_set_hl(0, "Search", { fg = "#19ffb2", underline = true })
   vim.api.nvim_set_hl(0, "IncSearch", { fg = "#19ffb2", underline = true })
-  vim.api.nvim_set_hl(0, "CurSearch", { fg = "black", bg = "#19ffb2" })
+  vim.api.nvim_set_hl(1, "CurSearch", { fg = "black", bg = "#19ffb2" })
 
-  for key, value in pairs(colors_tbl) do
-    vim.api.nvim_set_hl(0, key, { fg = value })
+  for _, pair in ipairs(indent_colors) do
+    vim.api.nvim_set_hl(0, pair.key, { fg = pair.color })
+  end
+  for _, pair in ipairs(delimiter_colors) do
+    vim.api.nvim_set_hl(0, pair.key, { fg = pair.color })
   end
 end
 
@@ -572,7 +578,7 @@ local plugins = {
         strategy = { [''] = rainbow_delimiters.strategy['global'] },
         query = { [''] = 'rainbow-delimiters' },
         priority = { [''] = 110 },
-        highlight = highlight,
+        highlight = indent_color_keys,
       }
     end
   },
@@ -585,10 +591,10 @@ local plugins = {
       require("ibl").setup {
         indent = {
           char = "▏",
-          highlight = highlight,
+          highlight = indent_color_keys,
         },
         scope = {
-          highlight = highlight,
+          highlight = delimiter_color_keys,
         },
       }
 
