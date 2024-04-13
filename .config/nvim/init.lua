@@ -48,6 +48,7 @@ local google_colors = {
   "#EA4335",
   "#FBBC05",
   "#34A853",
+  "#4285F4",
 }
 local colors = color.gen_gradient(google_colors, 12)
 local bg_color = "#282c34"
@@ -62,7 +63,7 @@ for i, _color in ipairs(colors) do
   table.insert(delimiter_color_keys, delimiter_color_key)
 
   local indent_color_key = "IntentColor" .. i
-  table.insert(indent_colors, { key = indent_color_key, color = color.leap(_color, bg_color, 0.7) })
+  table.insert(indent_colors, { key = indent_color_key, color = color.leap(_color, bg_color, 0.8) })
   table.insert(indent_color_keys, indent_color_key)
 end
 
@@ -578,7 +579,7 @@ local plugins = {
         strategy = { [''] = rainbow_delimiters.strategy['global'] },
         query = { [''] = 'rainbow-delimiters' },
         priority = { [''] = 110 },
-        highlight = indent_color_keys,
+        highlight = delimiter_color_keys,
       }
     end
   },
