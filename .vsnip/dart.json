@@ -32,6 +32,28 @@
       "snip_freezed"
     ],
     "body": [
+      "import 'package:freezed_annotation/freezed_annotation.dart';",
+      "",
+      "part '$TM_FILENAME_BASE.freezed.dart';",
+      "part '$TM_FILENAME_BASE.g.dart';",
+      "",
+      "@freezed",
+      "class $1 with _\\$$1 {",
+      "\tconst factory $1({",
+      "\t\t$0",
+      "\t}) = _$1;",
+      "",
+      "\tfactory $1.fromJson(Map<String, Object?> json) =>",
+      "\t\t_\\$$1FromJson(json);",
+      "}"
+    ]
+  },
+  "freezed class only": {
+    "description": "snip freezed class only",
+    "prefix": [
+      "snip_freezed_only"
+    ],
+    "body": [
       "@freezed",
       "class $1 with _\\$$1 {",
       "\tconst factory $1({",
