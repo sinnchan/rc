@@ -1,5 +1,8 @@
 -- path
-package.path = package.path .. ";" .. os.getenv("HOME") .. "/?.lua"
+package.path = package.path
+    .. ";" .. os.getenv("HOME")
+    .. "/?.lua"
+    .. ";~/.config/nvim/lua/?.lua"
 
 -- init
 vim.g.NERDCreateDefaultMappings = 0
@@ -38,27 +41,36 @@ vim.opt.wrapscan = false
 vim.opt.writebackup = false
 
 -- color
-local highlight = {
-  "RainbowRed",
-  "RainbowYellow",
-  "RainbowBlue",
-  "RainbowOrange",
-  "RainbowGreen",
-  "RainbowViolet",
-  "RainbowCyan",
+local color = require("color")
+local google_colors = {
+  "#4285F4",
+  "#EA4335",
+  "#FBBC05",
+  "#34A853",
 }
+local colors = color.gen_gradient(
+  google_colors,
+  12
+)
+
+local colors_tbl = {}
+for i, _color in ipairs(colors) do
+  colors_tbl["GradationColor" .. i] = color.leap(_color, "#282c34", 0.0)
+end
+
+local highlight = {}
+for key in pairs(colors_tbl) do
+  table.insert(highlight, key)
+end
 
 local custom_colors = function()
   vim.api.nvim_set_hl(0, "Search", { fg = "#19ffb2", underline = true })
   vim.api.nvim_set_hl(0, "IncSearch", { fg = "#19ffb2", underline = true })
   vim.api.nvim_set_hl(0, "CurSearch", { fg = "black", bg = "#19ffb2" })
-  vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
-  vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
-  vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
-  vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
-  vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
-  vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
-  vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+
+  for key, value in pairs(colors_tbl) do
+    vim.api.nvim_set_hl(0, key, { fg = value })
+  end
 end
 
 -- func
@@ -368,7 +380,7 @@ local plugins = {
     opts = {
       fvm = true,
       widget_guides = {
-        enabled = true,
+        enabled = false,
       },
       debugger = {
         enabled = true,
@@ -557,18 +569,9 @@ local plugins = {
     config = function()
       local rainbow_delimiters = require 'rainbow-delimiters'
       vim.g.rainbow_delimiters = {
-        strategy = {
-          [''] = rainbow_delimiters.strategy['global'],
-          vim = rainbow_delimiters.strategy['local'],
-        },
-        query = {
-          [''] = 'rainbow-delimiters',
-          lua = 'rainbow-blocks',
-        },
-        priority = {
-          [''] = 110,
-          lua = 210,
-        },
+        strategy = { [''] = rainbow_delimiters.strategy['global'] },
+        query = { [''] = 'rainbow-delimiters' },
+        priority = { [''] = 110 },
         highlight = highlight,
       }
     end
@@ -582,6 +585,7 @@ local plugins = {
       require("ibl").setup {
         indent = {
           char = "▏",
+          highlight = highlight,
         },
         scope = {
           highlight = highlight,
