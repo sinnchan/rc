@@ -44,11 +44,10 @@ vim.opt.writebackup = false
 -- color
 local color = require("color")
 local google_colors = {
+  "#34A853",
   "#4285F4",
   "#EA4335",
   "#FBBC05",
-  "#34A853",
-  "#4285F4",
 }
 local colors = color.gen_gradient(google_colors, 12)
 local bg_color = "#282c34"
@@ -387,7 +386,7 @@ local plugins = {
     opts = {
       fvm = true,
       widget_guides = {
-        enabled = false,
+        enabled = true,
       },
       debugger = {
         enabled = true,
@@ -596,6 +595,7 @@ local plugins = {
         },
         scope = {
           highlight = delimiter_color_keys,
+          show_start = false,
         },
       }
 
