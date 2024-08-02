@@ -24,7 +24,6 @@ vim.opt.foldmethod = "expr"
 vim.opt.hidden = true
 vim.opt.hlsearch = true
 vim.opt.ignorecase = true
-vim.opt.imdisable = true
 vim.opt.incsearch = true
 vim.opt.list = true
 vim.opt.number = true
@@ -40,44 +39,6 @@ vim.opt.updatetime = 300
 vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
-
--- color
-local color = require("color")
-local google_colors = {
-  "#34A853",
-  "#4285F4",
-  "#EA4335",
-  "#FBBC05",
-}
-local colors = color.gen_gradient(google_colors, 12)
-local bg_color = "#282c34"
-
-local indent_colors = {}
-local delimiter_colors = {}
-local delimiter_color_keys = {}
-local indent_color_keys = {}
-for i, _color in ipairs(colors) do
-  local delimiter_color_key = "DelimiterColor" .. i
-  table.insert(delimiter_colors, { key = delimiter_color_key, color = _color })
-  table.insert(delimiter_color_keys, delimiter_color_key)
-
-  local indent_color_key = "IntentColor" .. i
-  table.insert(indent_colors, { key = indent_color_key, color = color.leap(_color, bg_color, 0.8) })
-  table.insert(indent_color_keys, indent_color_key)
-end
-
-local custom_colors = function()
-  vim.api.nvim_set_hl(0, "Search", { fg = "#19ffb2", underline = true })
-  vim.api.nvim_set_hl(0, "IncSearch", { fg = "#19ffb2", underline = true })
-  vim.api.nvim_set_hl(1, "CurSearch", { fg = "black", bg = "#19ffb2" })
-
-  for _, pair in ipairs(indent_colors) do
-    vim.api.nvim_set_hl(0, pair.key, { fg = pair.color })
-  end
-  for _, pair in ipairs(delimiter_colors) do
-    vim.api.nvim_set_hl(0, pair.key, { fg = pair.color })
-  end
-end
 
 -- func
 local cmd = function(command)
@@ -129,7 +90,11 @@ local plugins = {
       local onedark = require("onedark")
       onedark.setup(opts)
       onedark.load()
-      custom_colors();
+
+      vim.api.nvim_set_hl(0, "Search", { fg = "#19ffb2", underline = true })
+      vim.api.nvim_set_hl(0, "IncSearch", { fg = "#19ffb2", underline = true })
+      vim.api.nvim_set_hl(1, "CurSearch", { fg = "black", bg = "#19ffb2" })
+      require('gradient_gen').apply()
     end,
   },
   {
@@ -374,8 +339,6 @@ local plugins = {
   },
 
   -- languages
-
-  { "udalov/kotlin-vim" },
   {
     "akinsho/flutter-tools.nvim",
     ft = { "dart" },
@@ -573,12 +536,12 @@ local plugins = {
     event = "VeryLazy",
     priority = 110,
     config = function()
-      local rainbow_delimiters = require 'rainbow-delimiters'
       vim.g.rainbow_delimiters = {
-        strategy = { [''] = rainbow_delimiters.strategy['global'] },
-        query = { [''] = 'rainbow-delimiters' },
-        priority = { [''] = 110 },
-        highlight = delimiter_color_keys,
+        strategy = { [""] = require("rainbow-delimiters").strategy["global"] },
+        query = { [""] = "rainbow-delimiters" },
+        priority = { [""] = 110 },
+        highlight = require("gradient_gen").scope_color_keys,
+
       }
     end
   },
@@ -591,10 +554,10 @@ local plugins = {
       require("ibl").setup {
         indent = {
           char = "▏",
-          highlight = indent_color_keys,
+          highlight = require("gradient_gen").indent_color_keys,
         },
         scope = {
-          highlight = delimiter_color_keys,
+          highlight = require("gradient_gen").scope_color_keys,
           show_start = false,
         },
       }
@@ -798,23 +761,9 @@ local plugins = {
     opts = {},
   },
   {
-    "smoka7/hop.nvim",
-    enabled = false,
-    version = "*",
-    opts = {
-      keys = "abcefhjkmnprstuvwxyz.2345678",
-      uppercase_labels = true,
-      multi_windows = true,
-    },
-    keys = function()
-      return { { "f", function() require("hop").hint_char1({}) end } }
-    end,
-  },
-  {
     "folke/noice.nvim",
     event = "VeryLazy",
     dependencies = {
-      -- "hrsh7th/nvim-cmp",
       "MunifTanjim/nui.nvim",
       "rcarriga/nvim-notify",
     },
@@ -855,7 +804,13 @@ local plugins = {
     "Pocco81/auto-save.nvim",
     event = "InsertEnter",
     config = true,
-  }
+  },
+  {
+    "sinnchan/gradient_gen.nvim",
+    lazy = false,
+    event = "VeryLazy",
+    config = true,
+  },
 }
 
 require("lazy").setup(plugins, lazy_opts)
