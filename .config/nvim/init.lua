@@ -2,7 +2,7 @@
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
 vim.o.showtabline = 2
-vim.o.guifont = "ProFont IIx Nerd Font:h10"
+vim.o.guifont = "ProFont IIx Nerd Font:h12"
 vim.opt.autoread = true
 vim.opt.backup = false
 vim.opt.breakindent = true
@@ -52,6 +52,8 @@ Map("n", "<C-l>", "10zl")
 Map("n", "<C-h>", "10zh")
 Map("n", "<C-j>", "10gj")
 Map("n", "<C-k>", "10gk")
+Map("n", "<C-y>", "10<C-y>")
+Map("n", "<C-e>", "10<C-e>")
 Map("n", "<leader>rr", cmd "source ~/.config/nvim/init.lua", { silent = true })
 Map("n", "<leader>ro", cmd "e ~/.config/nvim/init.lua", { silent = true })
 
@@ -612,6 +614,7 @@ local plugins = {
   },
   {
     "karb94/neoscroll.nvim",
+    enabled = false,
     event = "VeryLazy",
     opts = { easing_function = "quintic" },
     config = function(_, opts)
@@ -744,7 +747,7 @@ local plugins = {
   {
     "akinsho/toggleterm.nvim",
     opts = {
-      open_mapping = [[<C-\>]]
+      open_mapping = [[<C-¥>]]
     },
     keys = function()
       local term = require("toggleterm.terminal")
