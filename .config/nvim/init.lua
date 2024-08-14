@@ -1,14 +1,8 @@
--- pavalueth
---
-package.path = package.path
-    .. ";" .. os.getenv("HOME")
-    .. "/?.lua"
-    .. ";~/.config/nvim/lua/?.lua"
-
 -- init
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
 vim.o.showtabline = 2
+vim.o.guifont = "ProFont IIx Nerd Font:h10"
 vim.opt.autoread = true
 vim.opt.backup = false
 vim.opt.breakindent = true
@@ -56,6 +50,8 @@ end
 Map = vim.keymap.set
 Map("n", "<C-l>", "10zl")
 Map("n", "<C-h>", "10zh")
+Map("n", "<C-j>", "10gj")
+Map("n", "<C-k>", "10gk")
 Map("n", "<leader>rr", cmd "source ~/.config/nvim/init.lua", { silent = true })
 Map("n", "<leader>ro", cmd "e ~/.config/nvim/init.lua", { silent = true })
 
@@ -85,7 +81,7 @@ local plugins = {
     "navarasu/onedark.nvim",
     priority = 1000,
     lazy = false,
-    opts = { transparent = true },
+    opts = { transparent = false },
     config = function(_, opts)
       local onedark = require("onedark")
       onedark.setup(opts)
@@ -190,6 +186,12 @@ local plugins = {
                 completion = {
                   callSnippet = "Replace",
                 },
+                diagnostics = {
+                  globals = {
+                    "vim",
+                    "require",
+                  },
+                },
               },
             },
           }
@@ -236,7 +238,6 @@ local plugins = {
         vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
         Map("n", "gc", lsp_b.declaration, opts)
         Map("n", "gi", lsp_b.implementation, opts)
-        Map("n", "<C-k>", lsp_b.signature_help, opts)
         Map("n", "<leader>wa", lsp_b.add_workspace_folder, opts)
         Map("n", "<leader>wr", lsp_b.remove_workspace_folder, opts)
         Map("n", "<leader>fa", function() lsp_b.format { async = true } end, opts)
@@ -742,15 +743,20 @@ local plugins = {
   },
   {
     "akinsho/toggleterm.nvim",
-    opts = {},
+    opts = {
+      open_mapping = [[<C-\>]]
+    },
     keys = function()
-      local lazygit = require("toggleterm.terminal").Terminal:new({
+      local term = require("toggleterm.terminal")
+      local lazygit = term.Terminal:new({
         cmd = "lazygit",
         direction = "float",
         hidden = true,
       })
       return {
         { "<leader>lg", function() lazygit:toggle() end },
+        { "<S-esc>",      [[<C-\><C-n>]],                 mode = "t" },
+        { "<C-w>",      [[<C-\><C-n><C-w>]],            mode = "t" },
       }
     end
   },
