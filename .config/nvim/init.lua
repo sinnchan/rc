@@ -6,7 +6,6 @@ end
 -- init
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
-vim.o.showtabline = 2
 vim.o.guifont = "ProFont IIx Nerd Font:h12"
 vim.opt.autoread = true
 vim.opt.backup = false
@@ -67,6 +66,8 @@ Map("n", "<C-j>", "10gj")
 Map("n", "<C-k>", "10gk")
 Map("n", "<C-y>", "10<C-y>")
 Map("n", "<C-e>", "10<C-e>")
+Map("n", "<leader>+", cmd "resize +10")
+Map("n", "<leader>-", cmd "resize -10")
 Map("n", "<leader>rr", cmd "source ~/.config/nvim/init.lua", { silent = true })
 Map("n", "<leader>ro", cmd "e ~/.config/nvim/init.lua", { silent = true })
 
@@ -319,9 +320,7 @@ local plugins = {
       onLspAttach(function(ev)
         local lsp_b = vim.lsp.buf
         local opts = { buffer = ev.buf }
-        -- Enable completion triggered by <c-x><c-o>
         vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
-        Map("n", "gc", lsp_b.declaration, opts)
         Map("n", "gi", lsp_b.implementation, opts)
         Map("n", "<leader>wa", lsp_b.add_workspace_folder, opts)
         Map("n", "<leader>wr", lsp_b.remove_workspace_folder, opts)
@@ -345,6 +344,9 @@ local plugins = {
     event = { "BufReadPre", "BufNewFile" },
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
+      symbol_in_winbar = {
+        enable = false,
+      },
       lightbulb = {
         enable = false,
       },
@@ -698,21 +700,22 @@ local plugins = {
   {
     "karb94/neoscroll.nvim",
     enabled = enableScrollAnimation,
-    event = { "BufReadPre", "BufNewFile" },
-    opts = { easing_function = "quintic" },
+    event = "VeryLazy",
+    opts = { easing = "quadratic" },
     config = function(_, opts)
-      require("neoscroll").setup(opts)
-      require("neoscroll.config").set_mappings({
-        ["<C-u>"] = { "scroll", { "-vim.wo.scroll", "true", "64" } },
-        ["<C-d>"] = { "scroll", { "vim.wo.scroll", "true", "64" } },
-        ["<C-b>"] = { "scroll", { "-vim.api.nvim_win_get_height(0)", "true", "64" } },
-        ["<C-f>"] = { "scroll", { "vim.api.nvim_win_get_height(0)", "true", "64" } },
-        ["<C-y>"] = { "scroll", { "-0.10", "false", "48" } },
-        ["<C-e>"] = { "scroll", { "0.10", "false", "48" } },
-        ["zt"] = { "zt", { "64" } },
-        ["zz"] = { "zz", { "64" } },
-        ["zb"] = { "zb", { "64" } },
-      })
+      local s = require('neoscroll')
+      s.setup(opts)
+
+      local m = { 'n', 'v', 'x' }
+      Map(m, "<C-u>", function() s.ctrl_u({ duration = 100 }) end)
+      Map(m, "<C-d>", function() s.ctrl_d({ duration = 100 }) end)
+      Map(m, "<C-b>", function() s.ctrl_b({ duration = 200 }) end)
+      Map(m, "<C-f>", function() s.ctrl_f({ duration = 200 }) end)
+      Map(m, "<C-y>", function() s.scroll(-0.1, { move_cursor = false, duration = 100 }) end)
+      Map(m, "<C-e>", function() s.scroll(0.1, { move_cursor = false, duration = 100 }) end)
+      Map(m, "zt", function() s.zt({ half_win_duration = 100 }) end)
+      Map(m, "zz", function() s.zz({ half_win_duration = 100 }) end)
+      Map(m, "zb", function() s.zb({ half_win_duration = 100 }) end)
     end,
   },
   {
@@ -877,11 +880,6 @@ local plugins = {
     },
   },
   {
-    "rcarriga/nvim-notify",
-    main = "notify",
-    opts = { background_colour = "#000000" },
-  },
-  {
     -- lsp ui
     "j-hui/fidget.nvim",
     event = { "BufReadPre", "BufNewFile" },
@@ -915,10 +913,23 @@ local plugins = {
     opts = {
       chunk = {
         enable = true,
-        style = "#40ab8b",
+        style = "Cyan",
       },
     },
   },
+  {
+    "numToStr/Comment.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    config = true,
+  },
+  {
+    "nvim-zh/colorful-winsep.nvim",
+    event = { "WinLeave" },
+    opts = {
+      hi = { fg = "Cyan", bg = "background"},
+      symbols = { "─", "│", "╭", "╮", "╰", "╯" },
+    },
+  }
 }
 
 require("lazy").setup(plugins, lazy_opts)
