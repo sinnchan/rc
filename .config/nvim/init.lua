@@ -1,3 +1,8 @@
+local home = os.getenv("HOME")
+if home then
+  package.path = package.path .. ";" .. home .. "/?.lua"
+end
+
 -- init
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
@@ -19,6 +24,7 @@ vim.opt.hidden = true
 vim.opt.hlsearch = true
 vim.opt.ignorecase = true
 vim.opt.incsearch = true
+vim.opt.laststatus = 3
 vim.opt.list = true
 vim.opt.number = true
 vim.opt.shiftwidth = 2
@@ -33,6 +39,13 @@ vim.opt.updatetime = 300
 vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
+
+-- neovide
+local enableScrollAnimation = true
+if vim.g.neovide then
+  enableScrollAnimation = false
+  vim.g.neovide_hide_mouse_when_typing = true
+end
 
 -- func
 local cmd = function(command)
@@ -83,38 +96,108 @@ local plugins = {
     "navarasu/onedark.nvim",
     priority = 1000,
     lazy = false,
-    opts = { transparent = false },
+    opts = {
+      transparent = false,
+      style = "cool",
+      colors = {
+        search = "#FFFF00",
+      },
+      highlights = {
+        ["Search"] = { fg = "$search", bg = "NONE", underline = true },
+        ["IncSearch"] = { fg = "$search", bg = "NONE", underline = true },
+        ["CurSearch"] = { fg = "black", bg = "$search" },
+      }
+    },
     config = function(_, opts)
       local onedark = require("onedark")
       onedark.setup(opts)
       onedark.load()
-
-      vim.api.nvim_set_hl(0, "Search", { fg = "#19ffb2", underline = true })
-      vim.api.nvim_set_hl(0, "IncSearch", { fg = "#19ffb2", underline = true })
-      vim.api.nvim_set_hl(1, "CurSearch", { fg = "black", bg = "#19ffb2" })
-      require('gradient_gen').apply()
+      require("gradient_gen").apply()
     end,
   },
   {
     "nvim-lualine/lualine.nvim",
     priority = 1000,
-    lazy = false,
+    event = "VeryLazy",
     dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = {
-      options = { theme = "onedark" },
-      sections = {
-        lualine_a = { "mode" },
-        lualine_b = { "diff", "diagnostics" },
-        lualine_c = { "filename" },
-        lualine_x = { "encoding", "fileformat", "filetype" },
-        lualine_y = { "progress" },
-        lualine_z = { "location" },
-      },
-    },
+    config = function()
+      local function recording()
+        local reg = vim.fn.reg_recording()
+        if reg == "" then return "" else return "Recording @" .. reg end
+      end
+      require("lualine").setup({
+        options = { theme = "onedark" },
+        sections = {
+          lualine_a = { "mode", { "macro-recording", fmt = recording } },
+          lualine_b = { "diff", "diagnostics" },
+          lualine_c = { "filename" },
+          lualine_x = { "encoding", "fileformat", "filetype" },
+          lualine_y = { "progress" },
+          lualine_z = { "location" },
+        },
+      })
+    end,
+  },
+  {
+    "b0o/incline.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      local devicons = require("nvim-web-devicons")
+      require("incline").setup {
+        render = function(props)
+          local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
+          if filename == "" then filename = "[No Name]" end
+          local ft_icon, ft_color = devicons.get_icon_color(filename)
+
+          local function get_git_diff()
+            local icons = { removed = "-", changed = "~", added = "+" }
+            local signs = vim.b[props.buf].gitsigns_status_dict
+            local labels = {}
+            if signs == nil then return labels end
+            for name, icon in pairs(icons) do
+              if tonumber(signs[name]) and signs[name] > 0 then
+                table.insert(labels, { icon .. signs[name] .. " ", group = "Diff" .. name })
+              end
+            end
+            if #labels > 0 then table.insert(labels, { "┊ " }) end
+            return labels
+          end
+
+          local function get_diagnostic_label()
+            local icons = { error = " ", warn = " ", info = " ", hint = " " }
+            local label = {}
+
+            for severity, icon in pairs(icons) do
+              local n = #vim.diagnostic.get(props.buf, { severity = vim.diagnostic.severity[string.upper(severity)] })
+              if n > 0 then
+                table.insert(label, { icon .. n .. " ", group = "DiagnosticSign" .. severity })
+              end
+            end
+            if #label > 0 then table.insert(label, { "┊ " }) end
+            return label
+          end
+
+          return {
+            { get_diagnostic_label() },
+            { get_git_diff() },
+            {
+              (ft_icon or "") .. " ",
+              guifg = ft_color,
+              guibg = "none",
+            },
+            {
+              filename .. " ",
+              gui = vim.bo[props.buf].modified and "bold,italic" or "bold",
+            },
+          }
+        end,
+      }
+    end,
   },
   {
     "nvim-treesitter/nvim-treesitter",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = "nvim-treesitter/playground",
     main = "nvim-treesitter.configs",
     opts = {
@@ -249,7 +332,7 @@ local plugins = {
   {
     "folke/neodev.nvim",
     priority = 525,
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     opts = {
       library = {
         plugins = { "nvim-dap-ui" },
@@ -259,7 +342,7 @@ local plugins = {
   },
   {
     "nvimdev/lspsaga.nvim",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
       lightbulb = {
@@ -536,7 +619,7 @@ local plugins = {
   },
   {
     "hiphish/rainbow-delimiters.nvim",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     priority = 110,
     config = function()
       vim.g.rainbow_delimiters = {
@@ -550,7 +633,7 @@ local plugins = {
   },
   {
     "lukas-reineke/indent-blankline.nvim",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     priority = 100,
     config = function()
       local hooks = require "ibl.hooks"
@@ -560,7 +643,7 @@ local plugins = {
           highlight = require("gradient_gen").indent_color_keys,
         },
         scope = {
-          highlight = require("gradient_gen").scope_color_keys,
+          highlight = require("gradient_gen").indent_color_keys,
           show_start = false,
         },
       }
@@ -573,7 +656,7 @@ local plugins = {
   },
   {
     "lewis6991/gitsigns.nvim",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     opts = {
       on_attach = function(buf)
         local gs = package.loaded.gitsigns
@@ -614,21 +697,21 @@ local plugins = {
   },
   {
     "karb94/neoscroll.nvim",
-    enabled = false,
-    event = "VeryLazy",
+    enabled = enableScrollAnimation,
+    event = { "BufReadPre", "BufNewFile" },
     opts = { easing_function = "quintic" },
     config = function(_, opts)
       require("neoscroll").setup(opts)
       require("neoscroll.config").set_mappings({
-        ["<C-u>"] = { "scroll", { "-vim.wo.scroll", "true", "80" } },
-        ["<C-d>"] = { "scroll", { "vim.wo.scroll", "true", "80" } },
-        ["<C-b>"] = { "scroll", { "-vim.api.nvim_win_get_height(0)", "true", "160" } },
-        ["<C-f>"] = { "scroll", { "vim.api.nvim_win_get_height(0)", "true", "160" } },
-        ["<C-y>"] = { "scroll", { "-0.10", "false", "40" } },
-        ["<C-e>"] = { "scroll", { "0.10", "false", "40" } },
-        ["zt"] = { "zt", { "80" } },
-        ["zz"] = { "zz", { "80" } },
-        ["zb"] = { "zb", { "80" } },
+        ["<C-u>"] = { "scroll", { "-vim.wo.scroll", "true", "64" } },
+        ["<C-d>"] = { "scroll", { "vim.wo.scroll", "true", "64" } },
+        ["<C-b>"] = { "scroll", { "-vim.api.nvim_win_get_height(0)", "true", "64" } },
+        ["<C-f>"] = { "scroll", { "vim.api.nvim_win_get_height(0)", "true", "64" } },
+        ["<C-y>"] = { "scroll", { "-0.10", "false", "48" } },
+        ["<C-e>"] = { "scroll", { "0.10", "false", "48" } },
+        ["zt"] = { "zt", { "64" } },
+        ["zz"] = { "zz", { "64" } },
+        ["zb"] = { "zb", { "64" } },
       })
     end,
   },
@@ -693,7 +776,7 @@ local plugins = {
   },
   {
     "anuvyklack/windows.nvim",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "anuvyklack/middleclass",
       "anuvyklack/animation.nvim",
@@ -713,7 +796,7 @@ local plugins = {
   },
   {
     "nanozuki/tabby.nvim",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     opts = {
       theme = {
         fill = "TabLineFill",
@@ -758,20 +841,20 @@ local plugins = {
       })
       return {
         { "<leader>lg", function() lazygit:toggle() end },
-        { "<S-esc>",      [[<C-\><C-n>]],                 mode = "t" },
+        { "<S-esc>",    [[<C-\><C-n>]],                 mode = "t" },
         { "<C-w>",      [[<C-\><C-n><C-w>]],            mode = "t" },
       }
     end
   },
   {
     "chentoast/marks.nvim",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     version = "*",
     opts = {},
   },
   {
     "folke/noice.nvim",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "MunifTanjim/nui.nvim",
       "rcarriga/nvim-notify",
@@ -801,7 +884,7 @@ local plugins = {
   {
     -- lsp ui
     "j-hui/fidget.nvim",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     opts = {},
   },
   {
@@ -819,6 +902,22 @@ local plugins = {
     lazy = false,
     event = "VeryLazy",
     config = true,
+  },
+  {
+    "Wansmer/treesj",
+    keys = { "<space>m", "<space>j", "<space>s" },
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    config = true,
+  },
+  {
+    "shellRaining/hlchunk.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    opts = {
+      chunk = {
+        enable = true,
+        style = "#40ab8b",
+      },
+    },
   },
 }
 
