@@ -39,11 +39,18 @@ vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
 
+Map = vim.keymap.set
+
 -- neovide
 local enableScrollAnimation = true
 if vim.g.neovide then
   enableScrollAnimation = false
   vim.g.neovide_hide_mouse_when_typing = true
+  Map('v', '<D-c>', '"+y')         -- Copy
+  Map('n', '<D-v>', '"+P')         -- Paste normal mode
+  Map('v', '<D-v>', '"+P')         -- Paste visual mode
+  Map('c', '<D-v>', '<C-R>+')      -- Paste command mode
+  Map('i', '<D-v>', '<ESC>l"+Pli') -- Paste insert mode
 end
 
 -- func
@@ -59,7 +66,7 @@ local onLspAttach = function(callback)
 end
 
 -- default vim keymap
-Map = vim.keymap.set
+local _opts = { noremap = true, silent = true }
 Map("n", "<C-l>", "10zl")
 Map("n", "<C-h>", "10zh")
 Map("n", "<C-j>", "10gj")
@@ -68,8 +75,12 @@ Map("n", "<C-y>", "10<C-y>")
 Map("n", "<C-e>", "10<C-e>")
 Map("n", "<leader>+", cmd "resize +10")
 Map("n", "<leader>-", cmd "resize -10")
-Map("n", "<leader>rr", cmd "source ~/.config/nvim/init.lua", { silent = true })
-Map("n", "<leader>ro", cmd "e ~/.config/nvim/init.lua", { silent = true })
+Map("n", "<leader>rr", cmd "source ~/.config/nvim/init.lua", _opts)
+Map("n", "<leader>ro", cmd "e ~/.config/nvim/init.lua", _opts)
+Map('', '<D-v>', '+p<CR>', _opts)
+Map('!', '<D-v>', '<C-R>+', _opts)
+Map('t', '<D-v>', '<C-R>+', _opts)
+Map('v', '<D-v>', '<C-R>+', _opts)
 
 -- plugins
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -182,15 +193,8 @@ local plugins = {
           return {
             { get_diagnostic_label() },
             { get_git_diff() },
-            {
-              (ft_icon or "") .. " ",
-              guifg = ft_color,
-              guibg = "none",
-            },
-            {
-              filename .. " ",
-              gui = vim.bo[props.buf].modified and "bold,italic" or "bold",
-            },
+            { (ft_icon or "") .. " ", guifg = ft_color, guibg = "none" },
+            { filename .. " ", gui = "bold" },
           }
         end,
       }
@@ -926,7 +930,7 @@ local plugins = {
     "nvim-zh/colorful-winsep.nvim",
     event = { "WinLeave" },
     opts = {
-      hi = { fg = "Cyan", bg = "background"},
+      hi = { fg = "Cyan", bg = "background" },
       symbols = { "─", "│", "╭", "╮", "╰", "╯" },
     },
   }
