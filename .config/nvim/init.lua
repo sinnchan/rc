@@ -110,7 +110,7 @@ local plugins = {
     lazy = false,
     opts = {
       transparent = false,
-      style = "cool",
+      style = "darker",
       colors = {
         search = "#FFFF00",
       },
@@ -194,7 +194,7 @@ local plugins = {
             { get_diagnostic_label() },
             { get_git_diff() },
             { (ft_icon or "") .. " ", guifg = ft_color, guibg = "none" },
-            { filename .. " ", gui = "bold" },
+            { filename .. " ",        gui = "bold" },
           }
         end,
       }
@@ -705,7 +705,7 @@ local plugins = {
     "karb94/neoscroll.nvim",
     enabled = enableScrollAnimation,
     event = "VeryLazy",
-    opts = { easing = "quadratic" },
+    opts = { easing = "circular" },
     config = function(_, opts)
       local s = require('neoscroll')
       s.setup(opts)
@@ -862,6 +862,7 @@ local plugins = {
   {
     "folke/noice.nvim",
     event = { "BufReadPre", "BufNewFile" },
+    commit = "d9328ef",
     dependencies = {
       "MunifTanjim/nui.nvim",
       "rcarriga/nvim-notify",
@@ -933,7 +934,7 @@ local plugins = {
       hi = { fg = "Cyan", bg = "background" },
       symbols = { "─", "│", "╭", "╮", "╰", "╯" },
     },
-  }
+  },
 }
 
 require("lazy").setup(plugins, lazy_opts)
