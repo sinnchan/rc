@@ -229,24 +229,23 @@ local plugins = {
       ts.load_extension("noice")
     end,
     keys = function()
-      local ts = require("telescope")
-      local builtin = require("telescope.builtin")
+      local ts = function() return require("telescope") end
+      local builtin = function() return require("telescope.builtin") end
       return {
-        { "<leader>ff", builtin.find_files },
-        { "<leader>fl", builtin.live_grep },
-        { "<leader>fb", builtin.buffers },
-        { "<leader>fm", builtin.marks },
-        { "<leader>fc", builtin.commands },
-        { "<leader>fg", builtin.git_status },
-        { "<leader>fd", builtin.diagnostics },
-        { "<leader>fe", ts.extensions.emoji.emoji },
-        { "<leader>fn", ts.extensions.noice.noice },
+        { "<leader>ff", function() builtin().find_files() end },
+        { "<leader>fl", function() builtin().live_grep() end },
+        { "<leader>fb", function() builtin().buffers() end },
+        { "<leader>fm", function() builtin().marks() end },
+        { "<leader>fc", function() builtin().commands() end },
+        { "<leader>fg", function() builtin().git_status() end },
+        { "<leader>fd", function() builtin().diagnostics() end },
+        { "<leader>fe", function() ts().extensions.emoji.emoji() end },
+        { "<leader>fn", function() ts().extensions.noice.noice() end },
       }
     end,
   },
   {
     "williamboman/mason.nvim",
-    priority = 502,
     event = "VeryLazy",
     dependencies = {
       "neovim/nvim-lspconfig",
@@ -255,10 +254,10 @@ local plugins = {
   },
   {
     "williamboman/mason-lspconfig.nvim",
-    priority = 501,
     event = "VeryLazy",
     dependencies = {
       "williamboman/mason.nvim",
+      "neovim/nvim-lspconfig",
       "b0o/schemastore.nvim",
     },
     opts = {
@@ -314,7 +313,6 @@ local plugins = {
   },
   {
     "neovim/nvim-lspconfig",
-    priority = 500,
     event = "VeryLazy",
     keys = {
       { "<leader>e", vim.diagnostic.open_float },
@@ -334,7 +332,6 @@ local plugins = {
   },
   {
     "folke/neodev.nvim",
-    priority = 525,
     event = { "BufReadPre", "BufNewFile" },
     opts = {
       library = {
@@ -437,6 +434,7 @@ local plugins = {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "stevearc/dressing.nvim",
+      "mfussenegger/nvim-dap",
     },
     opts = {
       fvm = true,
@@ -551,43 +549,51 @@ local plugins = {
   },
   {
     "mfussenegger/nvim-dap",
-    priority = 550,
     dependencies = {
-      "rcarriga/nvim-dap-ui",
       "folke/neodev.nvim",
       "nvim-neotest/nvim-nio",
     },
     keys = function()
-      local dap = require("dap")
+      local function dap() return require("dap") end
+
       return {
-        { "<leader>dd", dap.toggle_breakpoint },
-        { "<leader>dD", dap.clear_breakpoints },
-        { "<leader>dl", dap.list_breakpoints },
-        { "<leader>dn", dap.step_over },
-        { "<leader>di", dap.step_into },
-        { "<leader>do", dap.step_out },
-        { "<leader>dc", dap.continue },
-        { "<leader>dC", dap.disconnect },
-        { "<leader>de", function() dap.set_exception_breakpoints() end },
-        { "<leader>dE", function() dap.set_exception_breakpoints({}) end },
+        { "<leader>dd", function() dap().toggle_breakpoint() end },
+        { "<leader>dD", function() dap().clear_breakpoints() end },
+        { "<leader>dl", function() dap().list_breakpoints() end },
+        { "<leader>dn", function() dap().step_over() end },
+        { "<leader>di", function() dap().step_into() end },
+        { "<leader>do", function() dap().step_out() end },
+        { "<leader>dc", function() dap().continue() end },
+        { "<leader>dC", function() dap().disconnect() end },
+        { "<leader>de", function() dap().set_exception_breakpoints() end },
+        { "<leader>dE", function() dap().set_exception_breakpoints({}) end },
       }
     end,
   },
   {
     "rcarriga/nvim-dap-ui",
     main = "dapui",
-    config = true,
     dependencies = { "nvim-neotest/nvim-nio" },
     keys = function()
-      local ui = require("dapui")
       return {
-        { "<leader>du", function() ui.toggle() end }
+        { "<leader>du", function() require("dapui").toggle() end }
       }
+    end,
+    config = function()
+      require("dapui").setup()
+      require("nvim-dap-virtual-text")
     end,
   },
   {
+    "theHamsta/nvim-dap-virtual-text",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    opts = { virt_text_pos = "eol" },
+  },
+  {
     "windwp/nvim-autopairs",
-    priority = 300,
     event = "InsertEnter",
     opts = {
       enable_check_bracket_line = false,
@@ -703,7 +709,7 @@ local plugins = {
   },
   {
     "karb94/neoscroll.nvim",
-    enabled = enableScrollAnimation,
+    cond = enableScrollAnimation,
     event = "VeryLazy",
     opts = { easing = "circular" },
     config = function(_, opts)
@@ -768,7 +774,8 @@ local plugins = {
   {
     "yorickpeterse/nvim-window",
     keys = function()
-      return { { "<C-w>f", require("nvim-window").pick, noremap = false } }
+      local pick = function() require("nvim-window").pick() end
+      return { { "<C-w>f", pick, noremap = false } }
     end,
   },
   {
@@ -840,16 +847,21 @@ local plugins = {
       open_mapping = [[<C-¥>]]
     },
     keys = function()
-      local term = require("toggleterm.terminal")
-      local lazygit = term.Terminal:new({
-        cmd = "lazygit",
-        direction = "float",
-        hidden = true,
-      })
+      local lazy_ins
+      local function lazygit()
+        if lazy_ins == nil then
+          lazy_ins = require("toggleterm.terminal").Terminal:new({
+            cmd = "lazygit",
+            direction = "float",
+            hidden = true,
+          })
+        end
+        return lazy_ins
+      end
       return {
-        { "<leader>lg", function() lazygit:toggle() end },
-        { "<S-esc>",    [[<C-\><C-n>]],                 mode = "t" },
-        { "<C-w>",      [[<C-\><C-n><C-w>]],            mode = "t" },
+        { "<leader>lg", function() lazygit():toggle() end },
+        { "<S-esc>",    [[<C-\><C-n>]],                   mode = "t" },
+        { "<C-w>",      [[<C-\><C-n><C-w>]],              mode = "t" },
       }
     end
   },
@@ -861,7 +873,7 @@ local plugins = {
   },
   {
     "folke/noice.nvim",
-    event = { "BufReadPre", "BufNewFile" },
+    event = "VeryLazy",
     commit = "d9328ef",
     dependencies = {
       "MunifTanjim/nui.nvim",
