@@ -45,13 +45,20 @@ Map = vim.keymap.set
 local enableScrollAnimation = true
 if vim.g.neovide then
   enableScrollAnimation = false
+
   vim.g.neovide_hide_mouse_when_typing = true
+  vim.g.neovide_text_gamma = 1.0
+  vim.g.neovide_text_contrast = 3.0
+
   Map('v', '<D-c>', '"+y')         -- Copy
   Map('n', '<D-v>', '"+P')         -- Paste normal mode
   Map('v', '<D-v>', '"+P')         -- Paste visual mode
   Map('c', '<D-v>', '<C-R>+')      -- Paste command mode
   Map('i', '<D-v>', '<ESC>l"+Pli') -- Paste insert mode
 end
+
+local gpt_key =
+"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"
 
 -- func
 local cmd = function(command)
@@ -73,6 +80,8 @@ Map("n", "<C-j>", "10gj")
 Map("n", "<C-k>", "10gk")
 Map("n", "<C-y>", "10<C-y>")
 Map("n", "<C-e>", "10<C-e>")
+Map("n", "n", "nzz", { remap = true })
+Map("n", "N", "Nzz", { remap = true })
 Map("n", "<leader>+", cmd "resize +10")
 Map("n", "<leader>-", cmd "resize -10")
 Map("n", "<leader>rr", cmd "source ~/.config/nvim/init.lua", _opts)
@@ -110,7 +119,7 @@ local plugins = {
     lazy = false,
     opts = {
       transparent = false,
-      style = "darker",
+      style = "dark",
       colors = {
         search = "#FFFF00",
       },
@@ -157,6 +166,9 @@ local plugins = {
     config = function()
       local devicons = require("nvim-web-devicons")
       require("incline").setup {
+        hide = {
+          cursorline = true,
+        },
         render = function(props)
           local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
           if filename == "" then filename = "[No Name]" end
@@ -307,6 +319,9 @@ local plugins = {
               },
             },
           }
+        end,
+        ["ts_ls"] = function()
+          require("lspconfig").ts_ls.setup {}
         end
       },
     },
@@ -426,8 +441,6 @@ local plugins = {
       }
     end,
   },
-
-  -- languages
   {
     "akinsho/flutter-tools.nvim",
     ft = { "dart" },
@@ -485,6 +498,7 @@ local plugins = {
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-cmdline",
       "hrsh7th/cmp-vsnip",
+      "hrsh7th/cmp-emoji",
       "hrsh7th/vim-vsnip",
       "onsails/lspkind.nvim",
     },
@@ -591,6 +605,25 @@ local plugins = {
       "nvim-treesitter/nvim-treesitter",
     },
     opts = { virt_text_pos = "eol" },
+  },
+  {
+    "jackMort/ChatGPT.nvim",
+    main = "chatgpt",
+    cmd = {
+      "ChatGPT",
+      "ChatGPTActAs",
+      "ChatGPTEditWithInstructions",
+      "ChatGPTRun",
+    },
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      "folke/trouble.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+    opts = {
+      api_key_cmd = "echo " .. gpt_key,
+    },
   },
   {
     "windwp/nvim-autopairs",
@@ -711,21 +744,21 @@ local plugins = {
     "karb94/neoscroll.nvim",
     cond = enableScrollAnimation,
     event = "VeryLazy",
-    opts = { easing = "circular" },
+    opts = { easing = "quadratic" },
     config = function(_, opts)
       local s = require('neoscroll')
       s.setup(opts)
 
       local m = { 'n', 'v', 'x' }
-      Map(m, "<C-u>", function() s.ctrl_u({ duration = 100 }) end)
-      Map(m, "<C-d>", function() s.ctrl_d({ duration = 100 }) end)
-      Map(m, "<C-b>", function() s.ctrl_b({ duration = 200 }) end)
-      Map(m, "<C-f>", function() s.ctrl_f({ duration = 200 }) end)
-      Map(m, "<C-y>", function() s.scroll(-0.1, { move_cursor = false, duration = 100 }) end)
-      Map(m, "<C-e>", function() s.scroll(0.1, { move_cursor = false, duration = 100 }) end)
-      Map(m, "zt", function() s.zt({ half_win_duration = 100 }) end)
-      Map(m, "zz", function() s.zz({ half_win_duration = 100 }) end)
-      Map(m, "zb", function() s.zb({ half_win_duration = 100 }) end)
+      Map(m, "<C-u>", function() s.ctrl_u({ duration = 500 }) end)
+      Map(m, "<C-d>", function() s.ctrl_d({ duration = 500 }) end)
+      Map(m, "<C-b>", function() s.ctrl_b({ duration = 800 }) end)
+      Map(m, "<C-f>", function() s.ctrl_f({ duration = 800 }) end)
+      Map(m, "<C-y>", function() s.scroll(-0.1, { move_cursor = false, duration = 250 }) end)
+      Map(m, "<C-e>", function() s.scroll(0.1, { move_cursor = false, duration = 250 }) end)
+      Map(m, "zt", function() s.zt({ half_win_duration = 500 }) end)
+      Map(m, "zz", function() s.zz({ half_win_duration = 500 }) end)
+      Map(m, "zb", function() s.zb({ half_win_duration = 500 }) end)
     end,
   },
   {
@@ -844,7 +877,7 @@ local plugins = {
   {
     "akinsho/toggleterm.nvim",
     opts = {
-      open_mapping = [[<C-¥>]]
+      open_mapping = { [[<C-\>]], [[<C-¥>]] },
     },
     keys = function()
       local lazy_ins
@@ -859,6 +892,8 @@ local plugins = {
         return lazy_ins
       end
       return {
+        [[<C-\>]],
+        [[<C-¥>]],
         { "<leader>lg", function() lazygit():toggle() end },
         { "<S-esc>",    [[<C-\><C-n>]],                   mode = "t" },
         { "<C-w>",      [[<C-\><C-n><C-w>]],              mode = "t" },
@@ -903,14 +938,18 @@ local plugins = {
     opts = {},
   },
   {
-    "dinhhuy258/git.nvim",
-    cmd = { "GitBlame" },
-    config = true,
+    "FabijanZulj/blame.nvim",
+    cmd = { "BlameToggle" },
+    opts = {},
   },
   {
     "Pocco81/auto-save.nvim",
     event = "InsertEnter",
-    config = true,
+    opts = {
+      execution_message = {
+        message = function() return "" end,
+      }
+    },
   },
   {
     "sinnchan/gradient_gen.nvim",
@@ -943,7 +982,7 @@ local plugins = {
     "nvim-zh/colorful-winsep.nvim",
     event = { "WinLeave" },
     opts = {
-      hi = { fg = "Cyan", bg = "background" },
+      hi = { bg = "background" },
       symbols = { "─", "│", "╭", "╮", "╰", "╯" },
     },
   },
