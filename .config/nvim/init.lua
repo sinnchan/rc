@@ -59,6 +59,7 @@ end
 
 local gpt_key =
 "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"
+local typo_file = home .. '/.config/nvim/spell/.typos.toml'
 
 -- func
 local cmd = function(command)
@@ -280,7 +281,7 @@ local plugins = {
             capabilities = require("cmp_nvim_lsp").default_capabilities(),
           }
         end,
-        ["lua_ls"] = function()
+        lua_ls = function()
           require("lspconfig").lua_ls.setup {
             settings = {
               Lua = {
@@ -288,16 +289,13 @@ local plugins = {
                   callSnippet = "Replace",
                 },
                 diagnostics = {
-                  globals = {
-                    "vim",
-                    "require",
-                  },
+                  globals = { "vim", "require" },
                 },
               },
             },
           }
         end,
-        ["jsonls"] = function()
+        jsonls = function()
           require("lspconfig").jsonls.setup {
             settings = {
               json = {
@@ -307,7 +305,7 @@ local plugins = {
             },
           }
         end,
-        ["yamlls"] = function()
+        yamlls = function()
           require("lspconfig").yamlls.setup {
             settings = {
               yaml = {
@@ -320,9 +318,20 @@ local plugins = {
             },
           }
         end,
-        ["ts_ls"] = function()
+        ts_ls = function()
           require("lspconfig").ts_ls.setup {}
-        end
+        end,
+        rust_analyzer = function()
+          require("lspconfig").rust_analyzer.setup {}
+        end,
+        typos_lsp = function()
+          require("lspconfig").typos_lsp.setup {
+            init_options = {
+              config = typo_file,
+              diagnosticSeverity = "Hint",
+            },
+          }
+        end,
       },
     },
   },
@@ -822,6 +831,20 @@ local plugins = {
     build = function() vim.fn["mkdp#util#install"]() end,
   },
   {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons',
+    },
+    ft = { "markdown" },
+    opts = {
+      heading = {
+        position = 'inline',
+        border = true,
+      },
+    },
+  },
+  {
     "anuvyklack/windows.nvim",
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
@@ -962,16 +985,6 @@ local plugins = {
     keys = { "<space>m", "<space>j", "<space>s" },
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     config = true,
-  },
-  {
-    "shellRaining/hlchunk.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    opts = {
-      chunk = {
-        enable = true,
-        style = "Cyan",
-      },
-    },
   },
   {
     "numToStr/Comment.nvim",
