@@ -1,0 +1,31 @@
+### BOOTSTRAP ###
+# req [curl, git]
+# opt [neovim ripgrep fd fzf lsd]
+
+if ! command -v curl git >/dev/null 2>&1; then
+  echo "required curl, git.."
+  return 1
+fi
+
+if  [ ! -d $HOME/.zplug ]; then
+  curl -sL --proto-redir -all,https "https://raw.githubusercontent.com/zplug/installer/master/installer.zsh" | zsh
+fi
+source $HOME/.zplug/init.zsh
+
+zplug "zplug/zplug", hook-build:"zplug --self-manage"
+zplug "romkatv/powerlevel10k", as:theme, depth:1
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+zplug "zsh-users/zsh-autosuggestions", defer:2
+zplug "jeffreytse/zsh-vi-mode", defer:2
+
+if ! zplug check; then
+  zplug install
+fi
+zplug load --verbose
+
+export LANG=en_US.UTF-8
+export EDITOR="nvim"
+
+alias ls="lsd"
+alias la="lsd -la"
+alias vi="nvim"

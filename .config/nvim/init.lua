@@ -6,7 +6,7 @@ end
 -- init
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
-vim.o.guifont = "ProFont IIx Nerd Font:h12"
+vim.o.guifont = "ProFont IIx Nerd Font:h14"
 vim.opt.autoread = true
 vim.opt.backup = false
 vim.opt.breakindent = true
@@ -39,6 +39,26 @@ vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
 
+local icons = {
+  error = " ",
+  warn = " ",
+  info = " ",
+  hint = " ",
+  added = " ",
+  removed = " ",
+  changed = " ",
+}
+vim.diagnostic.config({
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = icons.error,
+      [vim.diagnostic.severity.WARN] = icons.warn,
+      [vim.diagnostic.severity.INFO] = icons.info,
+      [vim.diagnostic.severity.HINT] = icons.hint,
+    },
+  },
+})
+
 Map = vim.keymap.set
 
 -- neovide
@@ -47,8 +67,6 @@ if vim.g.neovide then
   enableScrollAnimation = false
 
   vim.g.neovide_hide_mouse_when_typing = true
-  vim.g.neovide_text_gamma = 1.0
-  vim.g.neovide_text_contrast = 3.0
 
   Map('v', '<D-c>', '"+y')         -- Copy
   Map('n', '<D-v>', '"+P')         -- Paste normal mode
@@ -65,6 +83,26 @@ local typo_file = home .. '/.config/nvim/spell/.typos.toml'
 local cmd = function(command)
   return table.concat({ "<CMD>", command, "<CR>" })
 end
+
+-- vim.api.nvim_create_autocmd('FileType', {
+--   pattern = 'sh',
+--   callback = function()
+--     vim.lsp.start({
+--       name = 'bash-language-server',
+--       cmd = { 'bash-language-server', 'start' },
+--     })
+--   end,
+-- })
+
+local plug = setmetatable({
+  lazy = setmetatable({}, {
+    __index = function(_, k) return function() return require(k) end end,
+  }),
+}, {
+  __index = function(_, k)
+    return (require(k))
+  end
+})
 
 local onLspAttach = function(callback)
   vim.api.nvim_create_autocmd("LspAttach", {
@@ -131,10 +169,9 @@ local plugins = {
       }
     },
     config = function(_, opts)
-      local onedark = require("onedark")
-      onedark.setup(opts)
-      onedark.load()
-      require("gradient_gen").apply()
+      plug.onedark.setup(opts)
+      plug.onedark.load()
+      plug.gradient_gen.apply()
     end,
   },
   {
@@ -143,15 +180,25 @@ local plugins = {
     event = "VeryLazy",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      local function recording()
+      local recording = function()
         local reg = vim.fn.reg_recording()
         if reg == "" then return "" else return "Recording @" .. reg end
       end
-      require("lualine").setup({
+      local diff = {
+        "diff",
+        symbols = {
+          added = icons.added,
+          removed = icons.removed,
+          modified = icons.changed,
+        },
+      }
+      local diag = { "diagnostics", symbols = icons }
+
+      plug.lualine.setup({
         options = { theme = "onedark" },
         sections = {
           lualine_a = { "mode", { "macro-recording", fmt = recording } },
-          lualine_b = { "diff", "diagnostics" },
+          lualine_b = { diff, diag },
           lualine_c = { "filename" },
           lualine_x = { "encoding", "fileformat", "filetype" },
           lualine_y = { "progress" },
@@ -165,8 +212,8 @@ local plugins = {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     event = { "BufReadPre", "BufNewFile" },
     config = function()
-      local devicons = require("nvim-web-devicons")
-      require("incline").setup {
+      local devicons = plug["nvim-web-devicons"]
+      plug.incline.setup {
         hide = {
           cursorline = true,
         },
@@ -176,13 +223,13 @@ local plugins = {
           local ft_icon, ft_color = devicons.get_icon_color(filename)
 
           local function get_git_diff()
-            local icons = { removed = "-", changed = "~", added = "+" }
+            local ic = { "added", "changed", "removed", }
             local signs = vim.b[props.buf].gitsigns_status_dict
             local labels = {}
             if signs == nil then return labels end
-            for name, icon in pairs(icons) do
+            for _, name in ipairs(ic) do
               if tonumber(signs[name]) and signs[name] > 0 then
-                table.insert(labels, { icon .. signs[name] .. " ", group = "Diff" .. name })
+                table.insert(labels, { icons[name] .. signs[name] .. " ", group = "Diff" .. name })
               end
             end
             if #labels > 0 then table.insert(labels, { "┊ " }) end
@@ -190,13 +237,13 @@ local plugins = {
           end
 
           local function get_diagnostic_label()
-            local icons = { error = " ", warn = " ", info = " ", hint = " " }
+            local ic = { "error", "warn", "info", "hint" }
             local label = {}
 
-            for severity, icon in pairs(icons) do
+            for _, severity in ipairs(ic) do
               local n = #vim.diagnostic.get(props.buf, { severity = vim.diagnostic.severity[string.upper(severity)] })
               if n > 0 then
-                table.insert(label, { icon .. n .. " ", group = "DiagnosticSign" .. severity })
+                table.insert(label, { icons[severity] .. n .. " ", group = "DiagnosticSign" .. severity })
               end
             end
             if #label > 0 then table.insert(label, { "┊ " }) end
@@ -204,8 +251,8 @@ local plugins = {
           end
 
           return {
-            { get_diagnostic_label() },
             { get_git_diff() },
+            { get_diagnostic_label() },
             { (ft_icon or "") .. " ", guifg = ft_color, guibg = "none" },
             { filename .. " ",        gui = "bold" },
           }
@@ -236,22 +283,21 @@ local plugins = {
       "fannheyward/telescope-coc.nvim",
     },
     config = function()
-      local ts = require("telescope")
-      ts.load_extension("textcase")
-      ts.load_extension("emoji")
-      ts.load_extension("noice")
+      plug.telescope.load_extension("textcase")
+      plug.telescope.load_extension("emoji")
+      plug.telescope.load_extension("noice")
     end,
     keys = function()
-      local ts = function() return require("telescope") end
-      local builtin = function() return require("telescope.builtin") end
+      local ts = plug.lazy.telescope
+      local bl = plug.lazy["telescope.builtin"]
       return {
-        { "<leader>ff", function() builtin().find_files() end },
-        { "<leader>fl", function() builtin().live_grep() end },
-        { "<leader>fb", function() builtin().buffers() end },
-        { "<leader>fm", function() builtin().marks() end },
-        { "<leader>fc", function() builtin().commands() end },
-        { "<leader>fg", function() builtin().git_status() end },
-        { "<leader>fd", function() builtin().diagnostics() end },
+        { "<leader>ff", function() bl().find_files() end },
+        { "<leader>fl", function() bl().live_grep() end },
+        { "<leader>fb", function() bl().buffers() end },
+        { "<leader>fm", function() bl().marks() end },
+        { "<leader>fc", function() bl().commands() end },
+        { "<leader>fg", function() bl().git_status() end },
+        { "<leader>fd", function() bl().diagnostics() end },
         { "<leader>fe", function() ts().extensions.emoji.emoji() end },
         { "<leader>fn", function() ts().extensions.noice.noice() end },
       }
@@ -277,12 +323,12 @@ local plugins = {
       automatic_installation = true,
       handlers = {
         function(server_name)
-          require("lspconfig")[server_name].setup {
-            capabilities = require("cmp_nvim_lsp").default_capabilities(),
+          plug.lspconfig[server_name].setup {
+            capabilities = plug.cmp_nvim_lsp.default_capabilities(),
           }
         end,
         lua_ls = function()
-          require("lspconfig").lua_ls.setup {
+          plug.lspconfig.lua_ls.setup {
             settings = {
               Lua = {
                 completion = {
@@ -296,42 +342,39 @@ local plugins = {
           }
         end,
         jsonls = function()
-          require("lspconfig").jsonls.setup {
+          plug.lspconfig.jsonls.setup {
             settings = {
               json = {
-                schemas = require("schemastore").json.schemas(),
+                schemas = plug.schemastore.json.schemas(),
                 validate = { enable = true },
               },
             },
           }
         end,
         yamlls = function()
-          require("lspconfig").yamlls.setup {
+          plug.lspconfig.yamlls.setup {
             settings = {
               yaml = {
                 schemaStore = {
                   enable = false,
                   url = "",
                 },
-                schemas = require("schemastore").yaml.schemas(),
+                schemas = plug.schemastore.yaml.schemas(),
               },
             },
           }
         end,
-        ts_ls = function()
-          require("lspconfig").ts_ls.setup {}
-        end,
-        rust_analyzer = function()
-          require("lspconfig").rust_analyzer.setup {}
-        end,
         typos_lsp = function()
-          require("lspconfig").typos_lsp.setup {
+          plug.lspconfig.typos_lsp.setup {
             init_options = {
               config = typo_file,
               diagnosticSeverity = "Hint",
             },
           }
         end,
+        bashls = function() plug.lspconfig.bashls.setup {} end,
+        ts_ls = function() plug.lspconfig.ts_ls.setup {} end,
+        rust_analyzer = function() plug.lspconfig.rust_analyzer.setup {} end,
       },
     },
   },
@@ -488,7 +531,7 @@ local plugins = {
       },
     },
     config = function(_, opts)
-      local tools = require("flutter-tools")
+      local tools = plug["flutter-tools"]
       tools.setup(opts)
 
       local is_loaded, mod = pcall(require, "local_flutter_proj")
@@ -512,8 +555,8 @@ local plugins = {
       "onsails/lspkind.nvim",
     },
     opts = function()
-      local cmp = require("cmp")
-      local lspkind = require("lspkind")
+      local cmp = plug.cmp
+      local lspkind = plug.lspkind
       return {
         snippet = {
           expand = function(args)
@@ -552,10 +595,9 @@ local plugins = {
       }
     end,
     config = function(_, opts)
-      local pairs = require("nvim-autopairs.completion.cmp")
-      local cmp = require("cmp")
-      cmp.event:on("confirm_done", pairs.on_confirm_done())
-      cmp.setup(opts)
+      local pairs = plug["nvim-autopairs.completion.cmp"]
+      plug.cmp.event:on("confirm_done", pairs.on_confirm_done())
+      plug.cmp.setup(opts)
     end,
   },
   {
@@ -577,8 +619,7 @@ local plugins = {
       "nvim-neotest/nvim-nio",
     },
     keys = function()
-      local function dap() return require("dap") end
-
+      local dap = plug.lazy.dap
       return {
         { "<leader>dd", function() dap().toggle_breakpoint() end },
         { "<leader>dD", function() dap().clear_breakpoints() end },
@@ -599,12 +640,12 @@ local plugins = {
     dependencies = { "nvim-neotest/nvim-nio" },
     keys = function()
       return {
-        { "<leader>du", function() require("dapui").toggle() end }
+        { "<leader>du", function() plug.lazy.dapui().toggle() end },
       }
     end,
     config = function()
-      require("dapui").setup()
-      require("nvim-dap-virtual-text")
+      plug.dapui.setup()
+      plug["nvim-dap-virtual-text"].setup()
     end,
   },
   {
@@ -650,24 +691,33 @@ local plugins = {
   },
   {
     "nvim-tree/nvim-tree.lua",
-    lazy = false,
     dependencies = { "nvim-tree/nvim-web-devicons" },
+    lazy = (function()
+      local args = vim.fn.argv()
+      if #args == 0 then return true end
+      local attr = vim.loop.fs_stat(args[1])
+      if attr and attr.type == "directory" then
+        return false
+      end
+      return true
+    end)(),
+    event = "VeryLazy",
     opts = { sort_by = "case_sensitive" },
     config = function(_, opts)
-      require("nvim-tree").setup(opts)
+      plug["nvim-tree"].setup(opts)
       vim.g.loaded_netrw = 1
       vim.g.loaded_netrwPlugin = 1
       vim.opt.termguicolors = true
     end,
     keys = function()
-      local tree = require("nvim-tree.api")
+      local tree = plug.lazy["nvim-tree.api"]
       return {
-        { "<leader>to", tree.tree.open },
-        { "<leader>tc", tree.tree.close },
-        { "<leader>tt", tree.tree.toggle },
-        { "<leader>tg", tree.tree.focus },
-        { "<leader>tf", tree.tree.find_file },
-        { "<leader>tr", tree.tree.reload },
+        { "<leader>to", function() tree().tree.open() end },
+        { "<leader>tc", function() tree().tree.close() end },
+        { "<leader>tt", function() tree().tree.toggle() end },
+        { "<leader>tg", function() tree().tree.focus() end },
+        { "<leader>tf", function() tree().tree.find_file() end },
+        { "<leader>tr", function() tree().tree.reload() end },
       }
     end,
   },
@@ -677,10 +727,10 @@ local plugins = {
     priority = 110,
     config = function()
       vim.g.rainbow_delimiters = {
-        strategy = { [""] = require("rainbow-delimiters").strategy["global"] },
+        strategy = { [""] = plug["rainbow-delimiters"].strategy["global"] },
         query = { [""] = "rainbow-delimiters" },
         priority = { [""] = 110 },
-        highlight = require("gradient_gen").scope_color_keys,
+        highlight = plug.gradient_gen.scope_color_keys,
 
       }
     end
@@ -690,14 +740,14 @@ local plugins = {
     event = { "BufReadPre", "BufNewFile" },
     priority = 100,
     config = function()
-      local hooks = require "ibl.hooks"
-      require("ibl").setup {
+      local hooks = plug["ibl.hooks"]
+      plug.ibl.setup {
         indent = {
           char = "▏",
-          highlight = require("gradient_gen").indent_color_keys,
+          highlight = plug.gradient_gen.indent_color_keys,
         },
         scope = {
-          highlight = require("gradient_gen").indent_color_keys,
+          highlight = plug.gradient_gen.indent_color_keys,
           show_start = false,
         },
       }
@@ -755,7 +805,7 @@ local plugins = {
     event = "VeryLazy",
     opts = { easing = "quadratic" },
     config = function(_, opts)
-      local s = require('neoscroll')
+      local s = plug.neoscroll
       s.setup(opts)
 
       local m = { 'n', 'v', 'x' }
@@ -816,7 +866,7 @@ local plugins = {
   {
     "yorickpeterse/nvim-window",
     keys = function()
-      local pick = function() require("nvim-window").pick() end
+      local pick = function() plug["nvim-window"].pick() end
       return { { "<C-w>f", pick, noremap = false } }
     end,
   },
@@ -855,7 +905,7 @@ local plugins = {
       vim.o.winwidth = 10
       vim.o.winminwidth = 10
       vim.o.equalalways = false
-      require("windows").setup()
+      plug.windows.setup()
     end,
     keys = {
       { "<C-w>z", cmd "WindowsMaximize" },
@@ -881,7 +931,7 @@ local plugins = {
       buf_name = { mode = "unique" },
     },
     config = function(_, opts)
-      require("tabby.tabline").use_preset("tab_only", opts)
+      plug["tabby.tabline"].use_preset("tab_only", opts)
     end,
   },
   {
@@ -889,11 +939,11 @@ local plugins = {
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {},
     keys = function()
-      local spectre = require("spectre")
+      local sp = plug.lazy.spectre
       return {
-        { "<leader>S",  spectre.toggle },
-        { "<leader>sw", spectre.open_visual },
-        { "<leader>sp", spectre.open_file_search },
+        { "<leader>S",  function() sp().toggle() end },
+        { "<leader>sw", function() sp().open_visual() end },
+        { "<leader>sp", function() sp().open_file_search() end },
       }
     end,
   },
@@ -906,7 +956,7 @@ local plugins = {
       local lazy_ins
       local function lazygit()
         if lazy_ins == nil then
-          lazy_ins = require("toggleterm.terminal").Terminal:new({
+          lazy_ins = plug["toggleterm.terminal"].Terminal:new({
             cmd = "lazygit",
             direction = "float",
             hidden = true,
