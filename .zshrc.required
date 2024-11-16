@@ -1,3 +1,6 @@
+export LANG=en_US.UTF-8
+export EDITOR="nvim"
+
 ### BOOTSTRAP ###
 # req [curl, git]
 # opt [neovim ripgrep fd fzf lsd]
@@ -8,8 +11,13 @@ if ! command -v curl git >/dev/null 2>&1; then
 fi
 
 if  [ ! -d $HOME/.zplug ]; then
-  curl -sL --proto-redir -all,https "https://raw.githubusercontent.com/zplug/installer/master/installer.zsh" | zsh
+  echo "Downloa zplug"
+  export ZPLUG_HOME=$HOME/.zplug
+  git clone https://github.com/zplug/zplug $ZPLUG_HOME
 fi
+
+### ZPLUG ###
+
 source $HOME/.zplug/init.zsh
 
 zplug "zplug/zplug", hook-build:"zplug --self-manage"
@@ -25,8 +33,7 @@ if ! zplug check; then
 fi
 zplug load
 
-export LANG=en_US.UTF-8
-export EDITOR="nvim"
+### ALIAS ###
 
 alias ls="lsd"
 alias la="lsd -la"
