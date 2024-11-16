@@ -40,7 +40,6 @@ alias la="lsd -la"
 alias vi="nvim"
 
 # fzf
-source <(fzf --zsh)
 # https://github.com/junegunn/fzf#key-bindings-for-command-line
 # Preview file content using bat (https://github.com/sharkdp/bat)
 export FZF_CTRL_T_OPTS="
@@ -56,3 +55,6 @@ export FZF_CTRL_R_OPTS="
   --header 'Press CTRL-Y to copy command into clipboard'"
 # Print tree structure in the preview window
 export FZF_ALT_C_OPTS="--preview 'tree -C {}'"
+
+# Append a command directly
+zvm_after_init_commands+=('source <(fzf --zsh)')
