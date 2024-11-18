@@ -3,7 +3,7 @@ export EDITOR="nvim"
 
 ### BOOTSTRAP ###
 # req [curl, git]
-# opt [neovim ripgrep fd fzf lsd]
+# opt [neovim ripgrep fd fzf exa]
 
 if ! command -v curl git >/dev/null 2>&1; then
   echo "required curl, git.."
@@ -35,8 +35,8 @@ zplug load
 
 ### ALIAS ###
 
-alias ls="lsd"
-alias la="lsd -la"
+alias ls="exa"
+alias la="exa -la"
 alias vi="nvim"
 
 # fzf
