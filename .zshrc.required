@@ -35,8 +35,8 @@ zplug load
 
 ### ALIAS ###
 
-alias ls="exa"
-alias la="exa -la"
+alias ls="eza"
+alias la="eza -la"
 alias vi="nvim"
 
 # fzf

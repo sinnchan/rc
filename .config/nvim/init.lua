@@ -6,7 +6,8 @@ end
 -- init
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
-vim.o.guifont = "ProFont IIx Nerd Font:h14"
+-- vim.o.guifont = "ProFont IIx Nerd Font:h12"
+vim.o.guifont = "SauceCodePro Nerd Font:h13"
 vim.opt.autoread = true
 vim.opt.backup = false
 vim.opt.breakindent = true
@@ -62,17 +63,14 @@ vim.diagnostic.config({
 Map = vim.keymap.set
 
 -- neovide
-local enableScrollAnimation = true
 if vim.g.neovide then
-  enableScrollAnimation = false
-
   vim.g.neovide_hide_mouse_when_typing = true
 
-  Map('v', '<D-c>', '"+y')         -- Copy
-  Map('n', '<D-v>', '"+P')         -- Paste normal mode
-  Map('v', '<D-v>', '"+P')         -- Paste visual mode
-  Map('c', '<D-v>', '<C-R>+')      -- Paste command mode
-  Map('i', '<D-v>', '<ESC>l"+Pli') -- Paste insert mode
+  Map('v', '<D-c>', '"+y')
+  Map('n', '<D-v>', '"+P')
+  Map('v', '<D-v>', '"+P')
+  Map('c', '<D-v>', '<C-R>+')
+  Map('i', '<D-v>', '<ESC>l"+Pli')
 end
 
 local gpt_key =
@@ -158,7 +156,7 @@ local plugins = {
     lazy = false,
     opts = {
       transparent = false,
-      style = "dark",
+      style = "darker",
       colors = {
         search = "#FFFF00",
       },
@@ -657,6 +655,55 @@ local plugins = {
     opts = { virt_text_pos = "eol" },
   },
   {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+      "nvim-lua/plenary.nvim",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "sidlatau/neotest-dart",
+    },
+    keys = function()
+      local t = plug.lazy.neotest
+      return {
+        { "<leader>Ta", function() t().run.run({ strategy = "dap" }) end },
+        { "<leader>Tc", function() t().run.run({ vim.fn.expand("%"), strategy = "dap" }) end },
+        { "<leader>To", function() t().output.toggle() end },
+        { "<leader>TO", function() t().output_panel.toggle() end },
+        { "<leader>Ts", function() t().summary.toggle() end },
+        { "<leader>Td", function() t().diagnostic.toggle() end },
+      }
+    end,
+    config = function()
+      plug.neotest.setup {
+        adapters = {
+          plug["neotest-dart"] {
+            command = 'fvm flutter',
+            use_lsp = true,
+          },
+        },
+        summary = {
+          mappings = {
+            jumpto = "o",
+          },
+        },
+      }
+    end,
+  },
+  {
+    "rafcamlet/nvim-luapad",
+    cmd = { "Luapad", "LuaRun" },
+    opts = {},
+  },
+  {
+    "folke/todo-comments.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    opts = {},
+  },
+  {
     "jackMort/ChatGPT.nvim",
     main = "chatgpt",
     cmd = {
@@ -801,7 +848,7 @@ local plugins = {
   },
   {
     "karb94/neoscroll.nvim",
-    cond = enableScrollAnimation,
+    cond = not vim.g.neovide,
     event = "VeryLazy",
     opts = { easing = "quadratic" },
     config = function(_, opts)
@@ -1032,7 +1079,7 @@ local plugins = {
   },
   {
     "Wansmer/treesj",
-    keys = { "<space>m", "<space>j", "<space>s" },
+    keys = { "<leader>m", "<leader>j", "<leader>s" },
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     config = true,
   },
