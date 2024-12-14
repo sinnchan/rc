@@ -1,0 +1,5 @@
+[tools]
+eza = "latest"
+uv = "latest"
+neovim = "0.10.2"
+flutter = "3.19.1"

@@ -6,7 +6,6 @@ end
 -- init
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
--- vim.o.guifont = "ProFont IIx Nerd Font:h12"
 vim.o.guifont = "SauceCodePro Nerd Font:h13"
 vim.opt.autoread = true
 vim.opt.backup = false
@@ -500,7 +499,7 @@ local plugins = {
       "mfussenegger/nvim-dap",
     },
     opts = {
-      fvm = true,
+      fvm = false,
       widget_guides = {
         enabled = true,
       },
@@ -1072,6 +1071,31 @@ local plugins = {
     },
   },
   {
+
+    "dstein64/nvim-scrollview",
+    event = { "BufReadPre", "BufNewFile" },
+    main = "scrollview",
+    opts = {
+      current_only = true,
+      search_symbol = "-",
+      signs_on_startup = {
+        "changelist",
+        "conflicts",
+        "diagnostics",
+        "folds",
+        "marks",
+        "quickfix",
+        "search",
+        "trail",
+      },
+    },
+    config = function(_, opts)
+      plug.scrollview.setup(opts)
+      plug["scrollview.contrib.gitsigns"].setup(opts)
+      vim.api.nvim_set_hl(0, "ScrollViewSearch", { link = "Search" })
+    end
+  },
+  {
     "sinnchan/gradient_gen.nvim",
     lazy = false,
     event = "VeryLazy",
@@ -1094,6 +1118,17 @@ local plugins = {
     opts = {
       hi = { bg = "background" },
       symbols = { "─", "│", "╭", "╮", "╰", "╯" },
+    },
+  },
+  {
+    "potamides/pantran.nvim",
+    cmd = "Pantran",
+    opts = {
+      default_engine = "google",
+      google = {
+        default_target = "Japanese",
+        api_key = "AIzaSyCWtNQzg6ks53GO5M00HcOxmKTuW8chEFA",
+      },
     },
   },
 }
