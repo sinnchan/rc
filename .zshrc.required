@@ -3,7 +3,6 @@ export EDITOR="nvim"
 
 ### BOOTSTRAP ###
 # req [curl, git]
-# opt [neovim ripgrep fd fzf exa]
 
 if ! command -v curl git >/dev/null 2>&1; then
   echo "required curl, git.."

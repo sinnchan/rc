@@ -318,6 +318,15 @@ local plugins = {
     },
     opts = {
       automatic_installation = true,
+      ensure_installed = {
+        "lua_ls",
+        "jsonls",
+        "yamlls",
+        "typos_lsp",
+        "bashls",
+        "ts_ls",
+        "rust_analyzer",
+      },
       handlers = {
         function(server_name)
           plug.lspconfig[server_name].setup {
@@ -370,6 +379,7 @@ local plugins = {
           }
         end,
         bashls = function() plug.lspconfig.bashls.setup {} end,
+        taplo = function() plug.lspconfig.taplo.setup {} end,
         ts_ls = function() plug.lspconfig.ts_ls.setup {} end,
         rust_analyzer = function() plug.lspconfig.rust_analyzer.setup {} end,
       },

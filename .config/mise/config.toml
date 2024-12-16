@@ -1,5 +1,24 @@
+[settings]
+yes = true
+
 [tools]
 eza = "latest"
 uv = "latest"
 neovim = "0.10.2"
 flutter = "3.19.1"
+jq = "latest"
+tmux = "latest"
+fzf = "latest"
+fd = "latest"
+ripgrep = "latest"
+bottom = "latest"
+yq = "latest"
+node = "latest"
+
+[tasks.setup]
+run = [
+  "npm i -g bash-language-server",
+  "cargo install --features lsp --locked taplo-cli"
+]
+
+
