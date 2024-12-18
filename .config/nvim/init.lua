@@ -694,6 +694,7 @@ local plugins = {
         summary = {
           mappings = {
             jumpto = "o",
+            output = "O",
           },
         },
       }
