@@ -687,7 +687,6 @@ local plugins = {
       plug.neotest.setup {
         adapters = {
           plug["neotest-dart"] {
-            command = 'fvm flutter',
             use_lsp = true,
           },
         },
@@ -993,8 +992,19 @@ local plugins = {
   },
   {
     "nvim-pack/nvim-spectre",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    opts = {},
+    enabled = true,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "noib3/nvim-oxi",
+    },
+    build = "./build.sh",
+    opts = {
+      default = {
+        replace = {
+          cmd = "oxi",
+        },
+      },
+    },
     keys = function()
       local sp = plug.lazy.spectre
       return {
