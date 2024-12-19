@@ -6,7 +6,7 @@
     ],
     "body": [
       "@riverpod",
-      "$2 $1($1Ref ref) {",
+      "$2 $1(Ref ref) {",
       "\tthrow UnimplementedError();",
       "}"
     ]
