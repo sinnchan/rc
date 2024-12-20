@@ -533,6 +533,7 @@ local plugins = {
             ".dart_tool/",
             vim.fn.expand("~") .. "/.pub-cache/",
             vim.fn.expand("~") .. "/fvm/",
+            vim.fn.expand("~") .. "/.local/share/mise",
           },
         },
       },
