@@ -1050,7 +1050,6 @@ local plugins = {
   {
     "folke/noice.nvim",
     event = "VeryLazy",
-    commit = "d9328ef",
     dependencies = {
       "MunifTanjim/nui.nvim",
       "rcarriga/nvim-notify",

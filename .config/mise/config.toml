@@ -4,8 +4,8 @@ yes = true
 [tools]
 eza = "latest"
 uv = "latest"
-neovim = "0.10.2"
-flutter = "3.27.0"
+neovim = "0.10.3"
+flutter = "3.22.3"
 jq = "latest"
 tmux = "latest"
 fzf = "latest"
