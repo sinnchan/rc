@@ -64,6 +64,7 @@ Map = vim.keymap.set
 -- neovide
 if vim.g.neovide then
   vim.g.neovide_hide_mouse_when_typing = true
+  vim.g.neovide_window_blurred = true
 
   Map('v', '<D-c>', '"+y')
   Map('n', '<D-v>', '"+P')
@@ -80,16 +81,6 @@ local typo_file = home .. '/.config/nvim/spell/.typos.toml'
 local cmd = function(command)
   return table.concat({ "<CMD>", command, "<CR>" })
 end
-
--- vim.api.nvim_create_autocmd('FileType', {
---   pattern = 'sh',
---   callback = function()
---     vim.lsp.start({
---       name = 'bash-language-server',
---       cmd = { 'bash-language-server', 'start' },
---     })
---   end,
--- })
 
 local plug = setmetatable({
   lazy = setmetatable({}, {
@@ -610,6 +601,9 @@ local plugins = {
   },
   {
     "hrsh7th/vim-vsnip",
+    dependencies = {
+      "rafamadriz/friendly-snippets",
+    },
     config = function()
       local opts = { expr = true, noremap = false }
       Map({ "n", "s" }, "<s>", [[<Plug>(vsnip-select-text)]], opts)
@@ -779,6 +773,15 @@ local plugins = {
     end,
   },
   {
+    "folke/trouble.nvim",
+    opts = {},
+    cmd = "Trouble",
+    keys = {
+      { "<leader>xx", cmd "Trouble diagnostics toggle filter.buf=0" },
+      { "<leader>xX", cmd "Trouble diagnostics toggle" },
+    },
+  },
+  {
     "hiphish/rainbow-delimiters.nvim",
     event = { "BufReadPre", "BufNewFile" },
     priority = 110,
@@ -936,20 +939,6 @@ local plugins = {
     },
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
-  },
-  {
-    'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-tree/nvim-web-devicons',
-    },
-    ft = { "markdown" },
-    opts = {
-      heading = {
-        position = 'inline',
-        border = true,
-      },
-    },
   },
   {
     "anuvyklack/windows.nvim",
@@ -1149,6 +1138,25 @@ local plugins = {
       google = {
         default_target = "Japanese",
         api_key = "AIzaSyCWtNQzg6ks53GO5M00HcOxmKTuW8chEFA",
+      },
+    },
+  },
+  {
+    "LintaoAmons/scratch.nvim",
+    cmd = {
+      "Scratch",
+      "ScratchWithName",
+      "ScratchOpen",
+      "ScratchOpenFzf",
+    },
+    keys = { { "<leader>fs", cmd "ScratchOpenFzf" } },
+    opts = {
+      filetypes = {
+        "txt",
+        "md",
+        "sh",
+        "lua",
+        "py",
       },
     },
   },
