@@ -92,13 +92,6 @@ local plug = setmetatable({
   end
 })
 
-local onLspAttach = function(callback)
-  vim.api.nvim_create_autocmd("LspAttach", {
-    group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-    callback = callback,
-  })
-end
-
 -- default vim keymap
 local _opts = { noremap = true, silent = true }
 Map("n", "<C-l>", "10zl")
@@ -384,15 +377,18 @@ local plugins = {
       { "<leader>q", vim.diagnostic.setloclist },
     },
     config = function()
-      onLspAttach(function(ev)
-        local lsp_b = vim.lsp.buf
-        local opts = { buffer = ev.buf }
-        vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
-        Map("n", "gi", lsp_b.implementation, opts)
-        Map("n", "<leader>wa", lsp_b.add_workspace_folder, opts)
-        Map("n", "<leader>wr", lsp_b.remove_workspace_folder, opts)
-        Map("n", "<leader>fa", function() lsp_b.format { async = true } end, opts)
-      end)
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+        callback = function(ev)
+          local lsp_b = vim.lsp.buf
+          local opts = { buffer = ev.buf }
+          vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
+          Map("n", "gi", lsp_b.implementation, opts)
+          Map("n", "<leader>wa", lsp_b.add_workspace_folder, opts)
+          Map("n", "<leader>wr", lsp_b.remove_workspace_folder, opts)
+          Map("n", "<leader>fa", function() lsp_b.format { async = true } end, opts)
+        end,
+      })
     end,
   },
   {
@@ -537,6 +533,17 @@ local plugins = {
       if is_loaded then
         tools.setup_project(mod.projects)
       end
+
+      local lsp = plug.lazy["flutter-tools.lsp"]
+      vim.api.nvim_create_user_command(
+        "FlutterLspAttach",
+        function() lsp().attach() end,
+        {}
+      )
+      vim.api.nvim_create_autocmd("BufReadPost", {
+        pattern = "*.dart",
+        callback = function() lsp().attach() end,
+      })
     end
   },
   {
@@ -753,7 +760,15 @@ local plugins = {
       return true
     end)(),
     event = "VeryLazy",
-    opts = { sort_by = "case_sensitive" },
+    opts = {
+      sort_by = "case_sensitive",
+      filters = {
+        custom = {
+          ".g.dart$",
+          ".freezed.dart$",
+        },
+      },
+    },
     config = function(_, opts)
       plug["nvim-tree"].setup(opts)
       vim.g.loaded_netrw = 1
