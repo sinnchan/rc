@@ -303,13 +303,8 @@ local plugins = {
     opts = {
       automatic_installation = true,
       ensure_installed = {
-        "lua_ls",
-        "jsonls",
-        "yamlls",
-        "typos_lsp",
-        "bashls",
-        "ts_ls",
-        "rust_analyzer",
+        "lua_ls", "jsonls", "yamlls", "typos_lsp",
+        "bashls", "ts_ls", "rust_analyzer",
       },
       handlers = {
         function(server_name)
@@ -878,21 +873,25 @@ local plugins = {
     "karb94/neoscroll.nvim",
     cond = not vim.g.neovide,
     event = "VeryLazy",
-    opts = { easing = "quadratic" },
+    opts = {
+      easing = "quadratic",
+      performance_mode = true,
+    },
     config = function(_, opts)
       local s = plug.neoscroll
+      local d = 200
       s.setup(opts)
 
       local m = { 'n', 'v', 'x' }
-      Map(m, "<C-u>", function() s.ctrl_u({ duration = 500 }) end)
-      Map(m, "<C-d>", function() s.ctrl_d({ duration = 500 }) end)
-      Map(m, "<C-b>", function() s.ctrl_b({ duration = 800 }) end)
-      Map(m, "<C-f>", function() s.ctrl_f({ duration = 800 }) end)
-      Map(m, "<C-y>", function() s.scroll(-0.1, { move_cursor = false, duration = 250 }) end)
-      Map(m, "<C-e>", function() s.scroll(0.1, { move_cursor = false, duration = 250 }) end)
-      Map(m, "zt", function() s.zt({ half_win_duration = 500 }) end)
-      Map(m, "zz", function() s.zz({ half_win_duration = 500 }) end)
-      Map(m, "zb", function() s.zb({ half_win_duration = 500 }) end)
+      Map(m, "<C-u>", function() s.ctrl_u({ duration = d }) end)
+      Map(m, "<C-d>", function() s.ctrl_d({ duration = d }) end)
+      Map(m, "<C-b>", function() s.ctrl_b({ duration = d * 1.5 }) end)
+      Map(m, "<C-f>", function() s.ctrl_f({ duration = d * 1.5 }) end)
+      Map(m, "<C-y>", function() s.scroll(-0.1, { move_cursor = false, duration = d / 2 }) end)
+      Map(m, "<C-e>", function() s.scroll(0.1, { move_cursor = false, duration = d / 2 }) end)
+      Map(m, "zt", function() s.zt({ half_win_duration = d }) end)
+      Map(m, "zz", function() s.zz({ half_win_duration = d }) end)
+      Map(m, "zb", function() s.zb({ half_win_duration = d }) end)
     end,
   },
   {
@@ -1104,14 +1103,8 @@ local plugins = {
       current_only = true,
       search_symbol = "-",
       signs_on_startup = {
-        "changelist",
-        "conflicts",
-        "diagnostics",
-        "folds",
-        "marks",
-        "quickfix",
-        "search",
-        "trail",
+        "changelist", "conflicts", "diagnostics", "folds",
+        "marks", "quickfix", "search", "trail",
       },
     },
     config = function(_, opts)
@@ -1139,6 +1132,7 @@ local plugins = {
   },
   {
     "nvim-zh/colorful-winsep.nvim",
+    cond = not vim.g.neovide,
     event = { "WinLeave" },
     opts = {
       hi = { bg = "background" },
@@ -1159,19 +1153,12 @@ local plugins = {
   {
     "LintaoAmons/scratch.nvim",
     cmd = {
-      "Scratch",
-      "ScratchWithName",
-      "ScratchOpen",
-      "ScratchOpenFzf",
+      "Scratch", "ScratchWithName", "ScratchOpen", "ScratchOpenFzf",
     },
     keys = { { "<leader>fs", cmd "ScratchOpenFzf" } },
     opts = {
       filetypes = {
-        "txt",
-        "md",
-        "sh",
-        "lua",
-        "py",
+        "txt", "md", "sh", "lua", "py",
       },
     },
   },
