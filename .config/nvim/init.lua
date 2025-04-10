@@ -92,6 +92,36 @@ local plug = setmetatable({
   end
 })
 
+local function selectionCount()
+  local mode = vim.fn.mode()
+  local start_line, end_line, start_pos, end_pos
+
+  if not (mode:find("[vV\22]") ~= nil) then return "" end
+  start_line = vim.fn.line("v")
+  end_line = vim.fn.line(".")
+
+  if mode == 'V' then
+    start_pos = 1
+    end_pos = vim.fn.strlen(vim.fn.getline(end_line)) + 1
+  else
+    start_pos = vim.fn.col("v")
+    end_pos = vim.fn.col(".")
+  end
+
+  local chars = 0
+  for i = start_line, end_line do
+    local line = vim.fn.getline(i)
+    local line_len = vim.fn.strlen(line)
+    local s_pos = (i == start_line) and start_pos or 1
+    local e_pos = (i == end_line) and end_pos or line_len + 1
+    chars = chars + vim.fn.strchars(line:sub(s_pos, e_pos - 1))
+  end
+
+  local lines = math.abs(end_line - start_line) + 1
+  return tostring(lines) .. " lines, " .. tostring(chars) .. " characters"
+end
+
+
 -- default vim keymap
 local _opts = { noremap = true, silent = true }
 Map("n", "<C-l>", "10zl")
@@ -106,6 +136,7 @@ Map("n", "<leader>+", cmd "resize +10")
 Map("n", "<leader>-", cmd "resize -10")
 Map("n", "<leader>rr", cmd "source ~/.config/nvim/init.lua", _opts)
 Map("n", "<leader>ro", cmd "e ~/.config/nvim/init.lua", _opts)
+Map("n", "<leader>L", cmd "Lazy", _opts)
 Map('', '<D-v>', '+p<CR>', _opts)
 Map('!', '<D-v>', '<C-R>+', _opts)
 Map('t', '<D-v>', '<C-R>+', _opts)
@@ -181,7 +212,7 @@ local plugins = {
           lualine_a = { "mode", { "macro-recording", fmt = recording } },
           lualine_b = { diff, diag },
           lualine_c = { "filename" },
-          lualine_x = { "encoding", "fileformat", "filetype" },
+          lualine_x = { { selectionCount }, "encoding", "fileformat", "filetype" },
           lualine_y = { "progress" },
           lualine_z = { "location" },
         },
@@ -754,7 +785,6 @@ local plugins = {
       end
       return true
     end)(),
-    event = "VeryLazy",
     opts = {
       sort_by = "case_sensitive",
       filters = {
