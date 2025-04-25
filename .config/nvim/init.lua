@@ -1192,6 +1192,14 @@ local plugins = {
       },
     },
   },
+  {
+    "RRethy/vim-illuminate",
+    event = { "BufReadPre", "BufNewFile" },
+    keys = {
+      { "<a-j>", "<a-n>zz", remap = true },
+      { "<a-k>", "<a-p>zz", remap = true },
+    },
+  },
 }
 
 require("lazy").setup(plugins, lazy_opts)
