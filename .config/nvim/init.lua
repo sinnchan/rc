@@ -38,6 +38,7 @@ vim.opt.updatetime = 300
 vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
+vim.opt.fixendofline = true
 
 local icons = {
   error = " ",
@@ -59,6 +60,19 @@ vim.diagnostic.config({
   },
 })
 
+local lsps = {
+  "bashls",
+  "html",
+  "jsonls",
+  "kotlin_language_server",
+  "lua_ls",
+  "pylsp",
+  "rust_analyzer",
+  "ts_ls",
+  "typos_lsp",
+  "yamlls",
+}
+
 Map = vim.keymap.set
 
 -- neovide
@@ -75,7 +89,7 @@ end
 
 local gpt_key =
 "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"
-local typo_file = home .. '/.config/nvim/spell/.typos.toml'
+local typo_file = '~/.config/nvim/spell/.typos.toml'
 
 -- func
 local cmd = function(command)
@@ -324,76 +338,68 @@ local plugins = {
     config = true,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
+    "mason-org/mason-lspconfig.nvim",
     event = "VeryLazy",
     dependencies = {
       "williamboman/mason.nvim",
       "neovim/nvim-lspconfig",
       "b0o/schemastore.nvim",
+      "zapling/mason-lock.nvim",
     },
     opts = {
       automatic_installation = true,
-      ensure_installed = {
-        "lua_ls", "jsonls", "yamlls", "typos_lsp",
-        "bashls", "ts_ls", "rust_analyzer",
-      },
-      handlers = {
-        function(server_name)
-          plug.lspconfig[server_name].setup {
-            capabilities = plug.cmp_nvim_lsp.default_capabilities(),
-          }
-        end,
-        lua_ls = function()
-          plug.lspconfig.lua_ls.setup {
-            settings = {
-              Lua = {
-                completion = {
-                  callSnippet = "Replace",
-                },
-                diagnostics = {
-                  globals = { "vim", "require" },
-                },
-              },
-            },
-          }
-        end,
-        jsonls = function()
-          plug.lspconfig.jsonls.setup {
-            settings = {
-              json = {
-                schemas = plug.schemastore.json.schemas(),
-                validate = { enable = true },
-              },
-            },
-          }
-        end,
-        yamlls = function()
-          plug.lspconfig.yamlls.setup {
-            settings = {
-              yaml = {
-                schemaStore = {
-                  enable = false,
-                  url = "",
-                },
-                schemas = plug.schemastore.yaml.schemas(),
-              },
-            },
-          }
-        end,
-        typos_lsp = function()
-          plug.lspconfig.typos_lsp.setup {
-            init_options = {
-              config = typo_file,
-              diagnosticSeverity = "Hint",
-            },
-          }
-        end,
-        bashls = function() plug.lspconfig.bashls.setup {} end,
-        taplo = function() plug.lspconfig.taplo.setup {} end,
-        ts_ls = function() plug.lspconfig.ts_ls.setup {} end,
-        rust_analyzer = function() plug.lspconfig.rust_analyzer.setup {} end,
-      },
+      ensure_installed = lsps,
     },
+    config = function(_, opts)
+      plug["mason-lspconfig"].setup(opts)
+      vim.lsp.config("lua_ls", {
+        settings = {
+          Lua = {
+            completion = {
+              callSnippet = "Replace",
+            },
+            diagnostics = {
+              globals = { "vim", "require" },
+            },
+          },
+        },
+      })
+      vim.lsp.config("jsonls", {
+        settings = {
+          json = {
+            schemas = plug.schemastore.json.schemas(),
+            validate = { enable = true },
+          },
+        },
+      })
+      vim.lsp.config("yamlls", {
+        settings = {
+          yaml = {
+            schemaStore = {
+              enable = false,
+              url = "",
+            },
+            schemas = plug.schemastore.yaml.schemas(),
+          },
+        },
+      })
+      vim.lsp.config("typos_lsp", {
+        init_options = {
+          config = typo_file,
+          diagnosticSeverity = "Hint",
+        },
+      })
+      vim.lsp.enable(lsps)
+    end,
+  },
+  {
+    "cleong14/mason-lock.nvim",
+    branch = "main",
+    config = function()
+      plug["mason-lock"].setup({
+        lockfile_path = vim.fn.stdpath("config") .. "/mason/mason-lock.json",
+      })
+    end
   },
   {
     "neovim/nvim-lspconfig",
@@ -739,6 +745,18 @@ local plugins = {
       "nvim-lua/plenary.nvim",
     },
     opts = {},
+  },
+  {
+    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+    main = "lsp_lines",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      vim.diagnostic.config({
+        virtual_text = false,
+        virtual_lines = true,
+      })
+      plug.lsp_lines.setup()
+    end,
   },
   {
     "jackMort/ChatGPT.nvim",
