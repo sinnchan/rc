@@ -507,8 +507,6 @@ local plugins = {
         { "gD",          cmd "Lspsaga peek_definition" },
         { "go",          cmd "Lspsaga outline" },
         { "gr",          cmd "Lspsaga finder" },
-        { "<leader>ci",  cmd "Lspsaga incoming_calls" },
-        { "<leader>co",  cmd "Lspsaga outgoing_calls" },
         { "<leader>ac",  cmd "Lspsaga code_action" },
         { "<leader>ac",  cmd "Lspsaga code_action",         mode = "x" },
         { "<leader>rn",  cmd "Lspsaga rename" },
@@ -591,10 +589,10 @@ local plugins = {
       "hrsh7th/cmp-emoji",
       "hrsh7th/vim-vsnip",
       "onsails/lspkind.nvim",
+      "zbirenbaum/copilot-cmp",
     },
     opts = function()
       local cmp = plug.cmp
-      local lspkind = plug.lspkind
       return {
         snippet = {
           expand = function(args)
@@ -619,15 +617,16 @@ local plugins = {
           end,
         },
         sources = cmp.config.sources(
-          { { name = "nvim_lsp" }, { name = "vsnip" } },
+          { { name = "nvim_lsp" }, { name = "vsnip" }, { name = "copilot" } },
           { { name = "buffer" } }
         ),
         formatting = {
-          format = lspkind.cmp_format {
-            mode = "symbol",
+          format = plug.lspkind.cmp_format {
+            mode = "symbol_text",
             maxwidth = 50,
             ellipsis_char = "...",
             show_labelDetails = true,
+            preset = "codicons",
           },
         },
       }
@@ -750,6 +749,9 @@ local plugins = {
     "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
     main = "lsp_lines",
     event = { "BufReadPre", "BufNewFile" },
+    keys = {
+      { "<leader>lt", function() plug.lsp_lines.toggle() end },
+    },
     config = function()
       vim.diagnostic.config({
         virtual_text = false,
@@ -1216,6 +1218,64 @@ local plugins = {
     keys = {
       { "<a-j>", "<a-n>zz", remap = true },
       { "<a-k>", "<a-p>zz", remap = true },
+    },
+  },
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    opts = {
+      suggestion = { enabled = false },
+      panel = { enabled = false },
+      copilot_node_command = 'node'
+    },
+  },
+  {
+    "zbirenbaum/copilot-cmp",
+    config = true,
+  },
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    lazy = false,
+    dependencies = {
+      { "zbirenbaum/copilot.lua" },
+      { "nvim-lua/plenary.nvim" },
+    },
+    build = "make tiktoken",
+    event = { "BufReadPre", "BufNewFile" },
+    opts = {
+      debug = true,
+      show_help = "yes",
+      prompts = {
+        Explain = {
+          prompt = "/COPILOT_EXPLAIN コードを日本語で説明してください",
+          mapping = '<leader>ce',
+        },
+        Review = {
+          prompt = '/COPILOT_REVIEW コードを日本語でレビューしてください。',
+          mapping = '<leader>cr',
+        },
+        Fix = {
+          prompt = "/COPILOT_FIX このコードには問題があります。バグを修正したコードを表示してください。説明は日本語でお願いします。",
+          mapping = '<leader>cf',
+        },
+        Optimize = {
+          prompt = "/COPILOT_REFACTOR 選択したコードを最適化し、パフォーマンスと可読性を向上させてください。説明は日本語でお願いします。",
+          mapping = '<leader>co',
+        },
+        Docs = {
+          prompt = "/COPILOT_GENERATE 選択したコードに関するドキュメントコメントを日本語で生成してください。",
+          mapping = '<leader>cd',
+        },
+        Tests = {
+          prompt = "/COPILOT_TESTS 選択したコードの詳細なユニットテストを書いてください。説明は日本語でお願いします。",
+          mapping = '<leader>ct',
+        },
+        Commit = {
+          prompt =
+          '実装差分に対するコミットメッセージを日本語で記述してください。',
+          mapping = '<leader>cco',
+        },
+      },
     },
   },
 }
