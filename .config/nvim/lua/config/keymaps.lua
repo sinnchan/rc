@@ -1,0 +1,22 @@
+local cmd = function(command)
+  return table.concat({ "<CMD>", command, "<CR>" })
+end
+
+local _opts = { noremap = true, silent = true }
+vim.keymap.set("n", "<C-l>", "10zl")
+vim.keymap.set("n", "<C-h>", "10zh")
+vim.keymap.set("n", "<C-j>", "10gj")
+vim.keymap.set("n", "<C-k>", "10gk")
+vim.keymap.set("n", "<C-y>", "10<C-y>")
+vim.keymap.set("n", "<C-e>", "10<C-e>")
+vim.keymap.set("n", "n", "nzz", { remap = true })
+vim.keymap.set("n", "N", "Nzz", { remap = true })
+vim.keymap.set("n", "<leader>+", cmd "resize +10")
+vim.keymap.set("n", "<leader>-", cmd "resize -10")
+vim.keymap.set("n", "<leader>rr", cmd "source ~/.config/nvim/init.lua", _opts)
+vim.keymap.set("n", "<leader>ro", cmd "e ~/.config/nvim/init.lua", _opts)
+vim.keymap.set("n", "<leader>L", cmd "Lazy", _opts)
+vim.keymap.set('', '<D-v>', '+p<CR>', _opts)
+vim.keymap.set('!', '<D-v>', '<C-R>+', _opts)
+vim.keymap.set('t', '<D-v>', '<C-R>+', _opts)
+vim.keymap.set('v', '<D-v>', '<C-R>+', _opts)
