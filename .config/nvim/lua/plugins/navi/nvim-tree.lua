@@ -20,6 +20,13 @@ return {
         ".freezed.dart$",
       },
     },
+    sync_root_with_cwd = true,
+    respect_buf_cwd = true,
+    actions = {
+      change_dir = {
+        enable = false,
+      },
+    },
   },
   config = function(_, opts)
     plug["nvim-tree"].setup(opts)
@@ -36,6 +43,13 @@ return {
       { "<leader>tg", function() tree().tree.focus() end },
       { "<leader>tf", function() tree().tree.find_file() end },
       { "<leader>tr", function() tree().tree.reload() end },
+      { "<leader>tL", function()
+        local path = vim.fn.stdpath("config")
+        vim.cmd.tabnew()
+        tree().tree.close()
+        vim.cmd.tcd(path)
+        tree().tree.open { path = path }
+      end },
     }
   end,
 }
