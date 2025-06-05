@@ -10,7 +10,7 @@ return {
   config = function()
     vim.diagnostic.config({
       virtual_text = false,
-      virtual_lines = true,
+      virtual_lines = false,
     })
     plug.lsp_lines.setup()
   end,

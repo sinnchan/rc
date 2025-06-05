@@ -1,5 +1,5 @@
 local plug = require("util.plug")
-local typo_file = '~/.config/nvim/spell/.typos.toml'
+local typo_file = vim.fn.stdpath("config") .. '/spell/.typos.toml'
 local lsps = {
   "bashls",
   "html",
