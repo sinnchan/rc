@@ -6,7 +6,7 @@ return {
   dependencies = { "nvim-neotest/nvim-nio" },
   keys = function()
     return {
-      { "<leader>du", function() plug.lazy.dapui().toggle() end },
+      { "<leader>du", function() plug.lazy.dapui().toggle() end , desc = ""},
     }
   end,
   config = function()

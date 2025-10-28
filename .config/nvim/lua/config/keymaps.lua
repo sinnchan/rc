@@ -3,10 +3,10 @@ local cmd = function(command)
 end
 
 local _opts = { noremap = true, silent = true }
-vim.keymap.set("n", "<C-l>", "10zl")
-vim.keymap.set("n", "<C-h>", "10zh")
-vim.keymap.set("n", "<C-j>", "10gj")
-vim.keymap.set("n", "<C-k>", "10gk")
+vim.keymap.set({ "n", "v" }, "<C-l>", "10zl")
+vim.keymap.set({ "n", "v" }, "<C-h>", "10zh")
+vim.keymap.set({ "n", "v" }, "<C-j>", "10gj")
+vim.keymap.set({ "n", "v" }, "<C-k>", "10gk")
 vim.keymap.set("n", "<C-y>", "10<C-y>")
 vim.keymap.set("n", "<C-e>", "10<C-e>")
 vim.keymap.set("n", "n", "nzz", { remap = true })
