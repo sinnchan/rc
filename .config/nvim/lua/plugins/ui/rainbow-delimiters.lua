@@ -1,4 +1,5 @@
 local plug = require("util.plug")
+local colors = require("util.colors_gen")
 
 return {
   "hiphish/rainbow-delimiters.nvim",
@@ -9,7 +10,7 @@ return {
       strategy = { [""] = plug["rainbow-delimiters"].strategy["global"] },
       query = { [""] = "rainbow-delimiters" },
       priority = { [""] = 110 },
-      highlight = plug.gradient_gen.scope_color_keys,
+      highlight = colors.scope_color_keys,
     }
   end
 }

@@ -1,4 +1,5 @@
 local plug = require("util.plug")
+local colors = require("util.colors_gen")
 
 return {
   "lukas-reineke/indent-blankline.nvim",
@@ -9,10 +10,10 @@ return {
     plug.ibl.setup {
       indent = {
         char = "▏",
-        highlight = plug.gradient_gen.indent_color_keys,
+        highlight = colors.indent_color_keys,
       },
       scope = {
-        highlight = plug.gradient_gen.indent_color_keys,
+        highlight = colors.indent_color_keys,
         show_start = false,
       },
     }

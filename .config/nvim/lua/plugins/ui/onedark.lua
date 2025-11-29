@@ -1,4 +1,5 @@
 local plug = require("util.plug")
+local colors = require("util.colors_gen")
 
 return {
   "navarasu/onedark.nvim",
@@ -19,6 +20,7 @@ return {
   config = function(_, opts)
     plug.onedark.setup(opts)
     plug.onedark.load()
-    plug.gradient_gen.apply()
+    colors.setup()
+    colors.apply()
   end,
 }
