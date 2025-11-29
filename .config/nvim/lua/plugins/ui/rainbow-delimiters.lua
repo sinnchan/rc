@@ -10,7 +10,6 @@ return {
       query = { [""] = "rainbow-delimiters" },
       priority = { [""] = 110 },
       highlight = plug.gradient_gen.scope_color_keys,
-
     }
   end
 }

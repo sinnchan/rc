@@ -3,7 +3,7 @@ return {
   cond = not vim.g.neovide,
   event = { "WinLeave" },
   opts = {
-    hi = { bg = "background" },
+    hi = { bg = "NONE" },
     symbols = { "─", "│", "╭", "╮", "╰", "╯" },
   },
 }
