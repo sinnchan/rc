@@ -1,3 +1,4 @@
+local plug = require("util.plug")
 return {
   "neovim/nvim-lspconfig",
   event = "VeryLazy",
@@ -15,7 +16,7 @@ return {
         vim.keymap.set("n", "gi", lsp_b.implementation, opts)
         vim.keymap.set("n", "<leader>wa", lsp_b.add_workspace_folder, opts)
         vim.keymap.set("n", "<leader>wr", lsp_b.remove_workspace_folder, opts)
-        vim.keymap.set("n", "<leader>fa", function() lsp_b.format { async = true } end, opts)
+        vim.keymap.set("n", "<leader>fa", function() plug.lazy.conform().format { async = true, bufnr = ev.buf } end, opts)
       end,
     })
   end,

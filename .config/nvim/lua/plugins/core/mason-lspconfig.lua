@@ -65,6 +65,26 @@ return {
         diagnosticSeverity = "Hint",
       },
     })
-    vim.lsp.enable(lsps)
+    vim.lsp.config("gdscript", {
+      name = "godot",
+      cmd = vim.lsp.rpc.connect("127.0.0.1", 6005),
+      on_attach = function(_, _)
+        plug.dap.adapters.godot = {
+          type = "server",
+          host = "127.0.0.1",
+          port = 6006,
+        }
+        plug.dap.configurations.gdscript = { {
+          type = "godot",
+          request = "launch",
+          name = "Launch scene",
+          project = "${workspaceFolder}",
+          launch_scene = true,
+        } }
+      end,
+    })
+    local _lsps = vim.deepcopy(lsps)
+    table.insert(_lsps, "gdscript")
+    vim.lsp.enable(_lsps)
   end,
 }

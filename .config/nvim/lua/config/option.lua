@@ -34,3 +34,5 @@ vim.opt.updatetime = 300
 vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
+vim.opt.winblend = 0
+vim.opt.pumblend = 0
