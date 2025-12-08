@@ -13,7 +13,6 @@ return {
     "hrsh7th/cmp-emoji",
     "hrsh7th/vim-vsnip",
     "onsails/lspkind.nvim",
-    "zbirenbaum/copilot-cmp",
   },
   opts = function()
     local cmp = plug.cmp
@@ -44,7 +43,6 @@ return {
         {
           { name = "nvim_lsp" },
           { name = "vsnip" },
-          -- { name = "copilot" },
         },
         { { name = "buffer" } }
       ),

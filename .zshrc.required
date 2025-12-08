@@ -34,8 +34,6 @@ zplug load
 
 ### ALIAS ###
 
-eval "$(mise activate)"
-
 alias ls="eza"
 alias la="eza -la"
 alias vi="nvim"

@@ -57,5 +57,18 @@ return {
       pattern = "*.dart",
       callback = function() lsp().attach() end,
     })
+
+    -- 既存の publishDiagnostics ハンドラを退避
+    local lsp_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
+    vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+      if result and result.uri and result.diagnostics then
+        local fname = vim.uri_to_fname(result.uri)
+        if fname:match("%.g%.dart$") then
+          result.diagnostics = {}
+        end
+      end
+
+      return lsp_handler(err, result, ctx, config)
+    end
   end
 }
