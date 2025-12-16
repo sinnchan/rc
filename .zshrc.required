@@ -10,7 +10,7 @@ if ! command -v curl git >/dev/null 2>&1; then
 fi
 
 if  [ ! -d $HOME/.zplug ]; then
-  echo "Downloa zplug"
+  echo "Download zplug"
   export ZPLUG_HOME=$HOME/.zplug
   git clone https://github.com/zplug/zplug $ZPLUG_HOME
 fi
@@ -31,6 +31,10 @@ if ! zplug check; then
   zplug install
 fi
 zplug load
+
+### mise
+
+eval "$(mise activate zsh)"
 
 ### ALIAS ###
 
