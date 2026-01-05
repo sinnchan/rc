@@ -4,7 +4,7 @@ yes = true
 [tools]
 eza = "latest"
 uv = "latest"
-neovim = "0.11.1"
+neovim = "0.11.5"
 flutter = "3.22.3"
 jq = "latest"
 tmux = "latest"
@@ -14,6 +14,8 @@ ripgrep = "latest"
 bottom = "latest"
 yq = "latest"
 node = "latest"
+lazygit = "0.57.0"
+rust = "1.92.0"
 
 [tasks.setup]
 run = [

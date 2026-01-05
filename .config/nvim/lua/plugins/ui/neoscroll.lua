@@ -6,7 +6,7 @@ return {
   event = "VeryLazy",
   opts = {
     easing = "quadratic",
-    performance_mode = true,
+    performance_mode = false,
   },
   config = function(_, opts)
     local s = plug.neoscroll
