@@ -38,7 +38,7 @@ if ! command -v mise > /dev/null 2>&1; then
   curl https://mise.run | sh
 fi
 
-eval "$(mise activate zsh)"
+eval "$(~/.local/bin//mise activate zsh)"
 
 ### ALIAS ###
 
