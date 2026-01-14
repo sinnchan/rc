@@ -4,4 +4,5 @@
 .config/nvim/plugin/packer_compiled.lua
 .config/pulse
 .config/go
+.config/configstore
 

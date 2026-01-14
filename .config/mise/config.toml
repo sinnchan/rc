@@ -16,13 +16,32 @@ yq = "latest"
 node = "latest"
 lazygit = "0.57.0"
 rust = "1.92.0"
-python = "3.14.2"
+python = "3.13.11"
+ollama = "latest"
 
-[tasks.setup]
+[env]
+AI_MODEL="gpt-oss:20b"
+
+[shell_alias]
+aider="uv run aider --model ollama/$AI_MODEL --chat-language japanese"
+
+[tasks.install]
+run = "mise install"
+
+[tasks.bootstrap-nvim]
+depends = ["install"]
 run = [
   "npm i -g bash-language-server",
   "cargo install --features lsp --locked taplo-cli",
   "cargo install oxi",
+]
+
+[tasks.bootstrap-ai]
+depends = ["install"]
+run = [
+  "uv pip install --python .venv/bin/python -U aider-chat",
+  "uv pip install --python .venv/bin/python -U audioop-lts",
+  "uv pip install --python .venv/bin/python -U 'litellm[all]==1.75.6'",
 ]
 
 

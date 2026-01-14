@@ -9,6 +9,7 @@ local lsps = {
   "pylsp",
   "rust_analyzer",
   "ts_ls",
+  "eslint",
   "typos_lsp",
   "yamlls",
 }

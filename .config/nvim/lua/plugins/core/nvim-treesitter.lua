@@ -5,7 +5,17 @@ return {
   lazy = false,
   build = ":TSUpdate",
   config = function(_, _)
-    local ts_fts = { "lua", "bash", "zsh", "c", "vim", "rust", "dart", "javascript" }
+    local ts_fts = {
+      "lua",
+      "bash",
+      "zsh",
+      "c",
+      "vim",
+      "rust",
+      "dart",
+      "javascript",
+      "typescript",
+    }
     plug["nvim-treesitter"].install(ts_fts)
     vim.api.nvim_create_autocmd("FileType", {
       pattern = ts_fts,
