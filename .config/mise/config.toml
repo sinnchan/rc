@@ -21,6 +21,7 @@ ollama = "latest"
 
 [env]
 AI_MODEL="gpt-oss:20b"
+OLLAMA_API_BASE="http://127.0.0.1:11434"
 
 [shell_alias]
 aider="uv run aider --model ollama/$AI_MODEL --chat-language japanese"
