@@ -5,7 +5,7 @@ yes = true
 eza = "latest"
 uv = "latest"
 neovim = "0.11.5"
-flutter = "3.22.3"
+flutter = "3.38.9"
 jq = "latest"
 tmux = "latest"
 fzf = "latest"
@@ -20,10 +20,14 @@ python = "3.13.11"
 ollama = "latest"
 
 [env]
+EDITOR="nvim"
 AI_MODEL="gpt-oss:20b"
 OLLAMA_API_BASE="http://127.0.0.1:11434"
 
 [shell_alias]
+ls="eza"
+la="eza -la"
+vi="nvim"
 aider="uv run aider --model ollama/$AI_MODEL --chat-language japanese"
 
 [tasks.install]

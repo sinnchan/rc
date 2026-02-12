@@ -1,5 +1,4 @@
 export LANG=en_US.UTF-8
-export EDITOR="nvim"
 
 ### BOOTSTRAP ###
 # req [curl, git]
@@ -34,17 +33,11 @@ zplug load
 
 ### mise
 
-if ! command -v mise > /dev/null 2>&1; then
+if ! command -v $HOME/.local/bin/mise > /dev/null 2>&1; then
   curl https://mise.run | sh
 fi
 
-eval "$(~/.local/bin//mise activate zsh)"
-
-### ALIAS ###
-
-alias ls="eza"
-alias la="eza -la"
-alias vi="nvim"
+eval "$($HOME/.local/bin/mise activate zsh)"
 
 # fzf
 # https://github.com/junegunn/fzf#key-bindings-for-command-line
