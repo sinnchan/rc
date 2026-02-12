@@ -36,7 +36,7 @@ run = "mise install"
 [tasks.bootstrap-nvim]
 depends = ["install"]
 run = [
-  "npm i -g bash-language-server",
+  "npm i -g bash-language-server tree-sitter-cli",
   "cargo install --features lsp --locked taplo-cli",
   "cargo install oxi",
 ]
