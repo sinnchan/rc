@@ -10,6 +10,7 @@ return {
       "bash",
       "zsh",
       "c",
+      "cpp",
       "vim",
       "rust",
       "dart",

@@ -2,6 +2,8 @@ local plug = require("util.plug")
 local typo_file = vim.fn.stdpath("config") .. '/spell/.typos.toml'
 local lsps = {
   "bashls",
+  "clangd",
+  "eslint",
   "html",
   "jsonls",
   "kotlin_language_server",
@@ -9,7 +11,6 @@ local lsps = {
   "pylsp",
   "rust_analyzer",
   "ts_ls",
-  "eslint",
   "typos_lsp",
   "yamlls",
 }
