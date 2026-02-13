@@ -2,9 +2,16 @@
 
 rc_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 
-echo $rc_dir
+cd $HOME
 
-cd ~
+if [ -d "$HOME/.config" ]; then
+  for p in "$rc_dir/.config/"*; do
+    [ -e "$p" ] || continue
+    ln -s "$p" "$HOME/.config/"
+  done
+else
+  ln -s "$rc_dir/.config" "$HOME/.config"
+fi
 
 ln -s $rc_dir/.config
 ln -s $rc_dir/.gitconfig
