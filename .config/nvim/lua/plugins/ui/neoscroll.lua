@@ -2,7 +2,7 @@ local plug = require("util.plug")
 
 return {
   "karb94/neoscroll.nvim",
-  cond = not vim.g.neovide,
+  cond = not vim.g.neovide and not vim.g.performance_mode,
   event = "VeryLazy",
   opts = {
     easing = "quadratic",

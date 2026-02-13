@@ -5,5 +5,8 @@ return {
   opts = {
     hi = { bg = "NONE" },
     symbols = { "─", "│", "╭", "╮", "╰", "╯" },
+    animate = {
+      enabled = not vim.g.performance_mode,
+    },
   },
 }

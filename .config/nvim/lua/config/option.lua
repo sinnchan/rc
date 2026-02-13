@@ -4,6 +4,7 @@
 vim.g.NERDCreateDefaultMappings = 0
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+vim.g.performance_mode = false
 vim.o.guifont = "SauceCodePro Nerd Font:h13"
 vim.opt.autoread = true
 vim.opt.backup = false
