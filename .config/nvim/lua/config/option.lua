@@ -36,3 +36,4 @@ vim.opt.winblend = 0
 vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.writebackup = false
+vim.opt.clipboard:append({ "unnamed", "unnamedplus" })
