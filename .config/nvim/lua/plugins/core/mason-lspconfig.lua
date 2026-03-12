@@ -85,8 +85,6 @@ return {
         } }
       end,
     })
-    local _lsps = vim.deepcopy(lsps)
-    table.insert(_lsps, "gdscript")
-    vim.lsp.enable(_lsps)
+    vim.lsp.enable({"gdscript"})
   end,
 }
