@@ -1,5 +1,6 @@
 return {
-  "iamcco/markdown-preview.nvim",
+  "sinnchan/markdown-preview.nvim",
+  branch = "update-mermaid",
   cmd = {
     "MarkdownPreview",
     "MarkdownPreviewStop",
