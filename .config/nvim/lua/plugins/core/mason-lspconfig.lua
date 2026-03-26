@@ -42,6 +42,20 @@ return {
         },
       },
     })
+    vim.lsp.config("rust_analyzer", {
+      settings = {
+        ["rust-analyzer"] = {
+          checkOnSave = true,
+          check = {
+            command = "check",
+            workspace = true,
+          },
+          cargo = {
+            autoreload = true,
+          },
+        },
+      },
+    })
     vim.lsp.config("jsonls", {
       settings = {
         json = {
